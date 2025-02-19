@@ -11,7 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="kr" className="isHidedScrollBar">
       <body className="isHidedScrollBar">
         {children}
       </body>
