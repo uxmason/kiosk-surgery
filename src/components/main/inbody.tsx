@@ -1,7 +1,7 @@
 const Inbody = () => {
     return (
         <div className="flex flex-col bg-[rgba(56,171,190)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]">
-            <p className="text-white text-[24px] font-[250px] leading-[24px]">
+            <p className="text-white text-[24px] font-[250] leading-[24px]">
                 인바디
             </p>
             <div className="h-full">그래프</div>
@@ -13,9 +13,7 @@ const Inbody = () => {
                 </div>
                 <div>
                     <p className="text-white font-bold leading-[16px] text-[10px]">
-                        키:
-                        <span className="text-[16px]">178</span>
-                        cm
+                        키: <span className="text-[16px] pl-[1px]">178</span> cm
                     </p>
                 </div>
             </div>
