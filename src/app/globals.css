@@ -11,3 +11,11 @@
   position: relative;
   box-sizing: border-box;
 }
+.isHidedScrollBar {
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.isHidedScrollBar::-webkit-scrollbar {
+  display: none;
+}
