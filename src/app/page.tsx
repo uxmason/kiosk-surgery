@@ -1,17 +1,30 @@
+import {
+    Ai,
+    Client,
+    Inbody,
+    Info,
+    Photo,
+    StartBtn,
+    Texts,
+} from "@/components/main";
+
 export default function Home() {
     return (
         <>
-            <main>
-                <div>TEST...</div>
-                <div
-                    style={{
-                        background: "url(./images/image20240219.png) no-repeat",
-                        backgroundPosition: "center",
-                        backgroundSize: "cover",
-                        height: "1920px",
-                        width: "1080px",
-                    }}
-                ></div>
+            <main className="px-[178px] w-full">
+                <Texts />
+                <div className="flex flex-col w-full pt-[120px]">
+                    <div className="flex w-full gap-x-5">
+                        <Client />
+                        <Info />
+                    </div>
+                    <div className="flex w-full gap-x-5 py-5">
+                        <Inbody />
+                        <Photo />
+                        <Ai />
+                    </div>
+                    <StartBtn />
+                </div>
             </main>
             <footer></footer>
         </>
