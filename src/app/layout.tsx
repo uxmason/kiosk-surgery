@@ -12,7 +12,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="kr" className="isHidedScrollBar">
-      <body className="isHidedScrollBar">
+      <body>
         {children}
       </body>
     </html>
