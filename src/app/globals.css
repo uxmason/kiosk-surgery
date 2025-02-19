@@ -1,21 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+* {
+  color:rgba(58,62,89,1);
+  font-family: 'Noto Sans KR', sans-serif;
+  letter-spacing: -.03em;
+  word-break: keep-all;
+  margin:0;
+  padding:0;
+  border:none;
+  position: relative;
+  box-sizing: border-box;
 }
