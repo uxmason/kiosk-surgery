@@ -1,21 +1,67 @@
 @import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
+@import "tailwindcss";
 
-* {
-  color:rgba(58,62,89,1);
-  font-family: 'Noto Sans KR', sans-serif;
-  letter-spacing: -.03em;
-  word-break: keep-all;
-  margin:0;
-  padding:0;
-  border:none;
-  position: relative;
-  box-sizing: border-box;
+@layer base {
+    *,
+    ::before,
+    ::after {
+        box-sizing: border-box;
+        padding: 0px;
+        margin: 0px;
+        border-width: 0px;
+        border-style: solid;
+    }
+
+    ::before,
+    ::after {
+        --tw-content: "";
+    }
+
+    html {
+        font-family: "Noto Sans KR", sans-serif;
+        -webkit-text-size-adjust: none;
+    }
+
+    @supports not (min-block-size: 100dvb) {
+        :where(html) {
+            block-size: 100%;
+        }
+    }
+
+    body {
+        block-size: 100%;
+        block-size: 100dvb;
+        font-family: inherit;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #1d1f2d;
+    }
+
+    body > div#root {
+        @apply flex h-full flex-1 flex-col;
+    }
+
+    /* 스크롤바 스타일 */
+    ::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+        -webkit-appearance: none;
+    }
+    ::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
 }
+
 .isHidedScrollBar {
-  scroll-behavior: smooth;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+    min-width: 1080px;
+    min-height: 1920px;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 .isHidedScrollBar::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
