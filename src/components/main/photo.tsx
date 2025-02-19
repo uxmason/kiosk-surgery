@@ -1,7 +1,7 @@
 const Photo = () => {
     return (
         <div className="flex flex-col bg-[#169B7C] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]">
-            <p className="text-white text-[24px] font-[250px] leading-[24px]">
+            <p className="text-white text-[24px] font-[250] leading-[24px]">
                 사진
             </p>
             <div className="h-full">사진</div>
@@ -13,8 +13,8 @@ const Photo = () => {
                 </div>
                 <div>
                     <p className="text-white font-bold leading-[14px] text-[10px]">
-                        최종촬영:
-                        <span className="text-[16px]">24.07.08</span>
+                        최종촬영:{" "}
+                        <span className="text-[14px] pl-[1px]">24.07.08</span>
                     </p>
                 </div>
             </div>
