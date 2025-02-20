@@ -33,6 +33,7 @@ export default function Info() {
                         bg="#ED6B5B"
                         isShow={true}
                         isShowBtnText="준비 단계로"
+                        path="/operate"
                     />
                 </div>
                 <UpcomingTime

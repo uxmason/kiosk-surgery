@@ -1,6 +1,13 @@
-const Client = () => {
+"use client";
+interface Props {
+    setOpeOpen: (v: boolean) => void;
+}
+const Client = ({ setOpeOpen }: Props) => {
     return (
-        <div className="flex flex-col bg-[rgba(58,62,89,0.50)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px]">
+        <button
+            className="flex flex-col text-start bg-[rgba(58,62,89,0.50)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px]"
+            onClick={() => setOpeOpen(true)}
+        >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 고객정보
             </p>
@@ -14,7 +21,7 @@ const Client = () => {
                 210040233
             </p>
             <div className="bg-[url('/assets/setting.svg')] w-[22px] h-[22px] mt-9 bg-no-repeat" />
-        </div>
+        </button>
     );
 };
 export default Client;
