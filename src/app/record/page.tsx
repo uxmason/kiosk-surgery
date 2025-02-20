@@ -7,7 +7,7 @@ import {
     Process,
     UpcomingTime,
 } from "@/components/common";
-import { FirstImgs, SecondImgs } from "@/components/info";
+import { FirstImgs, SecondImgs } from "@/components/record";
 import { useState } from "react";
 
 export default function Info() {
