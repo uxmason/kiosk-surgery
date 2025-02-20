@@ -1,12 +1,5 @@
-import {
-    Ai,
-    Client,
-    Inbody,
-    Info,
-    Photo,
-    StartBtn,
-    Texts,
-} from "@/components/main";
+import { CustomBtn, Footer, Process, UpcomingTime } from "@/components/common";
+import { Ai, Client, Inbody, Info, Photo, Texts } from "@/components/main";
 
 export default function Home() {
     return (
@@ -23,10 +16,16 @@ export default function Home() {
                         <Photo />
                         <Ai />
                     </div>
-                    <StartBtn />
+                    <CustomBtn text="시작하기" bg="#15CF8F" isShow={false} />
                 </div>
+                <UpcomingTime
+                    text="시작까지 남은 시간"
+                    time="01:03"
+                    color="#15CF8F"
+                />
+                <Process isProcess={1} />
             </main>
-            <footer></footer>
+            <Footer />
         </>
     );
 }
