@@ -1,6 +1,6 @@
 const Texts = () => {
     return (
-        <div className="flex flex-col pt-[200px] w-full gap-y-[15px] items-center">
+        <div className="flex flex-col pt-[200px] w-full gap-y-[15px]">
             <p className="text-white text-[78px] font-bold leading-normal">
                 지방 하나만! 365mc
             </p>
