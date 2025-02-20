@@ -1,14 +1,25 @@
+"use client";
 import { CustomBtn, Footer, Process, UpcomingTime } from "@/components/common";
-import { Ai, Client, Inbody, Info, Photo, Texts } from "@/components/main";
+import {
+    Ai,
+    Client,
+    Inbody,
+    Info,
+    ModalSelectOpe,
+    Photo,
+    Texts,
+} from "@/components/main";
+import { useState } from "react";
 
 export default function Home() {
+    const [isOpeOpen, setOpeOpen] = useState(false);
     return (
         <>
             <main className="px-[178px] w-full">
                 <Texts />
                 <div className="flex flex-col w-full pt-[120px]">
                     <div className="flex w-full gap-x-5">
-                        <Client />
+                        <Client setOpeOpen={setOpeOpen} />
                         <Info />
                     </div>
                     <div className="flex w-full gap-x-5 py-5">
@@ -31,6 +42,7 @@ export default function Home() {
                 <Process isProcess={1} />
             </main>
             <Footer />
+            <ModalSelectOpe isOpen={isOpeOpen} />
         </>
     );
 }

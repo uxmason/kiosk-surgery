@@ -5,3 +5,4 @@ export { default as Inbody } from "./inbody";
 export { default as Photo } from "./photo";
 export { default as Ai } from "./ai";
 export { default as InbodyGraph } from "./inbody-graph";
+export { default as ModalSelectOpe } from "./modal-select-ope";
