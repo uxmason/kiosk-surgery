@@ -16,7 +16,12 @@ export default function Home() {
                         <Photo />
                         <Ai />
                     </div>
-                    <CustomBtn text="시작하기" bg="#15CF8F" isShow={false} />
+                    <CustomBtn
+                        text="시작하기"
+                        bg="#15CF8F"
+                        isShow={false}
+                        path="/record"
+                    />
                 </div>
                 <UpcomingTime
                     text="시작까지 남은 시간"
