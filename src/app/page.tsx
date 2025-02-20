@@ -1,3 +1,4 @@
+import { Footer, Process } from "@/components/common";
 import {
     Ai,
     Client,
@@ -6,6 +7,7 @@ import {
     Photo,
     StartBtn,
     Texts,
+    UpcomingTime,
 } from "@/components/main";
 
 export default function Home() {
@@ -25,8 +27,10 @@ export default function Home() {
                     </div>
                     <StartBtn />
                 </div>
+                <UpcomingTime />
+                <Process isProcess={1} />
             </main>
-            <footer></footer>
+            <Footer />
         </>
     );
 }
