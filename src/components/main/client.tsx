@@ -1,12 +1,12 @@
 "use client";
 interface Props {
-    setOpeOpen: (v: boolean) => void;
+    setIsOpeOpen: (v: boolean) => void;
 }
-const Client = ({ setOpeOpen }: Props) => {
+const Client = ({ setIsOpeOpen }: Props) => {
     return (
         <button
             className="flex flex-col text-start bg-[rgba(58,62,89,0.50)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px]"
-            onClick={() => setOpeOpen(true)}
+            onClick={() => setIsOpeOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 고객정보

@@ -7,8 +7,16 @@ interface Props {
     isShow: boolean;
     isShowBtnText?: string;
     path?: string | undefined;
+    setIsModalComplete?: (v: boolean) => void;
 }
-const CustomBtn = ({ text, bg, isShow, isShowBtnText, path }: Props) => {
+const CustomBtn = ({
+    text,
+    bg,
+    isShow,
+    isShowBtnText,
+    path,
+    setIsModalComplete,
+}: Props) => {
     const router = useRouter();
     const buttonStyle = {
         backgroundColor: bg,
@@ -17,6 +25,8 @@ const CustomBtn = ({ text, bg, isShow, isShowBtnText, path }: Props) => {
     const handleClick = () => {
         if (path) {
             router.push(path);
+        } else {
+            setIsModalComplete?.(true);
         }
     };
 

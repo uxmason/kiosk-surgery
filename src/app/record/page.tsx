@@ -4,6 +4,7 @@ import {
     ClientInfo,
     CustomBtn,
     Footer,
+    ModalOpeInfo,
     Process,
     UpcomingTime,
 } from "@/components/common";
@@ -13,11 +14,12 @@ import { useState } from "react";
 export default function Info() {
     const [isFirstOpen, setIsFirstOpen] = useState(true);
     const [isSecondOpen, setIsSecondOpen] = useState(false);
+    const [isOpenOpeModal, setIsOpenOpeModal] = useState(false);
 
     return (
         <>
             <main className="pt-5 px-5  w-full">
-                <ClientInfo />
+                <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
                 <FirstImgs
                     isFirstOpen={isFirstOpen}
                     isSecondOpen={isSecondOpen}
@@ -44,6 +46,10 @@ export default function Info() {
                 <Process isProcess={2} />
             </main>
             <Footer />
+            <ModalOpeInfo
+                isOpenOpeModal={isOpenOpeModal}
+                setIsOpenOpeModal={setIsOpenOpeModal}
+            />
         </>
     );
 }

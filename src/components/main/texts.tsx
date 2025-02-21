@@ -1,7 +1,10 @@
 const Texts = () => {
     return (
-        <div className="flex flex-col pt-[200px] w-full gap-y-[15px]">
-            <p className="text-white text-[78px] font-bold leading-normal">
+        <div className="flex flex-col pt-[120px] w-full gap-y-[15px]">
+            <p className="text-[26px] text-[#15CF8F] text-center font-bold leading-9">
+                부산365mc병원
+            </p>
+            <p className="text-white text-[78px] font-bold leading-normal pt-11">
                 지방 하나만! 365mc
             </p>
             <p className="text-white text-[30px] font-[250] leading-[50px] whitespace-pre-line">
