@@ -1,10 +1,15 @@
+"use client";
 import { parseCannulType } from "@/parse";
 import { CannulaType } from "@/type";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
-
-const Cannulas = () => {
+import { useState } from "react";
+interface Props {
+    setIsOpenAddCannualModal: (v: boolean) => void;
+}
+const Cannulas = ({ setIsOpenAddCannualModal }: Props) => {
+    const [isCannulaId, setIsCannulaId] = useState(0);
     return (
         <div className="flex flex-col w-full pt-10">
             <div className="flex px-5 items-end justify-between">
@@ -13,7 +18,10 @@ const Cannulas = () => {
                     <span className="text-[#15CF8F]">캐뉼라</span>
                     {` 툴을 선택해주세요."`}
                 </p>
-                <button className="w-[235px] h-[95px] bg-[#15CF8F] rounded-[15px]">
+                <button
+                    className="w-[235px] h-[95px] bg-[#15CF8F] rounded-[15px]"
+                    onClick={() => setIsOpenAddCannualModal(true)}
+                >
                     <p className="text-white text-[28px] font-bold leading-7">
                         신규 툴 등록
                     </p>
@@ -45,7 +53,16 @@ const Cannulas = () => {
                                 key={index}
                                 className="w-full max-w-[235px]"
                             >
-                                <div className="flex flex-col w-[235px] h-[285px] px-[30px] py-[30px] bg-[rgba(58,62,89,0.50)] rounded-[15px]">
+                                <button
+                                    className={`flex flex-col text-start w-[235px] h-[285px] px-[30px] py-[30px]  rounded-[15px]
+                                        ${
+                                            isCannulaId === c?.id
+                                                ? "outline-[5px] outline-[#15CF8F] bg-[#3A3E59]"
+                                                : "bg-[rgba(58,62,89,0.50)]"
+                                        }
+                                        `}
+                                    onClick={() => setIsCannulaId(c?.id)}
+                                >
                                     <p className="text-white text-[24px] font-bold leading-6">
                                         {c.name}
                                     </p>
@@ -83,7 +100,7 @@ const Cannulas = () => {
                                             );
                                         })}
                                     </div>
-                                </div>
+                                </button>
                             </SwiperSlide>
                         ))}
                     </Swiper>
@@ -95,6 +112,7 @@ const Cannulas = () => {
 export default Cannulas;
 
 const cannulas: Cannula[] = Array.from({ length: 7 }, (_, i) => ({
+    id: i + 1,
     name: "메르세데스",
     hole: 2,
     length: 45,
@@ -106,6 +124,7 @@ const cannulas: Cannula[] = Array.from({ length: 7 }, (_, i) => ({
 }));
 
 type Cannula = {
+    id: number;
     name: string;
     hole: number;
     length: number;

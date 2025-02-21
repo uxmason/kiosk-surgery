@@ -1,6 +1,12 @@
-const Ai = () => {
+interface Props {
+    setIsModalAIOpen: (v: boolean) => void;
+}
+const Ai = ({ setIsModalAIOpen }: Props) => {
     return (
-        <div className="flex flex-col bg-[rgba(91,135,237,0.60)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]">
+        <button
+            className="flex flex-col text-start bg-[rgba(91,135,237,0.60)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
+            onClick={() => setIsModalAIOpen(true)}
+        >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 AI 예측
             </p>
@@ -19,7 +25,7 @@ const Ai = () => {
                     </p> */}
                 </div>
             </div>
-        </div>
+        </button>
     );
 };
 export default Ai;

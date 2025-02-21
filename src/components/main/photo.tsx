@@ -1,6 +1,12 @@
-const Photo = () => {
+interface Props {
+    setIsModalImgsOpen: (v: boolean) => void;
+}
+const Photo = ({ setIsModalImgsOpen }: Props) => {
     return (
-        <div className="flex flex-col bg-[#169B7C] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]">
+        <button
+            className="flex flex-col text-start bg-[#169B7C] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
+            onClick={() => setIsModalImgsOpen(true)}
+        >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 사진
             </p>
@@ -18,7 +24,7 @@ const Photo = () => {
                     </p>
                 </div>
             </div>
-        </div>
+        </button>
     );
 };
 export default Photo;

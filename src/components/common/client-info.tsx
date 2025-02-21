@@ -1,4 +1,7 @@
-const ClientInfo = () => {
+interface Props {
+    setIsOpenOpeModal: (v: boolean) => void;
+}
+const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
     const sex = "F";
     return (
         <div className="flex w-full gap-x-5">
@@ -56,9 +59,12 @@ const ClientInfo = () => {
                     </p>
                 </div>
             </div>
-            <div className="flex w-[135px] h-[135px] rounded-[15px] bg-[rgba(58,62,89,0.50)] items-center justify-center">
+            <button
+                className="flex w-[135px] h-[135px] rounded-[15px] bg-[rgba(58,62,89,0.50)] items-center justify-center"
+                onClick={() => setIsOpenOpeModal(true)}
+            >
                 <div className="bg-[url('/assets/menu-tab.svg')] w-18 h-18" />
-            </div>
+            </button>
         </div>
     );
 };
