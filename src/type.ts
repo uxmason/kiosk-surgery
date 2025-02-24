@@ -1,7 +1,15 @@
 export type CannulaType = {
     type: "CURVE" | "CANCAVE" | "BLUNT" | "LINE";
 };
-export type PartType = "THIGH" | "ABDOMEN" | "ARM" | "LOVEHANDLE" | "BACK";
+export type PartType =
+    | "THIGH"
+    | "ABDOMEN"
+    | "ARM"
+    | "LOVEHANDLE"
+    | "BACK"
+    | "HIP"
+    | "FACE"
+    | "CALVES";
 export type OpeStateType = "DONE" | "ING" | "BEFORE";
 
 export type ModelType = {
