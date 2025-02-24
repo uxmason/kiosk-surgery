@@ -6,12 +6,12 @@ import {
     Inbody,
     Info,
     ModalImgs,
-    ModalSelectOpe,
     Photo,
     Texts,
 } from "@/components/main";
 import { ModalAI } from "@/components/main/modal-ai";
 import { ModalInbody } from "@/components/main/modal-inbody";
+import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useState } from "react";
 
 export default function Home() {

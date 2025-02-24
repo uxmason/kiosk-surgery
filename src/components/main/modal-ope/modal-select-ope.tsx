@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { CustomModal } from "../common";
+import { CustomModal } from "../../common";
+import { TimeLine } from ".";
 
 interface Props {
     isOpen: boolean;
@@ -20,7 +21,9 @@ const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
                         수술 고객 선택
                     </p>
                     <div className="flex w-full pt-[66px] gap-x-5">
-                        <div className="flex w-full max-w-[580px] min-h-[1200px] h-full bg-[rgba(58,62,89,0.25)] rounded-[15px] pl-5 pr-[25px] pt-[42px] pb-11"></div>
+                        <div className="flex w-full max-w-[580px] min-h-[1200px] h-full bg-[rgba(58,62,89,0.25)] rounded-[15px] pl-5 pr-[25px] pt-[42px]">
+                            <TimeLine />
+                        </div>
                         <div className="flex flex-col w-full max-w-[300px] gap-y-5">
                             {/* 병원 리스트 */}
                             <div
