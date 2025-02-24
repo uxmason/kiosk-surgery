@@ -2,6 +2,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { BtnAdd, Holes, Lengths, Models, Shapes, Thickness, Tips } from ".";
 import { CustomModal } from "../../common";
 import { AddNewCunnulaType } from "@/type";
+import { useEffect } from "react";
 interface Props {
     isOpenAddCannualModal: boolean;
     setIsOpenAddCannualModal: (v: boolean) => void;
@@ -11,6 +12,18 @@ const MoodalAddNewCannula = ({
     setIsOpenAddCannualModal,
 }: Props) => {
     const method = useForm<AddNewCunnulaType>();
+    const { reset } = method;
+
+    useEffect(() => {
+        reset({
+            model: undefined,
+            hole: undefined,
+            tip: undefined,
+            shape: undefined,
+            length: undefined,
+            thick: undefined,
+        });
+    }, [isOpenAddCannualModal]);
 
     return (
         <FormProvider {...method}>
