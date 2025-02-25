@@ -1,7 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomModal } from "../../common";
-import { TimeLine } from ".";
+import { ModalError, TimeLine } from ".";
+import { serverUrl } from "@/variables";
+import _ from "lodash";
 
 interface Props {
     isOpen: boolean;
@@ -9,9 +11,71 @@ interface Props {
 }
 
 const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
-    const [isHospitalId, setIsHospitalId] = useState(0);
+    // const { deviceId } = useStore();
+    const [isHospitalId, setIsHospitalId] = useState("21");
+    const [isOriginalHospitalId, setIsOriginalHospitalId] = useState("21");
     const [isHospitalExpand, setIsHospitalExpand] = useState(false);
-    const [doctorId, setDoctorId] = useState(2);
+    const [userId, setUserId] = useState("");
+    const [originalUserId, setOriginalUserId] = useState("21sc");
+    const [isErrorMessage, setIsErrorMessage] = useState(false);
+    const [isAllOpe, setIsAllOpe] = useState([]);
+
+    // 모든 지점의 수술 정보를 받아오기
+    const handleSelectAllOpe = async () => {
+        try {
+            const response = await fetch(`${serverUrl}/schedule/`, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            handleSelectAllOpe().then((res) => {
+                if (res.success) {
+                    setIsAllOpe(res.list);
+                } else {
+                    console.error(res.success);
+                }
+            });
+        }
+    }, [isOpen]);
+
+    const groupedByBranch = _.groupBy(isAllOpe, "지점");
+    const finalGroupedData = Object.entries(groupedByBranch).map(
+        ([branch, branchData]) => ({
+            branch,
+            doctors: Object.entries(_.groupBy(branchData, "담당의ID")),
+        })
+    );
+    const list = finalGroupedData
+        ?.filter((f) => f.branch === isOriginalHospitalId)
+        ?.map((d) => d)?.[0];
+    const timelineList = list?.doctors
+        ?.filter((s) => s?.[1]?.[0])
+        ?.filter((n) => n?.[0] === originalUserId)?.[0]?.[1];
+
+    // useEffect(() => {
+    //     if (userId === "") return;
+    //     eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //     handleChangeDoctor().then((res: any) => {
+    //         if (res.success === true) {
+    //             setUserId("");
+    //         } else {
+    //             setIsErrorMessage(true);
+    //             setUserId(originalUserId);
+    //         }
+    //     });
+    // }, [userId]);
 
     return (
         <>
@@ -22,10 +86,9 @@ const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
                     </p>
                     <div className="flex w-full pt-[66px] gap-x-5">
                         <div className="flex w-full max-w-[580px] min-h-[1200px] h-full bg-[rgba(58,62,89,0.25)] rounded-[15px] pl-5 pr-[25px] pt-[42px]">
-                            <TimeLine />
+                            <TimeLine timelineList={timelineList} />
                         </div>
                         <div className="flex flex-col w-full max-w-[300px] gap-y-5">
-                            {/* 병원 리스트 */}
                             <div
                                 className={`flex flex-col w-full h-full gap-y-[10px] transition-all duration-300 ease-in-out bg-[rgba(58,62,89,0.25)] rounded-[15px] px-[15px] py-[15px]
                                     ${
@@ -35,7 +98,7 @@ const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
                                     }
                                     `}
                             >
-                                {hospitales.map((h) => (
+                                {hospitales?.map((h) => (
                                     <div
                                         key={h.id}
                                         className={`flex items-center w-[270px] h-[70px] bg-[rgba(58,62,89,0.25)] transition-all duration-300 ease-in-out rounded-[10px] px-[25px] py-5 cursor-pointer
@@ -71,48 +134,65 @@ const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
                                 }
                                 `}
                             >
-                                {doctors?.map((d) => {
-                                    return (
-                                        <div
-                                            key={d?.id}
-                                            className={`flex relative w-[270px] h-[100px] text-white pt-[10px] px-5 bg-[rgba(58,62,89,0.25)] rounded-[10px]
+                                {finalGroupedData
+                                    ?.filter((f) => f.branch === isHospitalId)
+                                    ?.map((d) => d)?.[0]
+                                    ?.doctors?.map((s) => {
+                                        return (
+                                            <div
+                                                key={s?.[1]?.[0]?.["담당의ID"]}
+                                                className={`flex relative box-border w-[270px] h-[100px] text-white pt-[10px] px-5 bg-[rgba(58,62,89,0.25)] rounded-[10px]
                                                 ${
-                                                    doctorId === d?.id &&
-                                                    "border-[4px] border-solid border-[#15CF8F] box-border"
+                                                    originalUserId ===
+                                                        s?.[1]?.[0]?.[
+                                                            "담당의ID"
+                                                        ] &&
+                                                    "border-[4px] border-solid border-[#15CF8F] h-[104px]"
                                                 }
                                                 `}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setDoctorId(d?.id);
-                                            }}
-                                        >
-                                            <img
-                                                src={d?.img}
-                                                className="absolute w-[60px] h-[90px]"
-                                            />
-                                            <div className="flex flex-col pl-[85px] pt-[15px] gap-y-[13px]">
-                                                <p className="text-[22px] font-bold leading-[22px]">
-                                                    {d?.name}{" "}
-                                                    <span className="font-[250]">
-                                                        원장
-                                                    </span>
-                                                </p>
-                                                <p className="text-[14px] font-light leading-[14px]">
-                                                    오늘 수술:
-                                                    <span className="text-[16px] font-bold mx-1">
-                                                        {d?.count}
-                                                    </span>
-                                                    건
-                                                </p>
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setUserId(
+                                                        s?.[1]?.[0]?.[
+                                                            "담당의ID"
+                                                        ]
+                                                    );
+                                                }}
+                                            >
+                                                <div
+                                                    className={`isPortrait I${s?.[1]?.[0]?.["담당의ID"]} absolute w-[60px] h-[90px]`}
+                                                />
+                                                <div className="flex flex-col pl-[85px] pt-[15px] gap-y-[13px]">
+                                                    <p className="text-[22px] font-bold leading-[22px]">
+                                                        {
+                                                            s?.[1]?.[0]?.[
+                                                                "담당의명"
+                                                            ]
+                                                        }
+                                                        <span className="font-[250]">
+                                                            원장
+                                                        </span>
+                                                    </p>
+                                                    <p className="text-[14px] font-light leading-[14px]">
+                                                        오늘 수술:
+                                                        <span className="text-[16px] font-bold mx-1">
+                                                            {s?.[1]?.length}
+                                                        </span>
+                                                        건
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
                             </div>
                         </div>
                     </div>
                 </div>
             </CustomModal>
+            <ModalError
+                isErrorOpen={isErrorMessage}
+                setIsErrorOpen={setIsErrorMessage}
+            />
         </>
     );
 };
@@ -121,29 +201,14 @@ export default ModalSelecOpe;
 
 // 병원 리스트 데이터
 const hospitales: HospitalType[] = [
-    { id: 0, name: "서울" },
-    { id: 1, name: "인천" },
-    { id: 2, name: "대전" },
-    { id: 3, name: "대구" },
-    { id: 4, name: "부산" },
+    { id: "36", name: "서울" },
+    { id: "34", name: "인천" },
+    { id: "18", name: "대전" },
+    { id: "35", name: "대구" },
+    { id: "21", name: "부산" },
 ];
 
 type HospitalType = {
-    id: number;
+    id: string;
     name: string;
-};
-
-// 의사
-const doctors: DoctorType[] = Array.from({ length: 4 }, (_, i) => ({
-    id: i + 1,
-    name:
-        i === 0 ? "홍성훈" : i === 1 ? "송병철" : i === 2 ? "김현주" : "박윤찬",
-    count: i + 1,
-    img: "/images/mini-doctor.png",
-}));
-type DoctorType = {
-    id: number;
-    name: string;
-    count: number;
-    img: string;
 };

@@ -1,48 +1,16 @@
 import { parseOpePart, parseOpeState } from "@/parse";
-import { OpeType } from "@/type";
+interface Props {
+    timelineList: never[];
+}
 
-const events: OpeType[] = [
-    {
-        clientName: "강보연",
-        part: "THIGH",
-        psEntry: "210046223",
-        opeCode: "OPE0521",
-        opeDate: "20250221",
-        startTime: "0900",
-        endTime: "1230",
-        state: "DONE",
-    },
-    {
-        clientName: "강보연",
-        part: "ABDOMEN",
-        psEntry: "210046223",
-        opeCode: "OPE0521",
-        opeDate: "20250221",
-        startTime: "1230",
-        endTime: "1330",
-        state: "ING",
-    },
-    {
-        clientName: "강보연",
-        part: "ARM",
-        psEntry: "210046223",
-        opeCode: "OPE0521",
-        opeDate: "20250221",
-        startTime: "1400",
-        endTime: "1730",
-        state: "BEFORE",
-    },
-];
-
-const TimeLine = () => {
+const TimeLine = ({ timelineList }: Props) => {
     const scalingFactor = 100 / 60;
 
     return (
         <div className="relative flex flex-col w-full h-full max-h-[1200px] gap-y-[43px]">
-            {events?.map((t) => {
-                const startTime = t?.startTime;
-                const endTime = t?.endTime;
-
+            {timelineList?.map((t) => {
+                const startTime: string = t?.["시작시간"];
+                const endTime: string = t?.["종료시간"];
                 const startHour = Number(startTime.slice(0, 2));
                 const startMinute = Number(startTime.slice(2));
                 const endHour = Number(endTime.slice(0, 2));
@@ -57,28 +25,44 @@ const TimeLine = () => {
 
                 const eventTop = startTimeInMinutes * scalingFactor + 16;
 
+                const part = t?.["수술부위"];
+                const engPart =
+                    part === "허벅지"
+                        ? "THIGH"
+                        : part === "팔"
+                        ? "ARM"
+                        : part === "복부"
+                        ? "ABDOMEN"
+                        : part === "등"
+                        ? "BACK"
+                        : part === "러브핸들"
+                        ? "LOVEHANDLE"
+                        : part === "엉덩이"
+                        ? "HIP"
+                        : part === "얼굴"
+                        ? "FACE"
+                        : "CALVES";
+
                 return (
                     <div
-                        key={`${t?.opeDate}_${startTime}_${endTime}`}
+                        key={`${t?.["고객번호"]}_${startTime}_${endTime}`}
                         className="absolute flex w-full left-[45px] pt-[15px] px-[15px] rounded-[15px]"
                         style={{
                             top: `${eventTop}px`,
                             height: `${eventHeight}px`,
                             minHeight: 80,
                             width: 490,
-                            backgroundColor: `${
-                                parseOpePart(t?.part)?.color
-                            }33`,
+                            backgroundColor: `${parseOpePart(engPart).color}33`,
                         }}
                     >
                         <div
                             style={{
-                                borderColor: parseOpePart(t?.part)?.color,
+                                borderColor: parseOpePart(engPart).color,
                             }}
                             className={`flex items-center justify-center bg-white w-[50px] h-[50px] rounded-[15px] border-[5px]`}
                         >
                             <img
-                                src={`/assets/${t?.part.toLocaleLowerCase()}.svg`}
+                                src={`/assets/${engPart.toLocaleLowerCase()}.svg`}
                                 width={35}
                                 height={35}
                             />
@@ -86,33 +70,35 @@ const TimeLine = () => {
                         <div className="flex flex-col w-[90px] gap-y-2 ml-[14px] mr-5">
                             <p
                                 style={{
-                                    color: parseOpePart(t?.part)?.color,
+                                    color: parseOpePart(engPart).color,
                                 }}
                                 className="text-[24px] font-light leading-[24px]"
                             >
-                                {parseOpePart(t?.part).text}
+                                {t?.["수술부위"]}
                             </p>
                             <p className="text-white text-[16px] font-bold leading-[16px]">
-                                {t?.opeCode}
+                                {t?.["수술코드"]}
                             </p>
                         </div>
                         <div className="flex flex-col text-white gap-y-2 w-[120px]">
                             <p className="text-[24px] font-bold leading-[24px]">
-                                {t?.clientName}
+                                {t?.["고객명"]}
                             </p>
                             <p className="text-[14px] font-light leading-[16px]">
-                                {t?.psEntry}
+                                {t?.["고객번호"]}
                             </p>
                         </div>
                         <button
                             className="flex items-center justify-center w-[100px] h-[50px] rounded-[10px] ml-16"
                             style={{
-                                backgroundColor: parseOpeState(t?.state).color,
+                                backgroundColor: parseOpeState(
+                                    t?.["state"] || "0"
+                                ).color,
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <p className="text-white text-[16px] font-bold leading-[16px]">
-                                {parseOpeState(t?.state).text}
+                                {parseOpeState(t?.["state"] || "0").text}
                             </p>
                         </button>
                     </div>

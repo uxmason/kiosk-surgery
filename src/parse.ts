@@ -27,7 +27,8 @@ export const parseOpePart = generateParseKeyForObject<PartType>({
     CALVES: { text: "종아리", color: "#5B87ED" },
 });
 export const parseOpeState = generateParseKeyForObject<OpeStateType>({
-    BEFORE: { text: "선택하기", color: "#15CF8F" },
-    DONE: { text: "기록 완료", color: "#5B87ED" },
-    ING: { text: "수술 중", color: "#ED6B5B" },
+    0: { text: "선택하기", color: "#15CF8F" },
+    1: { text: "수술 중", color: "#ED6B5B" },
+    2: { text: "수술 완료", color: "#ED6B5B" },
+    3: { text: "기록 완료", color: "#5B87ED" },
 });

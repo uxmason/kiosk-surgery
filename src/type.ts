@@ -10,7 +10,7 @@ export type PartType =
     | "HIP"
     | "FACE"
     | "CALVES";
-export type OpeStateType = "DONE" | "ING" | "BEFORE";
+export type OpeStateType = "0" | "1" | "2" | "3";
 
 export type ModelType = {
     id: number;
