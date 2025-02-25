@@ -19,7 +19,7 @@ const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
     const [originalUserId, setOriginalUserId] = useState("21sc");
     const [isErrorMessage, setIsErrorMessage] = useState(false);
     const [isAllOpe, setIsAllOpe] = useState([]);
-
+    console.log(setIsOriginalHospitalId, userId, setOriginalUserId);
     // 모든 지점의 수술 정보를 받아오기
     const handleSelectAllOpe = async () => {
         try {

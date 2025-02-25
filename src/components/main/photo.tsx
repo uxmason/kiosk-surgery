@@ -16,7 +16,6 @@ const Photo = ({ setIsModalImgsOpen, imgs, isError }: Props) => {
                 <>
                     <div className="w-full h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
                         {Array.from({ length: 15 }, (_, i) => {
-                            console.log(imgs);
                             return (
                                 <div
                                     key={i}
