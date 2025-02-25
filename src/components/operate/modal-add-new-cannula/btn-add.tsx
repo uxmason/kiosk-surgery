@@ -54,7 +54,11 @@ const BtnAdd = () => {
                 `}
                 onClick={(e) => {
                     e.stopPropagation();
-                    setIsClickComplete(true);
+                    if (isClickComplete) {
+                        setIsClickComplete(false);
+                    } else {
+                        setIsClickComplete(true);
+                    }
                 }}
             >
                 <p className="text-white text-[32px] font-bold">

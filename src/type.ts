@@ -1,6 +1,16 @@
 export type CannulaType = {
     type: "CURVE" | "CANCAVE" | "BLUNT" | "LINE";
 };
+export type PartType =
+    | "THIGH"
+    | "ABDOMEN"
+    | "ARM"
+    | "LOVEHANDLE"
+    | "BACK"
+    | "HIP"
+    | "FACE"
+    | "CALVES";
+export type OpeStateType = "0" | "1" | "2" | "3";
 
 export type ModelType = {
     id: number;
@@ -34,4 +44,15 @@ export type AddNewCunnulaType = {
     shape: number | undefined | null;
     length: number | undefined | null;
     thick: number | undefined | null;
+};
+
+export type OpeType = {
+    clientName: string;
+    part: PartType;
+    opeCode: string;
+    psEntry: string;
+    startTime: string;
+    endTime: string;
+    opeDate: string;
+    state: OpeStateType;
 };

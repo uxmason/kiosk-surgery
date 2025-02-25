@@ -1,24 +1,36 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { ClientInfoForModal, CustomModal } from "../common";
 import { useEffect, useState } from "react";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 import { Thumbs } from "swiper/modules";
 import "swiper/css";
+import { imgOriginalUrl, imgThumbUrl } from "@/variables";
 
 interface Props {
     isModalImgsOpen: boolean;
     setIsModalImgsOpen: (v: boolean) => void;
+    imgs: never[];
 }
 
-const serverDates = ["2025-01-21", "2025-01-22", "2025-01-23"];
-const ModalImgs = ({ isModalImgsOpen, setIsModalImgsOpen }: Props) => {
+const ModalImgs = ({ isModalImgsOpen, setIsModalImgsOpen, imgs }: Props) => {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | null>(null);
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
+    const [currentImgs, setCurrentImgs] = useState([]);
+
+    const regDates = imgs?.map((v: any) => v?.regdate);
 
     useEffect(() => {
-        setCurrentDateIndex(serverDates?.length - 1);
-    }, []);
+        if (imgs.length === 0) return;
+        setCurrentDateIndex(imgs?.length - 1);
+    }, [imgs]);
+
+    useEffect(() => {
+        setCurrentImgs(
+            imgs?.filter((_, i) => i === currentDateIndex)?.[0]?.["image"]
+        );
+    }, [imgs, currentDateIndex]);
 
     return (
         <CustomModal
@@ -46,17 +58,19 @@ const ModalImgs = ({ isModalImgsOpen, setIsModalImgsOpen }: Props) => {
                             setCurrentImgIndex(activeIndex)
                         }
                     >
-                        {Array.from({ length: 9 }, (_, i) => {
+                        {currentImgs?.map((v: any, i: number) => {
                             return (
                                 <SwiperSlide
                                     key={i}
                                     className="flex flex-col h-[95px] items-center justify-center"
                                 >
                                     <img
-                                        src="/images/client.png"
+                                        src={`${imgOriginalUrl}/${String(
+                                            v?.filename
+                                        )?.slice(4)}`}
                                         width={885}
                                         height={565}
-                                        className="object-cover"
+                                        className="w-[885px] h-[565px] aspect-[885/565] object-cover rounded-[15px]"
                                     />
                                 </SwiperSlide>
                             );
@@ -68,25 +82,28 @@ const ModalImgs = ({ isModalImgsOpen, setIsModalImgsOpen }: Props) => {
                             onSwiper={setThumbsSwiper}
                             modules={[Thumbs]}
                             direction="horizontal"
-                            className="overflow-y-scroll h-full"
+                            className="overflow-y-scroll h-full w-full flex items-center"
                             spaceBetween={10}
                             slidesPerView={8}
+                            centeredSlides={currentImgs?.length < 8}
                         >
-                            {Array.from({ length: 9 }, (_, i) => {
+                            {currentImgs?.map((f: any, i: number) => {
                                 return (
                                     <SwiperSlide
                                         style={{ height: 95 }}
                                         key={i}
-                                        className="h-[95px] flex items-center justify-center"
+                                        className="h-[95px] w-[95px] flex items-center justify-center"
                                     >
                                         <img
-                                            src="/images/client.png"
+                                            src={`${imgThumbUrl}/${String(
+                                                f?.filename
+                                            )?.slice(4)}`}
                                             width={95}
                                             height={95}
                                             className={`${
                                                 currentImgIndex === i &&
                                                 "border-[3px] border-solid border-[#15CF8F]"
-                                            } object-cover w-[95px] h-[95px] aspect-square rounded-[10px]`}
+                                            } object-cover w-[95px] h-[95px] rounded-[10px]`}
                                             onClick={(e) => e.stopPropagation()}
                                             onError={(e) =>
                                                 (e.currentTarget.src =
@@ -99,7 +116,7 @@ const ModalImgs = ({ isModalImgsOpen, setIsModalImgsOpen }: Props) => {
                         </Swiper>
                     </div>
                     <div className="flex items-center justify-center w-full h-[135px] backdrop-blur-[20px] py-5 gap-x-5 bg-[rgba(58,62,89,0.25)] rounded-[15px]">
-                        {serverDates?.map((_, i) => {
+                        {regDates?.map((r, i) => {
                             return (
                                 <button
                                     key={i}
@@ -118,9 +135,9 @@ const ModalImgs = ({ isModalImgsOpen, setIsModalImgsOpen }: Props) => {
                                     <p className="text-[rgba(255,255,255,0.50)] text-[18px] font-bold leading-6">
                                         촬영일
                                     </p>
-                                    <p className="text-white text-[24px] font-bold leading-6">{`2025-01-2${
-                                        i + 1
-                                    }`}</p>
+                                    <p className="text-white text-[24px] font-bold leading-6">
+                                        {r}
+                                    </p>
                                 </button>
                             );
                         })}
