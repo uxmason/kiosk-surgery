@@ -56,6 +56,7 @@ export default function Home() {
         handleSelectDoctor().then((res) => {
             if (res.success) {
                 setIsDoctorId(res.doctorId);
+                setIsError(false);
             } else {
                 setIsError(true);
             }
@@ -200,7 +201,7 @@ export default function Home() {
     return (
         <>
             <main className="px-[178px] w-full">
-                <Texts />
+                <Texts isError={isError} />
                 <div className="flex flex-col w-full pt-[120px]">
                     <div className="flex w-full gap-x-5">
                         <Client
@@ -208,43 +209,62 @@ export default function Home() {
                             setIsOpeOpen={setIsOpeOpen}
                             isOpeInfo={isOpeInfo}
                         />
-                        <Info isOpeInfo={isOpeInfo} />
+                        <Info
+                            isError={isError}
+                            setIsOpeOpen={setIsOpeOpen}
+                            isOpeInfo={isOpeInfo}
+                        />
                     </div>
                     <div className="flex w-full gap-x-5 py-5">
-                        <Inbody setIsInbodyOpen={setIsInbodyOpen} />
+                        <Inbody
+                            isError={isError}
+                            setIsInbodyOpen={setIsInbodyOpen}
+                        />
                         <Photo
+                            isError={isError}
                             setIsModalImgsOpen={setIsModalImgsOpen}
                             imgs={imgs}
                         />
-                        <Ai setIsModalAIOpen={setIsModalAIOpen} />
+                        <Ai
+                            isError={isError}
+                            setIsModalAIOpen={setIsModalAIOpen}
+                        />
                     </div>
                     <CustomBtn
-                        text="시작하기"
-                        bg="#15CF8F"
+                        text={
+                            isError
+                                ? "수술 대상이 아직 선택되지 않았습니다."
+                                : "시작하기"
+                        }
+                        bg={isError ? "rgba(58,62,89,0.50)" : '"#15CF8F"'}
                         isShow={false}
                         path="/record"
+                        isError={isError}
                     />
                 </div>
-                <UpcomingTime
-                    text="시작까지 남은 시간"
-                    time={formattedTime}
-                    color="#15CF8F"
-                />
+                {!isError && (
+                    <UpcomingTime
+                        text="시작까지 남은 시간"
+                        time={formattedTime}
+                        color="#15CF8F"
+                    />
+                )}
+                {isError && <div className="pt-[180px]" />}
                 <Process isProcess={1} />
             </main>
             <Footer />
             <ModalSelectOpe isOpen={isOpeOpen} setIsOpeOpen={setIsOpeOpen} />
             <ModalInbody
-                isInbodyOpen={isInbodyOpen}
+                isInbodyOpen={isInbodyOpen && !isError}
                 setIsInbodyOpen={setIsInbodyOpen}
             />
             <ModalImgs
                 imgs={imgs}
-                isModalImgsOpen={isModalImgsOpen}
+                isModalImgsOpen={isModalImgsOpen && !isError}
                 setIsModalImgsOpen={setIsModalImgsOpen}
             />
             <ModalAI
-                isModalAIOpen={isModalAIOpen}
+                isModalAIOpen={isModalAIOpen && !isError}
                 setIsModalAIOpen={setIsModalAIOpen}
             />
         </>

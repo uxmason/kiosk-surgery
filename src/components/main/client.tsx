@@ -11,7 +11,7 @@ const Client = ({ isError, setIsOpeOpen, isOpeInfo }: Props) => {
     const info = isOpeInfo?.[0];
     return (
         <button
-            className="flex flex-col text-start bg-[rgba(58,62,89,0.50)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px]"
+            className="flex flex-col text-start bg-[rgba(58,62,89,0.50)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
             onClick={() => setIsOpeOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
@@ -31,8 +31,10 @@ const Client = ({ isError, setIsOpeOpen, isOpeInfo }: Props) => {
                     <div className="bg-[url('/assets/setting.svg')] w-[22px] h-[22px] mt-9 bg-no-repeat" />
                 </>
             ) : (
-                <div className="flex justify-center mt-[64px] items-center w-[100px] h-[50px] bg-[#15CF8F] rounded-[10px]">
-                    <p>선택하기</p>
+                <div className="flex justify-center mt-[64px] ml-[34px] items-center w-[100px] h-[50px] bg-[#15CF8F] rounded-[10px]">
+                    <p className="text-white text-[16px] font-bold leading-[16px]">
+                        선택하기
+                    </p>
                 </div>
             )}
         </button>

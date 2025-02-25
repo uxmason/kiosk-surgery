@@ -1,7 +1,14 @@
-const Texts = () => {
+interface Props {
+    isError: boolean;
+}
+const Texts = ({ isError }: Props) => {
     return (
         <div className="flex flex-col pt-[120px] w-full gap-y-[15px]">
-            <p className="text-[26px] text-[#15CF8F] text-center font-bold leading-9">
+            <p
+                className={`text-[26px] text-center font-bold leading-9 
+                ${!isError ? "text-[#15CF8F]" : "text-[#1d1f2d]"}
+                `}
+            >
                 부산365mc병원
             </p>
             <p className="text-white text-[78px] font-bold leading-normal pt-11">
