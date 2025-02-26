@@ -188,6 +188,7 @@ export default function Home() {
 
     // 키오스크 고유 번호
     useEffect(() => {
+      console.log('a');
         const getFingerprint = async () => {
             const fp = await FingerprintJS.load();
             const result = await fp.get();
