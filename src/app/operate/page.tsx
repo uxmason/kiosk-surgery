@@ -11,7 +11,6 @@ import {
 import { Cannulas, ModalComplete, Parts } from "@/components/operate";
 import { MoodalAddNewCannula } from "@/components/operate/modal-add-new-cannula";
 import { CannulaListType, IncisionListType } from "@/type";
-import { cannulaUrl, serverUrl } from "@/variables";
 import { useEffect, useState } from "react";
 
 export default function Info() {
@@ -26,7 +25,7 @@ export default function Info() {
     // 캐뉼라 리스트 불러오기
     const handleSelectCannulaList = async () => {
         try {
-            const response = await fetch(`${cannulaUrl}/list/`, {
+            const response = await fetch(`/api/kiosk-surgery/cannula/list`, {
                 method: "GET",
             });
 
@@ -44,7 +43,7 @@ export default function Info() {
     useEffect(() => {
         handleSelectCannulaList().then((res) => {
             if (res.success) {
-                setCannulaInSurgeryList(res.cannulaInSurgeryList);
+                setCannulaInSurgeryList(res.list);
             } else console.log("FAIL_CANNULA_LIST");
         });
     }, []);
@@ -52,7 +51,7 @@ export default function Info() {
     // 인시젼 리스트 불러오기
     const handleSelectIncisionList = async () => {
         try {
-            const response = await fetch(`${serverUrl}/incision/list/`, {
+            const response = await fetch(`/api/kiosk-surgery/incision/list`, {
                 method: "GET",
             });
 

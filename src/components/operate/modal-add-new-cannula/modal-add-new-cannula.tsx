@@ -11,9 +11,6 @@ import {
     ThicknessType,
 } from "@/type";
 import { useEffect, useState } from "react";
-import { cannulaUrl, serverUrl } from "@/variables";
-import { usePsentryStore } from "@/store";
-import { getFormattedDate } from "@/function";
 interface Props {
     isOpenAddCannualModal: boolean;
     setIsOpenAddCannualModal: (v: boolean) => void;
@@ -22,7 +19,6 @@ const MoodalAddNewCannula = ({
     isOpenAddCannualModal,
     setIsOpenAddCannualModal,
 }: Props) => {
-    const { psEntry } = usePsentryStore();
     const [isExistCannula, setExistCannula] = useState(false);
     const [modelNames, setModelNames] = useState<ModelNameType[]>([]);
     const [holeCounts, setHoleCounts] = useState<HolelCountType[]>([]);
@@ -34,7 +30,7 @@ const MoodalAddNewCannula = ({
     // 캐뉼라 정보 불러오기
     const handleSelectCannulaSpec = async () => {
         try {
-            const response = await fetch(`${cannulaUrl}/spec/`, {
+            const response = await fetch(`/api/kiosk-surgery/cannula/spec`, {
                 method: "GET",
             });
 
@@ -72,15 +68,15 @@ const MoodalAddNewCannula = ({
     const length = watch()?.length;
     const thick = watch()?.thick;
     const isComplete =
-        typeof model === "string" &&
-        typeof hole === "string" &&
-        typeof tip === "string" &&
-        typeof shape === "string" &&
-        typeof length === "string" &&
-        typeof thick === "string";
+        typeof model === "number" &&
+        typeof hole === "number" &&
+        typeof tip === "number" &&
+        typeof shape === "number" &&
+        typeof length === "number" &&
+        typeof thick === "number";
 
     const handleExistCannula = async () => {
-        const url = `${serverUrl}/cannula/exist/`;
+        const url = `/api/kiosk-surgery/cannula/exist/`;
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -94,11 +90,8 @@ const MoodalAddNewCannula = ({
                     shapeID: shape,
                     lengthID: length,
                     thicknessID: thick,
-                    psEntry: psEntry,
-                    opDate: getFormattedDate(),
                 }),
             });
-
             if (response.ok) {
                 const result = await response.json();
                 return result;
@@ -120,7 +113,7 @@ const MoodalAddNewCannula = ({
                 }
             });
         }
-    }, [isComplete]);
+    }, [isComplete, watch()]);
 
     useEffect(() => {
         reset({

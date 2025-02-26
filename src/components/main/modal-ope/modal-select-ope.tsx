@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { CustomModal } from "../../common";
 import { ModalError, TimeLine } from ".";
-import { serverUrl } from "@/variables";
 import _ from "lodash";
 import { useDoctorIdStore } from "@/store";
 
@@ -24,7 +23,7 @@ const ModalSelecOpe = ({ isOpen, setOpeOpen }: Props) => {
     // 모든 지점의 수술 정보를 받아오기
     const handleSelectAllOpe = async () => {
         try {
-            const response = await fetch(`${serverUrl}/schedule/`, {
+            const response = await fetch(`/api/kiosk-surgery/schedule/`, {
                 method: "GET",
             });
 
