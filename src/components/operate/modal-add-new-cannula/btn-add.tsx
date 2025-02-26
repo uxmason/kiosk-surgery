@@ -1,13 +1,10 @@
 "use client";
 import { AddNewCunnulaType } from "@/type";
-import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 interface Props {
     isExistCannula: boolean;
 }
 const BtnAdd = ({ isExistCannula }: Props) => {
-    const [isClickComplete, setIsClickComplete] = useState(false);
-
     const { watch } = useFormContext<AddNewCunnulaType>();
     const model = watch()?.model;
     const hole = watch()?.hole;
@@ -16,19 +13,19 @@ const BtnAdd = ({ isExistCannula }: Props) => {
     const length = watch()?.length;
     const thick = watch()?.thick;
     const isComplete =
-        typeof model === "string" &&
-        typeof hole === "string" &&
-        typeof tip === "string" &&
-        typeof shape === "string" &&
-        typeof length === "string" &&
-        typeof thick === "string";
-    console.log(isExistCannula);
+        typeof model === "number" &&
+        typeof hole === "number" &&
+        typeof tip === "number" &&
+        typeof shape === "number" &&
+        typeof length === "number" &&
+        typeof thick === "number";
+
     return (
         <div className="flex flex-col items-center justify-center w-full">
             <div
                 className={`flex items-center justify-center w-[480px] bg-[rgba(255,255,255,0.25)] backdrop-blur-[20px] rounded-[15px] transition-all duration-200 ease-in
                 ${
-                    isComplete && isClickComplete
+                    isComplete && isExistCannula
                         ? "opacity-100 h-[120px] mb-[30px]"
                         : "opacity-0 h-0 mb-[0px]"
                 }
@@ -41,7 +38,7 @@ const BtnAdd = ({ isExistCannula }: Props) => {
             <p
                 className={`text-white text-center font-bold leading-12 whitespace-pre-line transition-all duration-200 ease-in
                     ${
-                        isComplete && isClickComplete
+                        isComplete && isExistCannula
                             ? "opacity-100 pb-[30px] text-[32px]"
                             : "opacity-0 text-[0px] pb-[0px]"
                     }
@@ -56,20 +53,22 @@ const BtnAdd = ({ isExistCannula }: Props) => {
                 `}
                 onClick={(e) => {
                     e.stopPropagation();
-                    if (isClickComplete) {
-                        setIsClickComplete(false);
-                    } else {
-                        setIsClickComplete(true);
+                    if (isExistCannula) {
+                        return;
                     }
                 }}
             >
                 <p className="text-white text-[32px] font-bold">
-                    {isClickComplete ? "네" : "신규 캐뉼라 등록"}
+                    {isExistCannula ? "네" : "신규 캐뉼라 등록"}
                 </p>
             </button>
             <p
                 className={`text-white text-center text-[32px] font-bold leading-12 whitespace-pre-line transition-all duration-200 ease-in
-                    ${!isComplete ? "opacity-100" : "opacity-0 text-[0px]"}
+                    ${
+                        !isComplete && !isExistCannula
+                            ? "opacity-100"
+                            : "opacity-0 text-[0px]"
+                    }
                     `}
             >
                 {`“6개 조건을 모두 선택하셔야 신규 캐뉼라 등록 조건
