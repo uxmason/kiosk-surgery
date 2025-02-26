@@ -1,5 +1,8 @@
-export type CannulaType = {
-    type: "CURVE" | "CANCAVE" | "BLUNT" | "LINE";
+export type TipType = {
+    type: "사선형" | "블런트형" | "샤프형";
+};
+export type ShapeType = {
+    type: "직선형" | "컨케이브";
 };
 export type PartType =
     | "THIGH"
@@ -12,38 +15,47 @@ export type PartType =
     | "CALVES";
 export type OpeStateType = "0" | "1" | "2" | "3";
 
-export type ModelType = {
-    id: number;
-    name: string;
+export type ModelNameType = {
+    _id: string;
+    MODEL_NAME: string;
 };
-export type HolelType = {
-    id: number;
-    name: string;
+export type HolelCountType = {
+    _id: string;
+    HOLE_COUNT: string;
 };
-export type TipType = {
-    id: number;
-    name: string;
+export type TipsType = {
+    _id: string;
+    TIP: string;
 };
-export type ShapeType = {
-    id: number;
-    name: string;
+export type ShapesType = {
+    _id: string;
+    SHAPE: string;
 };
 export type LengthType = {
-    id: number;
-    name: string;
+    _id: string;
+    LENGTH: string;
 };
 export type ThicknessType = {
-    id: number;
-    name: string;
+    _id: string;
+    THICKNESS: string;
+};
+export type CannulaListType = {
+    갯수: string;
+    CANNULA_ID: string;
+    MODEL_NAME: string;
+    TIP: string;
+    SHAPE: string;
+    LENGTH: string;
+    THICKNESS: string;
 };
 
 export type AddNewCunnulaType = {
-    model: number | undefined | null;
-    hole: number | undefined | null;
-    tip: number | undefined | null;
-    shape: number | undefined | null;
-    length: number | undefined | null;
-    thick: number | undefined | null;
+    model: string | undefined | null;
+    hole: string | undefined | null;
+    tip: string | undefined | null;
+    shape: string | undefined | null;
+    length: string | undefined | null;
+    thick: string | undefined | null;
 };
 
 export type OpeType = {
@@ -55,4 +67,21 @@ export type OpeType = {
     endTime: string;
     opeDate: string;
     state: OpeStateType;
+};
+export type IncisionListType = {
+    _id: string;
+    POINT_NAME: string;
+    AJAX_ID: string;
+};
+export type ButtonDataType = {
+    style: { top: string; left?: string; right?: string };
+    id: number;
+};
+export type UpdatedButtonDataType = {
+    _id?: string;
+    POINT_NAME?: string;
+    AJAX_ID?: string;
+    style: { top: string; left?: string; right?: string };
+    id: number;
+    selected?: boolean;
 };

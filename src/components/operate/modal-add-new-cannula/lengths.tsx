@@ -1,7 +1,9 @@
 import { AddNewCunnulaType, LengthType } from "@/type";
 import { Controller, useFormContext } from "react-hook-form";
-
-const Lengths = () => {
+interface Props {
+    lengths: LengthType[];
+}
+const Lengths = ({ lengths }: Props) => {
     const { control, watch } = useFormContext<AddNewCunnulaType>();
     const length = watch()?.length;
     return (
@@ -30,23 +32,23 @@ const Lengths = () => {
                                 {lengths?.map((m) => {
                                     return (
                                         <button
-                                            key={m?.id}
+                                            key={m?._id}
                                             className={`w-full text-start py-[15px] px-[15px] rounded-[15px] ${
-                                                value === m?.id
+                                                value === m?._id
                                                     ? "bg-[#3A3E59] outline-[3px] outline-[#15CF8F]"
                                                     : "bg-[rgba(255,255,255,0.05)]"
                                             }`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (length === m.id) {
+                                                if (length === m?._id) {
                                                     onChange(null);
                                                 } else {
-                                                    onChange(m?.id);
+                                                    onChange(m?._id);
                                                 }
                                             }}
                                         >
                                             <p className="text-white text-[18px] font-bold leading-5">
-                                                {m?.name}
+                                                {m?.LENGTH}
                                                 <span className="pl-1">cm</span>
                                             </p>
                                         </button>
@@ -61,11 +63,3 @@ const Lengths = () => {
     );
 };
 export default Lengths;
-
-const lengths: LengthType[] = [
-    { id: 1, name: "25" },
-    { id: 2, name: "35" },
-    { id: 3, name: "45" },
-    { id: 4, name: "55" },
-    { id: 5, name: "65" },
-];

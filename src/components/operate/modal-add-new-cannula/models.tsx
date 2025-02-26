@@ -1,7 +1,9 @@
-import { AddNewCunnulaType, ModelType } from "@/type";
+import { AddNewCunnulaType, ModelNameType } from "@/type";
 import { Controller, useFormContext } from "react-hook-form";
-
-const Models = () => {
+interface Props {
+    modelNames: ModelNameType[];
+}
+const Models = ({ modelNames }: Props) => {
     const { control, watch } = useFormContext<AddNewCunnulaType>();
     const model = watch()?.model;
     return (
@@ -27,26 +29,26 @@ const Models = () => {
                     render={({ field: { value, onChange } }) => {
                         return (
                             <>
-                                {models?.map((m) => {
+                                {modelNames?.map((m: ModelNameType) => {
                                     return (
                                         <button
-                                            key={m?.id}
+                                            key={m?._id}
                                             className={`w-full text-start py-[15px] px-[15px] rounded-[15px] ${
-                                                value === m?.id
+                                                value === m?._id
                                                     ? "bg-[#3A3E59] outline-[3px] outline-[#15CF8F]"
                                                     : "bg-[rgba(255,255,255,0.05)]"
                                             }`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (model === m.id) {
+                                                if (model === m._id) {
                                                     onChange(null);
                                                 } else {
-                                                    onChange(m?.id);
+                                                    onChange(m?._id);
                                                 }
                                             }}
                                         >
                                             <p className="text-white text-[18px] font-bold leading-5">
-                                                {m?.name}
+                                                {m?.MODEL_NAME}
                                             </p>
                                         </button>
                                     );
@@ -60,8 +62,3 @@ const Models = () => {
     );
 };
 export default Models;
-
-const models: ModelType[] = [
-    { id: 1, name: "메르세데스" },
-    { id: 2, name: "메르세데스 더블" },
-];

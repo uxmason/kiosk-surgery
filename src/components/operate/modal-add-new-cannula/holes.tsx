@@ -1,7 +1,9 @@
-import { AddNewCunnulaType, HolelType } from "@/type";
+import { AddNewCunnulaType, HolelCountType } from "@/type";
 import { Controller, useFormContext } from "react-hook-form";
-
-const Holes = () => {
+interface Props {
+    holeCounts: HolelCountType[];
+}
+const Holes = ({ holeCounts }: Props) => {
     const { control, watch } = useFormContext<AddNewCunnulaType>();
     const hole = watch()?.hole;
     return (
@@ -28,26 +30,26 @@ const Holes = () => {
                     render={({ field: { value, onChange } }) => {
                         return (
                             <>
-                                {holes?.map((m) => {
+                                {holeCounts?.map((m) => {
                                     return (
                                         <button
-                                            key={m?.id}
+                                            key={m?._id}
                                             className={`w-full text-start py-[15px] px-[15px] rounded-[15px] ${
-                                                value === m?.id
+                                                value === m?._id
                                                     ? "bg-[#3A3E59] outline-[3px] outline-[#15CF8F]"
                                                     : "bg-[rgba(255,255,255,0.05)]"
                                             }`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (hole === m.id) {
+                                                if (hole === m?._id) {
                                                     onChange(null);
                                                 } else {
-                                                    onChange(m?.id);
+                                                    onChange(m?._id);
                                                 }
                                             }}
                                         >
                                             <p className="text-white text-[18px] font-bold leading-5">
-                                                {m?.name}
+                                                {m?.HOLE_COUNT}
                                                 <span className="pl-1">H</span>
                                             </p>
                                         </button>
@@ -62,10 +64,3 @@ const Holes = () => {
     );
 };
 export default Holes;
-
-const holes: HolelType[] = [
-    { id: 1, name: "1" },
-    { id: 2, name: "2" },
-    { id: 3, name: "3" },
-    { id: 4, name: "6" },
-];

@@ -1,7 +1,9 @@
-import { AddNewCunnulaType, ShapeType } from "@/type";
+import { AddNewCunnulaType, ShapesType } from "@/type";
 import { Controller, useFormContext } from "react-hook-form";
-
-const Shapes = () => {
+interface Props {
+    shapes: ShapesType[];
+}
+const Shapes = ({ shapes }: Props) => {
     const { control, watch } = useFormContext<AddNewCunnulaType>();
     const shape = watch()?.shape;
     return (
@@ -30,23 +32,23 @@ const Shapes = () => {
                                 {shapes?.map((m) => {
                                     return (
                                         <button
-                                            key={m?.id}
+                                            key={m?._id}
                                             className={`w-full text-start py-[15px] px-[15px] rounded-[15px] ${
-                                                value === m?.id
+                                                value === m?._id
                                                     ? "bg-[#3A3E59] outline-[3px] outline-[#15CF8F]"
                                                     : "bg-[rgba(255,255,255,0.05)]"
                                             }`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (shape === m.id) {
+                                                if (shape === m?._id) {
                                                     onChange(null);
                                                 } else {
-                                                    onChange(m?.id);
+                                                    onChange(m?._id);
                                                 }
                                             }}
                                         >
                                             <p className="text-white text-[18px] font-bold leading-5">
-                                                {m?.name}
+                                                {m?.SHAPE}
                                             </p>
                                         </button>
                                     );
@@ -60,8 +62,3 @@ const Shapes = () => {
     );
 };
 export default Shapes;
-
-const shapes: ShapeType[] = [
-    { id: 1, name: "직선형" },
-    { id: 2, name: "컨케이브" },
-];

@@ -1,7 +1,9 @@
-import { AddNewCunnulaType, TipType } from "@/type";
+import { AddNewCunnulaType, TipsType } from "@/type";
 import { Controller, useFormContext } from "react-hook-form";
-
-const Tips = () => {
+interface Props {
+    tips: TipsType[];
+}
+const Tips = ({ tips }: Props) => {
     const { control, watch } = useFormContext<AddNewCunnulaType>();
     const tip = watch()?.tip;
     return (
@@ -30,23 +32,23 @@ const Tips = () => {
                                 {tips?.map((m) => {
                                     return (
                                         <button
-                                            key={m?.id}
+                                            key={m?._id}
                                             className={`w-full text-start py-[15px] px-[15px] rounded-[15px] ${
-                                                value === m?.id
+                                                value === m?._id
                                                     ? "bg-[#3A3E59] outline-[3px] outline-[#15CF8F]"
                                                     : "bg-[rgba(255,255,255,0.05)]"
                                             }`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (tip === m.id) {
+                                                if (tip === m?._id) {
                                                     onChange(null);
                                                 } else {
-                                                    onChange(m?.id);
+                                                    onChange(m?._id);
                                                 }
                                             }}
                                         >
                                             <p className="text-white text-[18px] font-bold leading-5">
-                                                {m?.name}
+                                                {m?.TIP}
                                             </p>
                                         </button>
                                     );
@@ -60,9 +62,3 @@ const Tips = () => {
     );
 };
 export default Tips;
-
-const tips: TipType[] = [
-    { id: 1, name: "블런트형" },
-    { id: 2, name: "사선형" },
-    { id: 3, name: "샤프형" },
-];
