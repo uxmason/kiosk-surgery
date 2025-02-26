@@ -8,7 +8,7 @@ interface Props {
     isShowBtnText?: string;
     path?: string | undefined;
     setIsModalComplete?: (v: boolean) => void;
-    isError?: boolean;
+    isUnpaired?: boolean;
 }
 const CustomBtn = ({
     text,
@@ -17,7 +17,7 @@ const CustomBtn = ({
     isShowBtnText,
     path,
     setIsModalComplete,
-    isError,
+    isUnpaired,
 }: Props) => {
     const router = useRouter();
     const buttonStyle = {
@@ -25,7 +25,7 @@ const CustomBtn = ({
     };
 
     const handleClick = () => {
-        if (isError) return;
+        if (isUnpaired) return;
         if (path) {
             router.push(path);
         } else {

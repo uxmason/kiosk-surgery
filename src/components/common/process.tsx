@@ -12,7 +12,7 @@ const Process = ({ isProcess }: Props) => {
             : "bg-[rgba(58,62,89,0.15)]";
 
     return (
-        <div className="flex w-full justify-center gap-x-5">
+        <div className="absolute mt-[1510px] flex w-full justify-center gap-x-5">
             {[1, 2, 3].map((step) => (
                 <div key={step} className={`${getBgClass(step)} ${baseClass}`}>
                     <p className="text-white/50 text-[18px] font-bold leading-[24px]">

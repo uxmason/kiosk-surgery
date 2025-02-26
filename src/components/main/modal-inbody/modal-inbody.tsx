@@ -17,13 +17,13 @@ import {
 
 interface Props {
     isInbodyOpen: boolean;
-    setIsInbodyOpen: (v: boolean) => void;
+    setInbodyOpen: (v: boolean) => void;
 }
-const ModalInbody = ({ isInbodyOpen, setIsInbodyOpen }: Props) => {
+const ModalInbody = ({ isInbodyOpen, setInbodyOpen }: Props) => {
     return (
         <CustomModal
             isOpen={isInbodyOpen}
-            onClose={() => setIsInbodyOpen(false)}
+            onClose={() => setInbodyOpen(false)}
         >
             <div className="flex flex-col w-full h-fit items-center pt-20">
                 <p className="text-white text-[54px] font-bold leading-[54px]">

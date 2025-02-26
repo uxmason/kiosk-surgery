@@ -1,17 +1,17 @@
 interface Props {
-    setIsModalAIOpen: (v: boolean) => void;
-    isError: boolean;
+    setModalAIOpen: (v: boolean) => void;
+    isUnpaired: boolean;
 }
-const Ai = ({ setIsModalAIOpen, isError }: Props) => {
+const Ai = ({ setModalAIOpen, isUnpaired }: Props) => {
     return (
         <button
             className="flex flex-col text-start bg-[rgba(91,135,237,0.60)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
-            onClick={() => setIsModalAIOpen(true)}
+            onClick={() => setModalAIOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 AI 예측
             </p>
-            {!isError ? (
+            {!isUnpaired ? (
                 <>
                     <div className="h-full">예측</div>
                     <div className="flex w-full justify-between items-center">

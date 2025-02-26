@@ -3,21 +3,21 @@
 import { maskIdNumber } from "@/function";
 
 interface Props {
-    isError: boolean;
-    setIsOpeOpen: (v: boolean) => void;
+    isUnpaired: boolean;
+    setOpeOpen: (v: boolean) => void;
     isOpeInfo: never[];
 }
-const Client = ({ isError, setIsOpeOpen, isOpeInfo }: Props) => {
+const Client = ({ isUnpaired, setOpeOpen, isOpeInfo }: Props) => {
     const info = isOpeInfo?.[0];
     return (
         <button
             className="flex flex-col text-start bg-[rgba(58,62,89,0.50)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
-            onClick={() => setIsOpeOpen(true)}
+            onClick={() => setOpeOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 고객정보
             </p>
-            {!isError ? (
+            {!isUnpaired ? (
                 <>
                     <p className="text-[rgba(21,207,143)] text-[36px] font-bold leading-[32px] pt-[31px] pb-[41px]">
                         {info?.["고객명"]}

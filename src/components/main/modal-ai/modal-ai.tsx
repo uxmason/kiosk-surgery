@@ -4,14 +4,14 @@ import "swiper/css";
 
 interface Props {
     isModalAIOpen: boolean;
-    setIsModalAIOpen: (v: boolean) => void;
+    setModalAIOpen: (v: boolean) => void;
 }
 
-const ModalAI = ({ isModalAIOpen, setIsModalAIOpen }: Props) => {
+const ModalAI = ({ isModalAIOpen, setModalAIOpen }: Props) => {
     return (
         <CustomModal
             isOpen={isModalAIOpen}
-            onClose={() => setIsModalAIOpen(false)}
+            onClose={() => setModalAIOpen(false)}
         >
             <div className="flex flex-col w-full h-full items-center pt-20">
                 <p className="text-white text-[54px] font-bold leading-[54px]">

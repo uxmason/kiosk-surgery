@@ -1,19 +1,19 @@
 import InbodyGraph from "./inbody-graph";
 
 interface Props {
-    setIsInbodyOpen: (v: boolean) => void;
-    isError: boolean;
+    setInbodyOpen: (v: boolean) => void;
+    isUnpaired: boolean;
 }
-const Inbody = ({ setIsInbodyOpen, isError }: Props) => {
+const Inbody = ({ setInbodyOpen, isUnpaired }: Props) => {
     return (
         <button
             className="flex flex-col text-start bg-[rgba(56,171,190)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
-            onClick={() => setIsInbodyOpen(true)}
+            onClick={() => setInbodyOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 인바디
             </p>
-            {!isError ? (
+            {!isUnpaired ? (
                 <>
                     <InbodyGraph />
                     <div className="flex w-full justify-between items-center">

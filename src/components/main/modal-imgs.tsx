@@ -9,11 +9,11 @@ import { imgOriginalUrl, imgThumbUrl } from "@/variables";
 
 interface Props {
     isModalImgsOpen: boolean;
-    setIsModalImgsOpen: (v: boolean) => void;
+    setModalImgsOpen: (v: boolean) => void;
     imgs: never[];
 }
 
-const ModalImgs = ({ isModalImgsOpen, setIsModalImgsOpen, imgs }: Props) => {
+const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | null>(null);
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
@@ -35,7 +35,7 @@ const ModalImgs = ({ isModalImgsOpen, setIsModalImgsOpen, imgs }: Props) => {
     return (
         <CustomModal
             isOpen={isModalImgsOpen}
-            onClose={() => setIsModalImgsOpen(false)}
+            onClose={() => setModalImgsOpen(false)}
         >
             <div className="flex flex-col w-full h-full items-center pt-20">
                 <p className="text-white text-[54px] font-bold leading-[54px]">

@@ -1,19 +1,19 @@
 interface Props {
     isOpeInfo: never[];
-    isError: boolean;
-    setIsOpeOpen: (v: boolean) => void;
+    isUnpaired: boolean;
+    setOpeOpen: (v: boolean) => void;
 }
-const Info = ({ isOpeInfo, setIsOpeOpen, isError }: Props) => {
+const Info = ({ isOpeInfo, setOpeOpen, isUnpaired }: Props) => {
     const info = isOpeInfo?.[0];
     return (
         <button
             className="relative flex flex-col text-start w-[476px] h-[285px] bg-[#3A3E59] rounded-[15px] pt-[30px] pl-[30px] pb-[24px]"
-            onClick={() => setIsOpeOpen(true)}
+            onClick={() => setOpeOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px] pb-[31px]">
                 담당의
             </p>
-            {!isError ? (
+            {!isUnpaired ? (
                 <>
                     <div
                         className={`isPortrait I${info?.["담당의ID"]} absolute w-[150px] h-[220px] bg-no-repeat bottom-0 right-10`}

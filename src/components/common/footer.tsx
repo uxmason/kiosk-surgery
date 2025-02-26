@@ -1,6 +1,6 @@
 const Footer = () => {
     return (
-        <div className="flex w-full mx-auto justify-center pt-[25px]">
+        <div className="absolute mt-[1820px] w-full">
             <p className="text-white whitespace-pre-line text-center font-normal leading-6">
                 문의 및 안내:{" "}
                 <span className="underline underline-offset-2">HOBIT</span> Lab.

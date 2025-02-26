@@ -8,10 +8,10 @@ import { useDoctorIdStore } from "@/store";
 
 interface Props {
     isOpen: boolean;
-    setIsOpeOpen: (v: boolean) => void;
+    setOpeOpen: (v: boolean) => void;
 }
 
-const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
+const ModalSelecOpe = ({ isOpen, setOpeOpen }: Props) => {
     const { doctorId, branch } = useDoctorIdStore();
     const [isHospitalId, setIsHospitalId] = useState(branch);
     const [isOriginalHospitalId, setIsOriginalHospitalId] = useState(branch);
@@ -80,7 +80,7 @@ const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
 
     return (
         <>
-            <CustomModal isOpen={isOpen} onClose={() => setIsOpeOpen(false)}>
+            <CustomModal isOpen={isOpen} onClose={() => setOpeOpen(false)}>
                 <div className="flex flex-col w-full h-full items-center pt-20">
                     <p className="text-white text-[54px] font-bold leading-[54px]">
                         수술 고객 선택
