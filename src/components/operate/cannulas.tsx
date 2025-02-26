@@ -5,7 +5,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import { useState } from "react";
-import { removeSpace } from "@/function";
+import { getFormattedDate, removeSpace } from "@/function";
+import { usePsentryStore, useStore } from "@/store";
+import { serverUrl } from "@/variables";
 interface Props {
     setIsOpenAddCannualModal: (v: boolean) => void;
     cannulaInSurgeryList: CannulaListType[];
@@ -14,7 +16,86 @@ const Cannulas = ({
     setIsOpenAddCannualModal,
     cannulaInSurgeryList,
 }: Props) => {
-    const [isCannulaId, setIsCannulaId] = useState("");
+    const today = getFormattedDate();
+    const { deviceId } = useStore();
+    const { psEntry } = usePsentryStore();
+    const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
+    const [isCurrentCannulaId, setIsCurrentCannulaId] = useState("");
+    const handleSelectCannula = (id: string) => {
+        const data: DataType = {
+            deviceId: deviceId,
+            cannulaID: isCurrentCannulaId,
+            psEntry: psEntry,
+            opDate: today,
+        };
+
+        if (selectedCannulaIds?.includes(id)) {
+            handleInDirectDeleteCannula(data).then((res) => {
+                if (res.success) {
+                    console.log(res);
+                } else {
+                    console.log(res);
+                }
+            });
+        } else {
+            handleDirectAddCannula(data).then((res) => {
+                if (res.success) {
+                    console.log(res);
+                } else {
+                    console.log("FAIL_CANNULA_ DIRECTADD");
+                }
+            });
+        }
+        setSelectedCannulaIds((prev) =>
+            prev?.includes(id)
+                ? prev?.filter((cId) => cId !== id)
+                : [...prev, id]
+        );
+    };
+
+    const handleDirectAddCannula = async (data: DataType) => {
+        const url = `${serverUrl}/cannula/directAdd/`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                return result;
+            } else {
+                console.error("API 호출 실패", response.status);
+            }
+        } catch (error) {
+            console.error("에러 발생", error);
+        }
+    };
+
+    const handleInDirectDeleteCannula = async (data: DataType) => {
+        const url = `${serverUrl}/cannula/inDirectDelete/`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                return result;
+            } else {
+                console.error("API 호출 실패", response.status);
+            }
+        } catch (error) {
+            console.error("에러 발생", error);
+        }
+    };
 
     return (
         <div className="flex flex-col w-full pt-10">
@@ -72,14 +153,19 @@ const Cannulas = ({
                                     <button
                                         className={`flex flex-col text-start w-[235px] h-[285px] px-[30px] py-[30px]  rounded-[15px]
                                         ${
-                                            isCannulaId === c?.CANNULA_ID
+                                            selectedCannulaIds.includes(
+                                                c?.CANNULA_ID
+                                            )
                                                 ? "outline-[5px] outline-[#15CF8F] bg-[#3A3E59]"
                                                 : "bg-[rgba(58,62,89,0.50)]"
                                         }
                                         `}
-                                        onClick={() =>
-                                            setIsCannulaId(c?.CANNULA_ID)
-                                        }
+                                        onClick={() => {
+                                            setIsCurrentCannulaId(
+                                                c?.CANNULA_ID
+                                            );
+                                            handleSelectCannula(c?.CANNULA_ID);
+                                        }}
                                     >
                                         <p className="text-white text-[24px] font-bold leading-6">
                                             {c?.MODEL_NAME}
@@ -135,3 +221,10 @@ const Cannulas = ({
     );
 };
 export default Cannulas;
+
+type DataType = {
+    deviceId: string;
+    cannulaID: string;
+    psEntry: string;
+    opDate: string;
+};
