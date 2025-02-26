@@ -10,6 +10,7 @@ interface Props {
 }
 const Cannulas = ({ setIsOpenAddCannualModal }: Props) => {
     const [isCannulaId, setIsCannulaId] = useState(0);
+
     return (
         <div className="flex flex-col w-full pt-10">
             <div className="flex px-5 items-end justify-between">

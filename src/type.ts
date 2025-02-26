@@ -12,38 +12,38 @@ export type PartType =
     | "CALVES";
 export type OpeStateType = "0" | "1" | "2" | "3";
 
-export type ModelType = {
-    id: number;
-    name: string;
+export type ModelNameType = {
+    _id: string;
+    MODEL_NAME: string;
 };
-export type HolelType = {
-    id: number;
-    name: string;
+export type HolelCountType = {
+    _id: string;
+    HOLE_COUNT: string;
 };
-export type TipType = {
-    id: number;
-    name: string;
+export type TipsType = {
+    _id: string;
+    TIP: string;
 };
-export type ShapeType = {
-    id: number;
-    name: string;
+export type ShapesType = {
+    _id: string;
+    SHAPE: string;
 };
 export type LengthType = {
-    id: number;
-    name: string;
+    _id: string;
+    LENGTH: string;
 };
 export type ThicknessType = {
-    id: number;
-    name: string;
+    _id: string;
+    THICKNESS: string;
 };
 
 export type AddNewCunnulaType = {
-    model: number | undefined | null;
-    hole: number | undefined | null;
-    tip: number | undefined | null;
-    shape: number | undefined | null;
-    length: number | undefined | null;
-    thick: number | undefined | null;
+    model: string | undefined | null;
+    hole: string | undefined | null;
+    tip: string | undefined | null;
+    shape: string | undefined | null;
+    length: string | undefined | null;
+    thick: string | undefined | null;
 };
 
 export type OpeType = {
