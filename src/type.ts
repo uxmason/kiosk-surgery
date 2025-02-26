@@ -68,3 +68,20 @@ export type OpeType = {
     opeDate: string;
     state: OpeStateType;
 };
+export type IncisionListType = {
+    _id: string;
+    POINT_NAME: string;
+    AJAX_ID: string;
+};
+export type ButtonDataType = {
+    style: { top: string; left?: string; right?: string };
+    id: number;
+};
+export type UpdatedButtonDataType = {
+    _id?: string;
+    POINT_NAME?: string;
+    AJAX_ID?: string;
+    style: { top: string; left?: string; right?: string };
+    id: number;
+    selected?: boolean;
+};

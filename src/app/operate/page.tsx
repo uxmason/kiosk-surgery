@@ -10,8 +10,8 @@ import {
 } from "@/components/common";
 import { Cannulas, ModalComplete, Parts } from "@/components/operate";
 import { MoodalAddNewCannula } from "@/components/operate/modal-add-new-cannula";
-import { CannulaListType } from "@/type";
-import { cannulaUrl } from "@/variables";
+import { CannulaListType, IncisionListType } from "@/type";
+import { cannulaUrl, serverUrl } from "@/variables";
 import { useEffect, useState } from "react";
 
 export default function Info() {
@@ -21,6 +21,7 @@ export default function Info() {
     const [cannulaInSurgeryList, setCannulaInSurgeryList] = useState<
         CannulaListType[]
     >([]);
+    const [incisionList, setIncisionList] = useState<IncisionListType[]>([]);
 
     // 캐뉼라 리스트 불러오기
     const handleSelectCannulaList = async () => {
@@ -39,12 +40,41 @@ export default function Info() {
             console.error("Error fetching data:", error);
         }
     };
-
+    // 캐뉼라 리스트 담기
     useEffect(() => {
         handleSelectCannulaList().then((res) => {
             if (res.success) {
                 setCannulaInSurgeryList(res.cannulaInSurgeryList);
             } else console.log("FAIL_CANNULA_LIST");
+        });
+    }, []);
+
+    // 인시젼 리스트 불러오기
+    const handleSelectIncisionList = async () => {
+        try {
+            const response = await fetch(`${serverUrl}/incision/list/`, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // 인시젼 리스트 담기
+    useEffect(() => {
+        handleSelectIncisionList().then((res) => {
+            if (res.success) {
+                setIncisionList(res.list);
+            } else {
+                console.log("FAIL_INCISION_LIST");
+            }
         });
     }, []);
 
@@ -58,7 +88,7 @@ export default function Info() {
                     setIsOpenAddCannualModal={setIsOpenAddCannualModal}
                     cannulaInSurgeryList={cannulaInSurgeryList}
                 />
-                <Parts />
+                <Parts incisionList={incisionList} />
                 <div className="flex w-full justify-center pt-5 px-5">
                     <CustomBtn
                         text="기록 완료"
