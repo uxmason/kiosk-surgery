@@ -15,7 +15,6 @@ import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorIdStore, usePsentryStore, useStore } from "@/store";
-import { serverUrl } from "@/variables";
 
 export default function Home() {
     const [isUnpaired, setUnpaired] = useState(false);
@@ -34,7 +33,7 @@ export default function Home() {
     const handleSelectDoctor = async () => {
         try {
             const response = await fetch(
-                `${serverUrl}/checkDevice/?deviceId=${deviceId}`,
+                `/api/kiosk-surgery/check-device?deviceId=${deviceId}`,
                 {
                     method: "GET",
                 }
@@ -68,7 +67,7 @@ export default function Home() {
     const onHandleSelectOpe = async () => {
         try {
             const response = await fetch(
-                `${serverUrl}/surgery/?doctorId=${doctorId}`,
+                `/api/kiosk-surgery/surgery?doctorId=${doctorId}`,
                 {
                     method: "GET",
                 }
@@ -118,7 +117,7 @@ export default function Home() {
     const handleSelectInbodyLst = async (psEntry: string) => {
         try {
             const response = await fetch(
-                `${serverUrl}/inbody/?psEntry=${psEntry}`,
+                `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
                 {
                     method: "GET",
                 }
@@ -137,6 +136,7 @@ export default function Home() {
 
     // 고객 인바디 정보 담기
     useEffect(() => {
+        if (!psEntry) return;
         handleSelectInbodyLst(psEntry).then(
             (res: { success: boolean; doctorId: string }) => {
                 if (res.success) {
@@ -146,13 +146,13 @@ export default function Home() {
                 }
             }
         );
-    }, [isOpeInfo]);
+    }, [psEntry]);
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
         try {
             const response = await fetch(
-                `${serverUrl}/photos/?psEntry=${psEntry}`,
+                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
                 {
                     method: "GET",
                 }
@@ -171,6 +171,7 @@ export default function Home() {
 
     // 고객 이미지 담기
     useEffect(() => {
+        if (!psEntry) return;
         handleSelectImgLst(psEntry).then((res) => {
             if (res.success) {
                 setImgs(res.album);
@@ -178,7 +179,7 @@ export default function Home() {
                 console.log("FAIL");
             }
         });
-    }, [isOpeInfo]);
+    }, [psEntry]);
 
     useEffect(() => {
         if (!isOpeInfo) return;

@@ -7,7 +7,6 @@ import "swiper/css";
 import { useState } from "react";
 import { getFormattedDate, removeSpace } from "@/function";
 import { usePsentryStore, useStore } from "@/store";
-import { serverUrl } from "@/variables";
 interface Props {
     setIsOpenAddCannualModal: (v: boolean) => void;
     cannulaInSurgeryList: CannulaListType[];
@@ -54,7 +53,7 @@ const Cannulas = ({
     };
 
     const handleDirectAddCannula = async (data: DataType) => {
-        const url = `${serverUrl}/cannula/directAdd/`;
+        const url = `/api/kiosk-surgery/cannula/direct-add/`;
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -76,7 +75,7 @@ const Cannulas = ({
     };
 
     const handleInDirectDeleteCannula = async (data: DataType) => {
-        const url = `${serverUrl}/cannula/inDirectDelete/`;
+        const url = `/api/kiosk-surgery/cannula/inDirectDelete/`;
         try {
             const response = await fetch(url, {
                 method: "POST",
