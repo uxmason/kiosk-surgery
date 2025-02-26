@@ -16,7 +16,7 @@ const Info = ({ isOpeInfo, setIsOpeOpen, isError }: Props) => {
             {!isError ? (
                 <>
                     <div
-                        className={`isPortrait I${info?.["담당의ID"]} absolute bg-[url('/images/doctor.png')] w-[150px] h-[220px] bg-no-repeat bottom-0 right-10`}
+                        className={`isPortrait I${info?.["담당의ID"]} absolute w-[150px] h-[220px] bg-no-repeat bottom-0 right-10`}
                     />
                     <p className="text-white text-[32px] font-bold leading-[32px] text-justify">
                         {info?.["담당의명"]}

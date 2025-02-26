@@ -15,11 +15,10 @@ import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import useStore from "@/store";
+import { useDoctorIdStore, usePsentryStore, useStore } from "@/store";
 import { serverUrl } from "@/variables";
 
 export default function Home() {
-    const [isDoctorId, setIsDoctorId] = useState("");
     const [isError, setIsError] = useState(false);
     const [isOpeOpen, setIsOpeOpen] = useState(false);
     const [isInbodyOpen, setIsInbodyOpen] = useState(false);
@@ -28,6 +27,8 @@ export default function Home() {
     const [imgs, setImgs] = useState([]);
     const [isOpeInfo, setIsOpeInfo] = useState([]);
     const { deviceId, setDeviceId } = useStore();
+    const { psEntry, setPsEntry } = usePsentryStore();
+    const { doctorId, setDoctorId } = useDoctorIdStore();
     const [fingerprint, setFingerprint] = useState("");
 
     // 키오스크에 등록된 의사 찾기
@@ -55,7 +56,8 @@ export default function Home() {
         if (!deviceId) return;
         handleSelectDoctor().then((res) => {
             if (res.success) {
-                setIsDoctorId(res.doctorId);
+                const doctorInfo = res.doctorInfo?.[0];
+                setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
                 setIsError(false);
             } else {
                 setIsError(true);
@@ -67,7 +69,7 @@ export default function Home() {
     const onHandleSelectOpe = async () => {
         try {
             const response = await fetch(
-                `${serverUrl}/surgery/?doctorId=${isDoctorId}`,
+                `${serverUrl}/surgery/?doctorId=${doctorId}`,
                 {
                     method: "GET",
                 }
@@ -84,7 +86,7 @@ export default function Home() {
         }
     };
     useEffect(() => {
-        if (!isDoctorId) return;
+        if (!doctorId) return;
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setIsOpeInfo(res.list);
@@ -92,7 +94,7 @@ export default function Home() {
                 console.log("FAIL");
             }
         });
-    }, [isDoctorId]);
+    }, [doctorId]);
 
     // 숫자 카운트
     const [count, setCount] = useState(180);
@@ -136,8 +138,6 @@ export default function Home() {
 
     // 고객 인바디 정보 담기
     useEffect(() => {
-        if (isOpeInfo?.length === 0) return;
-        const psEntry = isOpeInfo?.[0]?.["고객번호"];
         handleSelectInbodyLst(psEntry).then(
             (res: { success: boolean; doctorId: string }) => {
                 if (res.success) {
@@ -172,8 +172,6 @@ export default function Home() {
 
     // 고객 이미지 담기
     useEffect(() => {
-        if (isOpeInfo?.length === 0) return;
-        const psEntry = isOpeInfo?.[0]?.["고객번호"];
         handleSelectImgLst(psEntry).then((res) => {
             if (res.success) {
                 setImgs(res.album);
@@ -181,6 +179,12 @@ export default function Home() {
                 console.log("FAIL");
             }
         });
+    }, [isOpeInfo]);
+
+    useEffect(() => {
+        if (!isOpeInfo) return;
+        const psEntry = isOpeInfo?.[0]?.["고객번호"];
+        setPsEntry(psEntry);
     }, [isOpeInfo]);
 
     // 키오스크 고유 번호

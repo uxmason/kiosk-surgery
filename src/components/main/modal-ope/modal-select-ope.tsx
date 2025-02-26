@@ -4,6 +4,7 @@ import { CustomModal } from "../../common";
 import { ModalError, TimeLine } from ".";
 import { serverUrl } from "@/variables";
 import _ from "lodash";
+import { useDoctorIdStore } from "@/store";
 
 interface Props {
     isOpen: boolean;
@@ -11,15 +12,15 @@ interface Props {
 }
 
 const ModalSelecOpe = ({ isOpen, setIsOpeOpen }: Props) => {
-    // const { deviceId } = useStore();
-    const [isHospitalId, setIsHospitalId] = useState("21");
-    const [isOriginalHospitalId, setIsOriginalHospitalId] = useState("21");
+    const { doctorId, branch } = useDoctorIdStore();
+    const [isHospitalId, setIsHospitalId] = useState(branch);
+    const [isOriginalHospitalId, setIsOriginalHospitalId] = useState(branch);
     const [isHospitalExpand, setIsHospitalExpand] = useState(false);
-    const [userId, setUserId] = useState("");
-    const [originalUserId, setOriginalUserId] = useState("21sc");
+    const [userId, setUserId] = useState(doctorId);
+    const [originalUserId, setOriginalUserId] = useState(doctorId);
     const [isErrorMessage, setIsErrorMessage] = useState(false);
     const [isAllOpe, setIsAllOpe] = useState([]);
-    console.log(setIsOriginalHospitalId, userId, setOriginalUserId);
+    console.log({ setIsOriginalHospitalId, userId, setOriginalUserId });
     // 모든 지점의 수술 정보를 받아오기
     const handleSelectAllOpe = async () => {
         try {

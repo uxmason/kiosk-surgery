@@ -2,8 +2,10 @@
 import { AddNewCunnulaType } from "@/type";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-
-const BtnAdd = () => {
+interface Props {
+    isExistCannula: boolean;
+}
+const BtnAdd = ({ isExistCannula }: Props) => {
     const [isClickComplete, setIsClickComplete] = useState(false);
 
     const { watch } = useFormContext<AddNewCunnulaType>();
@@ -14,13 +16,13 @@ const BtnAdd = () => {
     const length = watch()?.length;
     const thick = watch()?.thick;
     const isComplete =
-        typeof model === "number" &&
-        typeof hole === "number" &&
-        typeof tip === "number" &&
-        typeof shape === "number" &&
-        typeof length === "number" &&
-        typeof thick === "number";
-
+        typeof model === "string" &&
+        typeof hole === "string" &&
+        typeof tip === "string" &&
+        typeof shape === "string" &&
+        typeof length === "string" &&
+        typeof thick === "string";
+    console.log(isExistCannula);
     return (
         <div className="flex flex-col items-center justify-center w-full">
             <div
