@@ -1,5 +1,8 @@
-export type CannulaType = {
-    type: "CURVE" | "CANCAVE" | "BLUNT" | "LINE";
+export type TipType = {
+    type: "사선형" | "블런트형" | "샤프형";
+};
+export type ShapeType = {
+    type: "직선형" | "컨케이브";
 };
 export type PartType =
     | "THIGH"
@@ -34,6 +37,15 @@ export type LengthType = {
 };
 export type ThicknessType = {
     _id: string;
+    THICKNESS: string;
+};
+export type CannulaListType = {
+    갯수: string;
+    CANNULA_ID: string;
+    MODEL_NAME: string;
+    TIP: string;
+    SHAPE: string;
+    LENGTH: string;
     THICKNESS: string;
 };
 

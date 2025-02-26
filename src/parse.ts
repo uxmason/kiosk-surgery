@@ -8,13 +8,18 @@ function generateParseKeyForObject<T extends string>(
 ) {
     return (v: Nullish<T>) => (v ? obj[v] : fallback);
 }
-export const parseCannulType = generateParseKeyForObject<
-    "CURVE" | "CANCAVE" | "BLUNT" | "LINE"
+export const parseCannulTipType = generateParseKeyForObject<
+    "사선형" | "블런트형" | "샤프형"
 >({
-    CURVE: { text: "사선형", color: "#F9AC68" },
-    BLUNT: { text: "블런트형", color: "#ED6B5B" },
-    CANCAVE: { text: "컨케이브", color: "#F8ABBD" },
-    LINE: { text: "직선형", color: "#5B87ED" },
+    사선형: { text: "사선형", color: "#F9AC68" },
+    블런트형: { text: "블런트형", color: "#ED6B5B" },
+    샤프형: { text: "샤프형", color: "#F8ABBD" },
+});
+export const parseCannulShapeType = generateParseKeyForObject<
+    "직선형" | "컨케이브"
+>({
+    컨케이브: { text: "컨케이브", color: "#F8ABBD" },
+    직선형: { text: "직선형", color: "#5B87ED" },
 });
 export const parseOpePart = generateParseKeyForObject<PartType>({
     THIGH: { text: "허벅지", color: "#38ABBE" },
