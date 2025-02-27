@@ -28,3 +28,23 @@ export const getCurrentTimeHHMM = () => {
     const minutes = now.getMinutes().toString().padStart(2, "0");
     return `${hours}${minutes}`;
 };
+// 키오스크에 등록된 의사 찾기
+export const handleSelectDoctor = async (deviceId: string) => {
+    try {
+        const response = await fetch(
+            `/api/kiosk-surgery/check-device?deviceId=${deviceId}`,
+            {
+                method: "GET",
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+};

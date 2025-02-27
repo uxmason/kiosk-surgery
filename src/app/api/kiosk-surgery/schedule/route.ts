@@ -4,7 +4,7 @@ import { getFormattedDate } from "@/function";
 export async function GET() {
     try {
         const today = getFormattedDate();
-        const sql = `SELECT DISTINCT top 1
+        const sql = `SELECT
                     A.STARTBRAN AS 지점,
                     A.PROMTIME AS 시작시간, 
                     A.OPETIME AS 종료시간, 

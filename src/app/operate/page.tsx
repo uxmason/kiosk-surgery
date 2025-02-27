@@ -10,6 +10,7 @@ import {
 } from "@/components/common";
 import { Cannulas, ModalComplete, Parts } from "@/components/operate";
 import { MoodalAddNewCannula } from "@/components/operate/modal-add-new-cannula";
+import { handleSelectDoctor } from "@/function";
 import { useDoctorIdStore, useStore } from "@/store";
 import { CannulaListType, IncisionListType } from "@/type";
 import { useEffect, useState } from "react";
@@ -52,29 +53,9 @@ export default function Info() {
     ).padStart(2, "0")}`;
 
     // 키오스크에 등록된 의사 찾기
-    const handleSelectDoctor = async () => {
-        try {
-            const response = await fetch(
-                `/api/kiosk-surgery/check-device?deviceId=${deviceId}`,
-                {
-                    method: "GET",
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const result = await response.json();
-            return result;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
-
     useEffect(() => {
         if (!deviceId) return;
-        handleSelectDoctor().then((res) => {
+        handleSelectDoctor(deviceId).then((res) => {
             if (res.success) {
                 const doctorInfo = res.doctorInfo?.[0];
                 setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
@@ -144,8 +125,8 @@ export default function Info() {
 
     return (
         <>
-            <main className="pt-5 w-full">
-                <div className="px-5">
+            <main className="relative w-full h-full min-h-[1920px]">
+                <div className="">
                     <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
                 </div>
                 <Cannulas
@@ -153,7 +134,7 @@ export default function Info() {
                     cannulaInSurgeryList={cannulaInSurgeryList}
                 />
                 <Parts incisionList={incisionList} />
-                <div className="flex w-full justify-center pt-5 px-5">
+                <div className="flex w-full justify-center pt-5">
                     <CustomBtn
                         text="기록 완료"
                         bg="#5B87ED"
@@ -168,9 +149,9 @@ export default function Info() {
                     time={formattedTime}
                     color="#FFF"
                 />
-                <Process isProcess={3} />
+                <Process isProcess={3} isOther />
+                <Footer isOther />
             </main>
-            <Footer />
             <ModalOpeInfo
                 isOpenOpeModal={isOpenOpeModal}
                 setIsOpenOpeModal={setIsOpenOpeModal}
