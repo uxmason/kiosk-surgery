@@ -219,8 +219,9 @@ export default function Home() {
 
     // 키오스크 고유 번호
     useEffect(() => {
-        if(Cookies.get("FINGERPRINT_HASH")) {
-            setFingerprint(Cookies.get("FINGERPRINT_HASH"));
+        if (Cookies.get("FINGERPRINT_HASH")) {
+            const cookieVal = Cookies.get("FINGERPRINT_HASH");
+            setFingerprint(cookieVal ?? "");
         } else {
             const getFingerprint = async () => {
                 const fp = await FingerprintJS.load();
