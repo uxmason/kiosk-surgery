@@ -1,189 +1,122 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CustomModal } from "../../common";
-import { ModalError, TimeLine } from ".";
-import _ from "lodash";
-import { useDoctorIdStore } from "@/store";
+import { ModalError} from ".";
+// import _ from "lodash";
+// import { useDoctorIdStore } from "@/store";
+
+interface SurgeryItem {
+    지점코드: string;
+    지점명: string;
+    시작시간: string;
+    종료시간: string;
+    고객번호: string;
+    수술코드: string;
+    담당의ID: string;
+    담당의명: string;
+    수술부위: string;
+    예상시간: number;
+    고객명: string;
+    주민번호: string;
+    추가시간: number | null;
+    state: string | null;
+}
+interface DoctorItem {
+    doctorId: string;
+    surgeries: SurgeryItem[];
+}
+  
+interface DataAllOpeItem {
+    branch: string;
+    doctor: DoctorItem[];
+}
 
 interface Props {
     isOpen: boolean;
     setOpeOpen: (v: boolean) => void;
+    dataAllOpe: DataAllOpeItem[];
 }
 
-const ModalSelecOpe = ({ isOpen, setOpeOpen }: Props) => {
-    const { doctorId, branch } = useDoctorIdStore();
-    const [isHospitalId, setIsHospitalId] = useState(branch);
-    const [isOriginalHospitalId, setIsOriginalHospitalId] = useState(branch);
-    const [isHospitalExpand, setIsHospitalExpand] = useState(false);
-    const [userId, setUserId] = useState(doctorId);
-    const [originalUserId, setOriginalUserId] = useState(doctorId);
+const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe }: Props) => {
+    // const { doctorId, branch } = useDoctorIdStore();
+    const [hospitalIndex, setHospitalIndex] = useState(0);
+    const [doctorIndex, setDoctorIndex] = useState(0);
     const [isErrorMessage, setIsErrorMessage] = useState(false);
-    const [isAllOpe, setIsAllOpe] = useState([]);
-    console.log({ setIsOriginalHospitalId, userId, setOriginalUserId });
-    // 모든 지점의 수술 정보를 받아오기
-    // const handleSelectAllOpe = async () => {
-    //     try {
-    //         const response = await fetch(`/api/kiosk-surgery/schedule/`, {
-    //             method: "GET",
-    //         });
 
-    //         if (!response.ok) {
-    //             throw new Error("Network response was not ok");
-    //         }
-
-    //         const result = await response.json();
-    //         return result;
-    //     } catch (error) {
-    //         console.error("Error fetching data:", error);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     if (isOpen) {
-    //         handleSelectAllOpe().then((res) => {
-    //             if (res.success) {
-    //                 setIsAllOpe(res.list);
-    //             } else {
-    //                 console.error(res.success);
-    //             }
-    //         });
-    //     }
-    // }, [isOpen]);
-
-    const groupedByBranch = _.groupBy(isAllOpe, "지점");
-    const finalGroupedData = Object.entries(groupedByBranch).map(
-        ([branch, branchData]) => ({
-            branch,
-            doctors: Object.entries(_.groupBy(branchData, "담당의ID")),
-        })
-    );
-    const list = finalGroupedData
-        ?.filter((f) => f.branch === isOriginalHospitalId)
-        ?.map((d) => d)?.[0];
-    const timelineList = list?.doctors
-        ?.filter((s) => s?.[1]?.[0])
-        ?.filter((n) => n?.[0] === originalUserId)?.[0]?.[1];
-
-    // useEffect(() => {
-    //     if (userId === "") return;
-    //     eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //     handleChangeDoctor().then((res: any) => {
-    //         if (res.success === true) {
-    //             setUserId("");
-    //         } else {
-    //             setIsErrorMessage(true);
-    //             setUserId(originalUserId);
-    //         }
-    //     });
-    // }, [userId]);
+    // const groupedByBranch = _.groupBy(dataAllOpe, "지점");
+    // const finalGroupedData = Object.entries(groupedByBranch).map(
+    //     ([branch, branchData]) => ({
+    //         branch,
+    //         doctors: Object.entries(_.groupBy(branchData, "담당의ID")),
+    //     })
+    // );
 
     return (
         <>
-            <CustomModal isOpen={isOpen} onClose={() => setOpeOpen(false)}>
-                <div className="flex flex-col w-full h-full items-center pt-20">
-                    <p className="text-white text-[54px] font-bold leading-[54px]">
+            <CustomModal isOpen={isOpen} onClose={() => {setOpeOpen(false)}}>
+                <div className="flex flex-col w-full items-center">
+                    <p className="text-white text-[54px] font-bold leading-[54px] mt-20">
                         수술 고객 선택
                     </p>
                     <div className="flex w-full pt-[66px] gap-x-5">
-                        <div className="flex w-full max-w-[580px] min-h-[1200px] h-full bg-[rgba(58,62,89,0.25)] rounded-[15px] pl-5 pr-[25px] pt-[42px]">
-                            <TimeLine timelineList={timelineList} />
+                        <div className="relative w-full max-w-[580px] min-h-[1200px] h-full bg-[rgba(58,62,89,0.25)] rounded-[15px] pl-5 pr-[25px]">
+                            <div className="absolute w-full h-full max-h-[1200px] mt-[45px]">
+                            {Array.from({ length: 12 }, (_, i) => {
+                                const time = i + 9;
+                                const formatTime = i === 0 ? `0${time}:00` : `${time}:00`;
+                                return (
+                                    <div key={time} className={`relative flex w-[530px] ${i==11 ? 'h-[50px]' : 'h-[100px]'}`}>
+                                        <p className="text-white/50 text-[13px] font-bold leading-[13px] w-10">
+                                            {formatTime}
+                                        </p>
+                                        <div className="w-full ml-[10px] mt-[5px] border-t-[1px] border-[white]/20 border-dashed" />
+                                    </div>
+                                );
+                            })}
+                            </div>
+                            {(dataAllOpe?.[hospitalIndex]?.doctor?.[doctorIndex]?.surgeries ?? []).map((item, index) => {
+                                return (
+                                    <div key={index}
+                                        className={`absolute p-[20px] bg-[#ffffff05] text-white rounded-[15px] left-[75px] w-[470px]`} style={{top: 60 + (Number(item.시작시간.substring(0,2))-9)*100 + Number(item.시작시간.substring(2,4))/60*100+'px', height: Number(item.예상시간)*100-20 +'px'}}>
+                                        {item.시작시간} {Number(item.예상시간)*100} 
+                                    </div>)
+                                }
+                            )}
                         </div>
                         <div className="flex flex-col w-full max-w-[300px] gap-y-5">
-                            <div
-                                className={`flex flex-col w-full h-full gap-y-[10px] transition-all duration-300 ease-in-out bg-[rgba(58,62,89,0.25)] rounded-[15px] px-[15px] py-[15px]
-                                    ${
-                                        isHospitalExpand
-                                            ? "max-h-[420px] overflow-auto"
-                                            : "max-h-[100px] overflow-hidden"
-                                    }
-                                    `}
-                            >
-                                {hospitales?.map((h) => (
-                                    <div
-                                        key={h.id}
-                                        className={`flex items-center w-[270px] h-[70px] bg-[rgba(58,62,89,0.25)] transition-all duration-300 ease-in-out rounded-[10px] px-[25px] py-5 cursor-pointer
-                                            ${
-                                                isHospitalId === h.id
-                                                    ? "border-[4px] border-solid border-[#15CF8F]"
-                                                    : !isHospitalExpand &&
-                                                      isHospitalId !== h.id
-                                                    ? "hidden"
-                                                    : ""
-                                            }
-                                        `}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsHospitalExpand(
-                                                (prev) => !prev
-                                            );
-                                            setIsHospitalId(h.id);
-                                        }}
-                                    >
-                                        <p className="text-white text-[22px] font-bold leading-[30px]">
-                                            {h.name}365mc병원
+                            <div className={`flex flex-col w-full gap-y-[10px] transition-all duration-300 bg-[rgba(58,62,89,0.25)] rounded-[15px] px-[15px] py-[15px]`}>
+                                {dataAllOpe.map((item, index) => (
+                                    <div key={index}
+                                        className={`flex items-center w-[270px] h-[70px] transition-all duration-300 rounded-[10px] py-5 cursor-pointer ${index == hospitalIndex ? 'border-solid border-[4px] border-[#15CF8F] bg-[#3A3E59] px-[21px]' : 'bg-[rgba(58,62,89,.25)] px-[25px]'} z-1`}
+                                        onClick={() => {
+                                            setHospitalIndex(index);
+                                        }}>
+                                        <p className="text-white text-[22px] font-bold leading-[30px]">{item?.['branch']}
                                         </p>
                                     </div>
                                 ))}
                             </div>
-                            <div
-                                className={`flex flex-col w-full h-full gap-y-[10px] px-[15px] py-[15px] transition-all duration-300 ease-in-out bg-[rgba(58,62,89,0.25)] rounded-[15px]
-                                ${
-                                    isHospitalExpand
-                                        ? "max-h-[780px]"
-                                        : "max-h-[1080px]"
-                                }
-                                `}
-                            >
-                                {finalGroupedData
-                                    ?.filter((f) => f.branch === isHospitalId)
-                                    ?.map((d) => d)?.[0]
-                                    ?.doctors?.map((s) => {
-                                        return (
-                                            <div
-                                                key={s?.[1]?.[0]?.["담당의ID"]}
-                                                className={`flex relative box-border w-[270px] h-[100px] text-white pt-[10px] px-5 bg-[rgba(58,62,89,0.25)] rounded-[10px]
-                                                ${
-                                                    originalUserId ===
-                                                        s?.[1]?.[0]?.[
-                                                            "담당의ID"
-                                                        ] &&
-                                                    "border-[4px] border-solid border-[#15CF8F] h-[104px]"
-                                                }
-                                                `}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setUserId(
-                                                        s?.[1]?.[0]?.[
-                                                            "담당의ID"
-                                                        ]
-                                                    );
-                                                }}
-                                            >
-                                                <div
-                                                    className={`isPortrait I${s?.[1]?.[0]?.["담당의ID"]} absolute w-[60px] h-[90px]`}
-                                                />
-                                                <div className="flex flex-col pl-[85px] pt-[15px] gap-y-[13px]">
-                                                    <p className="text-[22px] font-bold leading-[22px]">
-                                                        {
-                                                            s?.[1]?.[0]?.[
-                                                                "담당의명"
-                                                            ]
-                                                        }
-                                                        <span className="font-[250]">
-                                                            원장
-                                                        </span>
-                                                    </p>
-                                                    <p className="text-[14px] font-light leading-[14px]">
-                                                        오늘 수술:
-                                                        <span className="text-[16px] font-bold mx-1">
-                                                            {s?.[1]?.length}
-                                                        </span>
-                                                        건
-                                                    </p>
-                                                </div>
+                            <div className={`flex flex-col w-full h-full gap-y-[10px] px-[15px] py-[15px] transition-all duration-300 bg-[rgba(58,62,89,0.25)] rounded-[15px]`}>
+                                {(dataAllOpe[hospitalIndex]?.doctor ?? []).map((item, index) => {
+                                    return (
+                                        <div key={index}
+                                            className={`flex relative box-border w-[270px] h-[100px] text-white  rounded-[10px] transition-all duration-300 cursor-pointer ${doctorIndex == index ? 'border-solid border-[4px] border-[#15CF8F] bg-[#3A3E59] pt-[6px] px-[6px]' : 'bg-[rgba(58,62,89,.25)] pt-[10px] px-[10px]'}`}
+                                            onClick={() => {
+                                                setDoctorIndex(index);
+                                            }}>
+                                            <div className="flex flex-col pl-[85px] pt-[15px] gap-y-[13px]">
+                                                <p className="text-[22px] font-bold leading-[22px]">
+                                                    {item.surgeries[0].담당의명} <span className="font-[250]">원장</span>
+                                                </p>
+                                                <p className="text-[14px] font-light leading-[14px]">
+                                                    오늘 수술: <span className="text-[16px] font-bold mx-1">
+                                                        {item.surgeries.length}
+                                                    </span>건
+                                                </p>
                                             </div>
-                                        );
-                                    })}
+                                        </div>
+                                    )})
+                                }
                             </div>
                         </div>
                     </div>
@@ -198,17 +131,3 @@ const ModalSelecOpe = ({ isOpen, setOpeOpen }: Props) => {
 };
 
 export default ModalSelecOpe;
-
-// 병원 리스트 데이터
-const hospitales: HospitalType[] = [
-    { id: "36", name: "서울" },
-    { id: "34", name: "인천" },
-    { id: "18", name: "대전" },
-    { id: "35", name: "대구" },
-    { id: "21", name: "부산" },
-];
-
-type HospitalType = {
-    id: string;
-    name: string;
-};

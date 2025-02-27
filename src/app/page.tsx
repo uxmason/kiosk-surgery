@@ -50,18 +50,19 @@ export default function Home() {
     };
 
     useEffect(() => {
-        if (!deviceId) return;
-        handleSelectDoctor().then((res) => {
-            if (res.success) {
-                const doctorInfo = res.doctorInfo?.[0];
-                setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
-                setUnpaired(false);
-            } else {
-                console.log('error', res.message);
-                toast.error(res.message);
-                setUnpaired(true);
-            }
-        });
+        if (deviceId) {
+            handleSelectDoctor().then((res) => {
+                if (res.success) {
+                    const doctorInfo = res.doctorInfo?.[0];
+                    setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
+                    setUnpaired(false);
+                } else {
+                    console.log('error', res.message);
+                    toast.error(res.message);
+                    setUnpaired(true);
+                }
+            });
+        }
     }, [deviceId]);
 
     // 가까운 미래의 수술 고객 정보
@@ -89,6 +90,9 @@ export default function Home() {
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setOpeInfo(res.list);
+                setInbody([]);
+                setFepa([]);
+                setLastRegDate('');
             } else {
                 console.log("FAIL");
             }
@@ -153,10 +157,7 @@ export default function Home() {
     const handleSelectImgLst = async (psEntry: string) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
-                {
-                    method: "GET",
-                }
+                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,{method: "GET",}
             );
 
             if (!response.ok) {
@@ -193,6 +194,7 @@ export default function Home() {
             const response = await fetch(`/api/kiosk-surgery/schedule/`, {method: "GET",});
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
+            console.log(result);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -202,7 +204,6 @@ export default function Home() {
         if (isOpeOpen) {
             handleSelectAllOpe().then((res) => {
                 if (res.success) {
-                    console.log('aaaaaa', res)
                     setAllOpe(res.list);
                     setOpeOpenNext(true);
                 } else {
@@ -210,6 +211,8 @@ export default function Home() {
                     toast.error(res.message);
                 }
             });
+        }else {
+            setOpeOpenNext(false);
         }
     }, [isOpeOpen]);
 
@@ -308,7 +311,7 @@ export default function Home() {
                 <Process isProcess={1} />
             </main>
             <Footer />
-            <ModalSelectOpe isOpen={isOpeOpenNext} setOpeOpen={setOpeOpen} />
+            <ModalSelectOpe isOpen={isOpeOpenNext} setOpeOpen={setOpeOpen} dataAllOpe={dataAllOpe} />
             <ModalInbody
                 isInbodyOpen={isInbodyOpen && !isUnpaired}
                 setInbodyOpen={setInbodyOpen}

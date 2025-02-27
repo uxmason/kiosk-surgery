@@ -5,7 +5,8 @@ export async function GET() {
     try {
         const today = getFormattedDate();
         const sql = `SELECT
-                    A.STARTBRAN AS 지점,
+                    A.STARTBRAN AS 지점코드,
+                    H.HOS_NAME AS 지점명,
                     A.PROMTIME AS 시작시간, 
                     A.OPETIME AS 종료시간, 
                     A.PSENTRY AS 고객번호, 
@@ -34,13 +35,37 @@ export async function GET() {
                     ON B.PSENTRY = A.PSENTRY
                 LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_SURGERY K
                     ON K.PSENTRY  = A.PSENTRY 
-                    AND K.OPDATE  = A.PROMDATE 
+                    AND K.OPDATE  = A.PROMDATE
+                LEFT OUTER JOIN tsfmc_data.dbo.HOS000T H
+                    ON H.HOS_CODE = A.STARTBRAN
                 WHERE A.PROMDATE = '${today}' 
                     AND A.PROMSTATE = '001'
                     -- AND A.PROMTIME > '$currentTime'
                 `;
         const results: any[] = await queryDB(sql);
-        return new Response(JSON.stringify({ success: true, list: results }));
+        const nested: {
+            branch: string;
+            doctor: {
+                doctorId: string;
+                surgeries: any [];
+            }[];
+        }[] = [];
+        results.forEach((record) => {
+            const branchName = record.지점명;
+            const doctorId = record.담당의ID;
+            let branchObj = nested.find((b) => b.branch === branchName);
+            if (!branchObj) {
+                branchObj = { branch: branchName, doctor: [] };
+                nested.push(branchObj);
+            }
+            let doctorObj = branchObj.doctor.find((d) => d.doctorId === doctorId);
+            if (!doctorObj) {
+                doctorObj = { doctorId, surgeries: [] };
+                branchObj.doctor.push(doctorObj);
+            }
+            doctorObj.surgeries.push(record);
+        });
+        return new Response(JSON.stringify({ success: true, list: nested }));
     } catch {
         return new Response(
             JSON.stringify({
