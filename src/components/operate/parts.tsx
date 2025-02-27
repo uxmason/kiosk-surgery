@@ -6,56 +6,76 @@ import {
     IncisionListType,
     UpdatedButtonDataType,
 } from "@/type";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 interface Props {
     incisionList: IncisionListType[];
 }
 const Parts = ({ incisionList }: Props) => {
+    const [updatedFrontButtonData, setUpdatedFrontButtonData] = useState<
+        UpdatedButtonDataType[]
+    >([]);
+    const [updatedBackButtonData, setUpdatedBackButtonData] = useState<
+        UpdatedButtonDataType[]
+    >([]);
+
     const mergeData = (
         buttonData: ButtonDataType[],
         incisionList: IncisionListType[]
     ) => {
-        return buttonData?.map((button) => {
-            const match = incisionList?.find(
-                (data) => data.AJAX_ID === String(button.id)
+        return buttonData.map((button) => {
+            const match = incisionList.find(
+                (data) => String(data.AJAX_ID) === String(button.id)
             );
+
             return { ...button, ...match, selected: false };
         });
     };
 
-    const updatedFrontButtonData: UpdatedButtonDataType[] = mergeData(
-        frontButtonData,
-        incisionList
-    );
-    const updatedBackButtonData: UpdatedButtonDataType[] = mergeData(
-        backButtonData,
-        incisionList
-    );
-    const updatedButtonData = [
+    const updatedButtonData: UpdatedButtonDataType[] = [
         ...updatedFrontButtonData,
         ...updatedBackButtonData,
     ];
-    const [selectedButtons, setSelectedButtons] = useState(
-        updatedButtonData?.map((button) => ({
-            id: button?.AJAX_ID,
-            POINT_NAME: button?.POINT_NAME,
-            selected: false,
-        }))
-    );
+
+    const [selectedButtons, setSelectedButtons] =
+        useState<UpdatedButtonDataType[]>(updatedButtonData);
+
     const isSelectedButtons = selectedButtons?.filter(
         (s) => s?.selected === true
     );
-
     const handleButtonClick = (id: string | undefined) => {
-        if (!id) return;
-        setSelectedButtons(
-            selectedButtons?.map((button) =>
-                button?.id === id
-                    ? { ...button, selected: !button.selected }
-                    : button
-            )
-        );
+        setSelectedButtons((prev) => {
+            const exists = prev.find((button) => button?.AJAX_ID === id);
+
+            if (exists) {
+                return prev.map((button) =>
+                    button?.AJAX_ID === id
+                        ? { ...button, selected: !button.selected }
+                        : button
+                );
+            } else {
+                const newButton = updatedButtonData.find(
+                    (button) => button?.AJAX_ID === id
+                );
+                return newButton
+                    ? [...prev, { ...newButton, selected: true }]
+                    : prev;
+            }
+        });
     };
+
+    useEffect(() => {
+        if (!incisionList) return;
+        const updatedFrontButtonData: UpdatedButtonDataType[] = mergeData(
+            frontButtonData,
+            incisionList
+        );
+        setUpdatedFrontButtonData(updatedFrontButtonData);
+        const updatedBackButtonData: UpdatedButtonDataType[] = mergeData(
+            backButtonData,
+            incisionList
+        );
+        setUpdatedBackButtonData(updatedBackButtonData);
+    }, [incisionList]);
 
     return (
         <div className="flex flex-col pt-[50px] w-full px-5">
@@ -68,13 +88,13 @@ const Parts = ({ incisionList }: Props) => {
                 <div className="relative">
                     {updatedFrontButtonData?.map((button) => {
                         const selectedButton = selectedButtons?.find(
-                            (item) => item?.id === button?.AJAX_ID
+                            (item) => item?.id === button?.id
                         );
                         const isSelected = selectedButton?.selected || false;
 
                         return (
                             <button
-                                key={button.id}
+                                key={button?.id}
                                 onClick={() =>
                                     handleButtonClick(button?.AJAX_ID)
                                 }
@@ -83,7 +103,7 @@ const Parts = ({ incisionList }: Props) => {
                                         ? "w-15 h-15 border-[12px] border-[#15CF8F] bg-white"
                                         : "w-10 h-10 border-[8px] border-white"
                                 }`}
-                                style={button.style}
+                                style={button?.style}
                             ></button>
                         );
                     })}
@@ -96,13 +116,13 @@ const Parts = ({ incisionList }: Props) => {
                 <div className="relative">
                     {updatedBackButtonData?.map((button) => {
                         const selectedButton = selectedButtons?.find(
-                            (item) => item?.id === button?.AJAX_ID
+                            (item) => item?.id === button?.id
                         );
                         const isSelected = selectedButton?.selected || false;
 
                         return (
                             <button
-                                key={button.id}
+                                key={button?.id}
                                 onClick={() =>
                                     handleButtonClick(button?.AJAX_ID)
                                 }
@@ -111,7 +131,7 @@ const Parts = ({ incisionList }: Props) => {
                                         ? "w-15 h-15 border-[12px] border-[#15CF8F] bg-white"
                                         : "w-10 h-10 border-[8px] border-white"
                                 }`}
-                                style={button.style}
+                                style={button?.style}
                             ></button>
                         );
                     })}
@@ -121,9 +141,9 @@ const Parts = ({ incisionList }: Props) => {
                     {isSelectedButtons?.map((sb) => {
                         return (
                             <button
-                                key={`${sb.id}_${sb.selected}`}
+                                key={`${sb?.id}_${sb.selected}`}
                                 className="flex items-center justify-between w-full bg-[rgba(58,62,89,0.50)] rounded-[10px] px-[25px] py-5"
-                                onClick={() => handleButtonClick(sb?.id)}
+                                onClick={() => handleButtonClick(sb?.AJAX_ID)}
                             >
                                 <div className="flex flex-col items-start w-full gap-y-3">
                                     <p className="text-white text-[22px] font-bold leading-[22px]">

@@ -1,10 +1,15 @@
 "use client";
+import { getFormattedDate } from "@/function";
+import { usePsentryStore, useStore } from "@/store";
 import { AddNewCunnulaType } from "@/type";
 import { useFormContext } from "react-hook-form";
 interface Props {
     isExistCannula: boolean;
+    setIsOpenAddCannualModal: (v: boolean) => void;
 }
-const BtnAdd = ({ isExistCannula }: Props) => {
+const BtnAdd = ({ isExistCannula, setIsOpenAddCannualModal }: Props) => {
+    const { deviceId } = useStore();
+    const { psEntry } = usePsentryStore();
     const { watch } = useFormContext<AddNewCunnulaType>();
     const model = watch()?.model;
     const hole = watch()?.hole;
@@ -19,6 +24,38 @@ const BtnAdd = ({ isExistCannula }: Props) => {
         typeof shape === "number" &&
         typeof length === "number" &&
         typeof thick === "number";
+
+    // 새로운 캐뉼라 등록
+    const handleAddNewCannula = async () => {
+        const url = `/api/kiosk-surgery/cannula/add/`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    deviceId: deviceId,
+                    modelNameID: model,
+                    holeCountID: hole,
+                    tipID: tip,
+                    shapeID: shape,
+                    lengthID: length,
+                    thicknessID: thick,
+                    psEntry: psEntry,
+                    opDate: getFormattedDate(),
+                }),
+            });
+            if (response.ok) {
+                const result = await response.json();
+                return result;
+            } else {
+                console.error("API 호출 실패", response.status);
+            }
+        } catch (error) {
+            console.error("에러 발생", error);
+        }
+    };
 
     return (
         <div className="flex flex-col items-center justify-center w-full">
@@ -55,6 +92,14 @@ const BtnAdd = ({ isExistCannula }: Props) => {
                     e.stopPropagation();
                     if (isExistCannula) {
                         return;
+                    } else {
+                        handleAddNewCannula().then((res) => {
+                            if (res.success) {
+                                setIsOpenAddCannualModal(false);
+                            } else {
+                                console.log("FAIL_ADD_NEW_CANNULA");
+                            }
+                        });
                     }
                 }}
             >

@@ -75,6 +75,7 @@ const MoodalAddNewCannula = ({
         typeof length === "number" &&
         typeof thick === "number";
 
+    // 캐뉼라 존재 여부 확인
     const handleExistCannula = async () => {
         const url = `/api/kiosk-surgery/cannula/exist/`;
         try {
@@ -144,7 +145,10 @@ const MoodalAddNewCannula = ({
                         <Lengths lengths={lengths} />
                         <Thickness thickness={thickness} />
                     </div>
-                    <BtnAdd isExistCannula={isExistCannula} />
+                    <BtnAdd
+                        isExistCannula={isExistCannula}
+                        setIsOpenAddCannualModal={setIsOpenAddCannualModal}
+                    />
                 </div>
             </CustomModal>
         </FormProvider>
