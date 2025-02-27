@@ -1,19 +1,19 @@
 interface Props {
-    isOpeInfo: never[];
+    dataOpeInfo: never[];
     isUnpaired: boolean;
     setOpeOpen: (v: boolean) => void;
 }
-const Info = ({ isOpeInfo, setOpeOpen, isUnpaired }: Props) => {
-    const info = isOpeInfo?.[0];
+const Info = ({ dataOpeInfo, setOpeOpen, isUnpaired }: Props) => {
+    const info = dataOpeInfo?.[0];
     return (
         <button
-            className="relative flex flex-col text-start w-[476px] h-[285px] bg-[#3A3E59] rounded-[15px] pt-[30px] pl-[30px] pb-[24px]"
+            className="relative flex flex-col text-start w-[476px] h-[285px] bg-[#3A3E59] rounded-[15px] p-[30px]"
             onClick={() => setOpeOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px] pb-[31px]">
                 담당의
             </p>
-            {!isUnpaired ? (
+            {info && !isUnpaired ? (
                 <>
                     <div
                         className={`isPortrait I${info?.["담당의ID"]} absolute w-[150px] h-[220px] bg-no-repeat bottom-0 right-10`}
@@ -53,7 +53,7 @@ const Info = ({ isOpeInfo, setOpeOpen, isUnpaired }: Props) => {
                     <div className="bg-[url('/assets/setting.svg')] w-[22px] h-[22px] mt-[34px] bg-no-repeat" />
                 </>
             ) : (
-                <div className="flex justify-center mt-[34px] ml-[158px] items-center w-[100px] h-[50px] bg-[#15CF8F] rounded-[10px]">
+                <div style={{filter: 'drop-shadow(0px 4px 40px rgba(21, 207, 143, .75))'}}className="absolute flex justify-center top-[120px] left-[188px] items-center w-[100px] h-[50px] bg-[#15CF8F] rounded-[10px]">
                     <p className="text-white text-[16px] font-bold leading-[16px]">
                         선택하기
                     </p>
