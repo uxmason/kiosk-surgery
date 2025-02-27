@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
         const url = new URL(req.url);
         const { deviceId } = Object.fromEntries(url.searchParams.entries());
         const sql = `SELECT * FROM tsfmc_mailsystem.dbo.KIOSK_DEVICES 
-                    WHERE DEVICE_HASH = '${deviceId}'
+                    WHERE DEVICE_HASH = '${deviceId}' AND AVAILABLE = '1'
                     `;
         const deviceResult = await queryDB(sql);
         if (deviceResult?.length > 0) {
@@ -27,8 +27,8 @@ export async function GET(req: NextRequest) {
                 });
             } else {
                 return NextResponse.json({
-                    success: false,
-                    message: "키오스크 등록을 기다려 주세요.",
+                    success: true,
+                    doctorInfo: null,
                 });
             }
         } else {

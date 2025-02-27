@@ -43,7 +43,7 @@ const FirstImgs = ({
     }, [imgs]);
     return (
         <>
-            <div className="flex w-full gap-x-5 pt-5 px-5">
+            <div className="flex w-full h-fit gap-x-5 pt-5 px-5">
                 {isFirstOpen ? (
                     <>
                         <div className="flex flex-col w-[885px] gap-y-5">
