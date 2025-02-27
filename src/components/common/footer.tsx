@@ -1,6 +1,13 @@
-const Footer = () => {
+interface Props {
+    isOther?: boolean;
+}
+const Footer = ({ isOther }: Props) => {
     return (
-        <div className="absolute mt-[1820px] w-full">
+        <div
+            className={`absolute w-full
+        ${isOther ? "mb-[52px] bottom-0" : "mt-[1820px]"}
+        `}
+        >
             <p className="text-white whitespace-pre-line text-center font-normal leading-6">
                 문의 및 안내:{" "}
                 <span className="underline underline-offset-2">HOBIT</span> Lab.

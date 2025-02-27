@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
             }
         } else {
             const insertSql = `INSERT INTO tsfmc_mailsystem.dbo.KIOSK_DEVICES (DEVICE_HASH, createdAt)
-                                VALUES (${deviceId}, SYSDATETIME())
+                                VALUES ('${deviceId}', SYSDATETIME())
                             `;
             await queryDB(insertSql);
 

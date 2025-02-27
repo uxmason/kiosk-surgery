@@ -34,7 +34,7 @@ const CustomBtn = ({
     };
 
     return (
-        <div className="flex w-full">
+        <div className="flex w-full px-5">
             {isShow && (
                 <button
                     className="flex items-center justify-between w-full max-w-[340px] rounded-[15px] bg-[rgba(255,255,255,0.25)] px-[35px] mr-5"

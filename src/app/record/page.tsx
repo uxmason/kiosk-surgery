@@ -9,25 +9,64 @@ import {
     UpcomingTime,
 } from "@/components/common";
 import { FirstImgs, SecondImgs } from "@/components/record";
-import { useState } from "react";
+import { PhotsArrType } from "@/type";
+import { useEffect, useState } from "react";
 
 export default function Info() {
+    const psEntry = "210040378";
+    // const { psEntry } = usePsentryStore();
     const [isFirstOpen, setIsFirstOpen] = useState(true);
     const [isSecondOpen, setIsSecondOpen] = useState(false);
     const [isOpenOpeModal, setIsOpenOpeModal] = useState(false);
+    const [imgs, setImgs] = useState<PhotsArrType[]>([]);
+
+    // 고객 사진 정보 불러오기
+    const handleSelectImgLst = async (psEntry: string) => {
+        try {
+            const response = await fetch(
+                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
+                {
+                    method: "GET",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // 고객 이미지 담기
+    useEffect(() => {
+        // if (!psEntry) return;
+        handleSelectImgLst(psEntry).then((res) => {
+            if (res.success) {
+                setImgs(res.list);
+            } else {
+                console.log("FAIL");
+            }
+        });
+    }, [psEntry]);
 
     return (
         <>
-            <main className="pt-5 px-5  w-full">
+            <main className="relative w-full h-full">
                 <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
                 <FirstImgs
                     isFirstOpen={isFirstOpen}
                     isSecondOpen={isSecondOpen}
                     setIsFirstOpen={setIsFirstOpen}
+                    imgs={imgs}
                 />
                 <SecondImgs
                     isSecondOpen={isSecondOpen}
                     setIsSecondOpen={setIsSecondOpen}
+                    imgs={imgs}
                 />
                 <div className="flex w-full justify-center pt-5">
                     <CustomBtn
@@ -39,13 +78,14 @@ export default function Info() {
                     />
                 </div>
                 <UpcomingTime
+                    isOther
                     text="수술 경과 시간"
                     time="00:03:23"
                     color="#ED6B5B"
                 />
-                <Process isProcess={2} />
+                <Process isProcess={2} isOther />
+                <Footer isOther />
             </main>
-            <Footer />
             <ModalOpeInfo
                 isOpenOpeModal={isOpenOpeModal}
                 setIsOpenOpeModal={setIsOpenOpeModal}

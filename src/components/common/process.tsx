@@ -1,18 +1,23 @@
 interface Props {
     isProcess: number;
+    isOther?: boolean;
 }
 
 const baseClass =
     "w-full max-w-[228px] h-[285px] rounded-[15px] py-[30px] px-[30px]";
 
-const Process = ({ isProcess }: Props) => {
+const Process = ({ isProcess, isOther }: Props) => {
     const getBgClass = (step: number) =>
         isProcess === step
             ? "bg-[rgba(58,62,89,0.75)]"
             : "bg-[rgba(58,62,89,0.15)]";
 
     return (
-        <div className="absolute mt-[1510px] flex w-full justify-center gap-x-5">
+        <div
+            className={`absolute flex w-full justify-center gap-x-5
+        ${isOther ? "mt-[0px] pb-[108px]" : "mt-[1510px]"}
+        `}
+        >
             {[1, 2, 3].map((step) => (
                 <div key={step} className={`${getBgClass(step)} ${baseClass}`}>
                     <p className="text-white/50 text-[18px] font-bold leading-[24px]">

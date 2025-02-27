@@ -4,7 +4,7 @@ interface Props {
 const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
     const sex = "F";
     return (
-        <div className="flex w-full gap-x-5">
+        <div className="flex w-full gap-x-5 px-5 pt-5">
             <div className="flex w-[885px] h-[135px] pt-[30px] pb-[41px] px-10 rounded-[15px] bg-[rgba(58,62,89,0.15)]">
                 <div className="flex flex-col gap-y-4 w-[190px]">
                     <p className="text-white/50 text-[18px] font-bold leading-6">
