@@ -75,7 +75,7 @@ const Cannulas = ({
     };
 
     const handleInDirectDeleteCannula = async (data: DataType) => {
-        const url = `/api/kiosk-surgery/cannula/inDirectDelete/`;
+        const url = `/api/kiosk-surgery/cannula/in-direct-delete/`;
         try {
             const response = await fetch(url, {
                 method: "POST",

@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import queryDB from "../../../../../../lib/db";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const { deviceId, cannulaID, psEntry, opDate } = await req.json();
 
@@ -15,26 +15,29 @@ export async function POST(req: Request) {
             });
         }
 
-        // 캐뉼라 정보 확인
-        const cannulaSql = `SELECT TOP 1 * FROM CNL_CANNULA WHERE _id = ${cannulaID}`;
-        const cannulaResult = await queryDB(cannulaSql);
-        if (cannulaResult?.length === 0) {
+        // 🔹 CANNULA 존재 여부 확인
+        const checkResult = await queryDB(
+            `SELECT TOP 1 * FROM CNL_CANNULA 
+            WHERE _id = ${cannulaID}`
+        );
+        if (checkResult?.length === 0) {
             return NextResponse.json({
                 success: false,
                 message: "이 _id로 등록된 캐뉼라 정보는 없습니다.",
             });
         }
 
-        // 수술 정보 등록
-        const insertSql = `INSERT INTO CNL_SURGERY (CANNULA_ID, PSENTRY, OPDATE, createdAt) 
-                        VALUES (${cannulaID}, ${psEntry}, ${opDate}, SYSDATETIME())
-                        `;
-        await queryDB(insertSql);
+        await queryDB(
+            `DELETE FROM CNL_SURGERY 
+            WHERE CANNULA_ID = ${cannulaID} 
+            AND PSENTRY = ${psEntry} 
+            AND OPDATE = ${opDate}`
+        );
 
         return NextResponse.json({ success: true });
     } catch {
         return NextResponse.json(
-            { success: false, message: "사용할 수 없는 디바이스 정보입니다." },
+            { success: false, message: "서버 오류 발생" },
             { status: 500 }
         );
     }
