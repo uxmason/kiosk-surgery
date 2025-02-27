@@ -53,11 +53,12 @@ export default function Home() {
     useEffect(() => {
         if (!deviceId) return;
         handleSelectDoctor().then((res) => {
+            const doctorInfo = res.doctorInfo?.[0];
             if (res.success) {
-                const doctorInfo = res.doctorInfo?.[0];
                 setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
                 setUnpaired(false);
             } else {
+                console.log(doctorInfo?.message)
                 setUnpaired(true);
             }
         });
