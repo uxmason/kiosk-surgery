@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
         const url = new URL(req.url);
         const { deviceId } = Object.fromEntries(url.searchParams.entries());
         const sql = `SELECT * FROM tsfmc_mailsystem.dbo.KIOSK_DEVICES 
-                    WHERE DEVICE_HASH = '${deviceId}' AND AVAILABLE = '1'
+                    WHERE DEVICE_HASH = '${deviceId}' AND AVAILABLE = 1
                     `;
         const deviceResult = await queryDB(sql);
         if (deviceResult?.length > 0) {

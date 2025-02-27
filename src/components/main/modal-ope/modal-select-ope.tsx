@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CustomModal } from "../../common";
 import { ModalError, TimeLine } from ".";
 import _ from "lodash";
@@ -8,9 +8,10 @@ import { useDoctorIdStore } from "@/store";
 interface Props {
     isOpen: boolean;
     setOpeOpen: (v: boolean) => void;
+    dataAllOpe: never[];
 }
 
-const ModalSelecOpe = ({ isOpen, setOpeOpen }: Props) => {
+const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe }: Props) => {
     const { doctorId, branch } = useDoctorIdStore();
     const [isHospitalId, setIsHospitalId] = useState(branch);
     const [isOriginalHospitalId, setIsOriginalHospitalId] = useState(branch);
@@ -18,8 +19,8 @@ const ModalSelecOpe = ({ isOpen, setOpeOpen }: Props) => {
     const [userId, setUserId] = useState(doctorId);
     const [originalUserId, setOriginalUserId] = useState(doctorId);
     const [isErrorMessage, setIsErrorMessage] = useState(false);
-    const [isAllOpe, setIsAllOpe] = useState([]);
-    console.log({ setIsOriginalHospitalId, userId, setOriginalUserId });
+    // const [isAllOpe, setIsAllOpe] = useState([]);
+    // console.log('bbbb', { setIsOriginalHospitalId, userId, setOriginalUserId });
     // 모든 지점의 수술 정보를 받아오기
     // const handleSelectAllOpe = async () => {
     //     try {
@@ -50,7 +51,7 @@ const ModalSelecOpe = ({ isOpen, setOpeOpen }: Props) => {
     //     }
     // }, [isOpen]);
 
-    const groupedByBranch = _.groupBy(isAllOpe, "지점");
+    const groupedByBranch = _.groupBy(dataAllOpe, "지점");
     const finalGroupedData = Object.entries(groupedByBranch).map(
         ([branch, branchData]) => ({
             branch,
