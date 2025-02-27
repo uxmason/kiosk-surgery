@@ -55,7 +55,7 @@ export default function Info() {
 
     return (
         <>
-            <main className="relative w-full h-full">
+            <main className="absolute w-full h-full">
                 <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
                 <FirstImgs
                     isFirstOpen={isFirstOpen}
