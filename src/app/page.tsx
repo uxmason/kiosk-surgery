@@ -8,19 +8,25 @@ import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorIdStore, usePsentryStore, useStore } from "@/store";
+import toast from "react-hot-toast";
 
 export default function Home() {
     const [isUnpaired, setUnpaired] = useState(false);
     const [isOpeOpen, setOpeOpen] = useState(false);
+    const [isOpeOpenNext, setOpeOpenNext] = useState(false);
     const [isInbodyOpen, setInbodyOpen] = useState(false);
     const [isModalImgsOpen, setModalImgsOpen] = useState(false);
     const [isModalAIOpen, setModalAIOpen] = useState(false);
     const [imgs, setImgs] = useState([]);
-    const [isOpeInfo, setOpeInfo] = useState([]);
+    const [dataOpeInfo, setOpeInfo] = useState([]);
+    const [dataInbody, setInbody] = useState([]);
+    const [dataFepa, setFepa] = useState([]);
+    const [dataAllOpe, setAllOpe] = useState([]);
     const { deviceId, setDeviceId } = useStore();
     const { psEntry, setPsEntry } = usePsentryStore();
     const { doctorId, setDoctorId } = useDoctorIdStore();
     const [fingerprint, setFingerprint] = useState("");
+    const [lastRegDate, setLastRegDate] = useState("");
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -51,6 +57,8 @@ export default function Home() {
                 setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
                 setUnpaired(false);
             } else {
+                console.log('error', res.message);
+                toast.error(res.message);
                 setUnpaired(true);
             }
         });
@@ -175,10 +183,35 @@ export default function Home() {
     }, [psEntry]);
 
     useEffect(() => {
-        if (!isOpeInfo) return;
-        const psEntry = isOpeInfo?.[0]?.["고객번호"];
+        if (!dataOpeInfo) return;
+        const psEntry = dataOpeInfo?.[0]?.["고객번호"];
         setPsEntry(psEntry);
-    }, [isOpeInfo]);
+    }, [dataOpeInfo]);
+
+    const handleSelectAllOpe = async () => {
+        try {
+            const response = await fetch(`/api/kiosk-surgery/schedule/`, {method: "GET",});
+            if (!response.ok) throw new Error("Network response was not ok");
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+    useEffect(() => {
+        if (isOpeOpen) {
+            handleSelectAllOpe().then((res) => {
+                if (res.success) {
+                    console.log('aaaaaa', res)
+                    setAllOpe(res.list);
+                    setOpeOpenNext(true);
+                } else {
+                    console.log('error', res.message);
+                    toast.error(res.message);
+                }
+            });
+        }
+    }, [isOpeOpen]);
 
     // 키오스크 고유 번호
     useEffect(() => {
@@ -227,32 +260,35 @@ export default function Home() {
                         <Client
                             isUnpaired={isUnpaired}
                             setOpeOpen={setOpeOpen}
-                            isOpeInfo={isOpeInfo}
+                            dataOpeInfo={dataOpeInfo}
                         />
                         <Info
                             isUnpaired={isUnpaired}
                             setOpeOpen={setOpeOpen}
-                            isOpeInfo={isOpeInfo}
+                            dataOpeInfo={dataOpeInfo}
                         />
                     </div>
                     <div className="flex w-full gap-x-5 py-5">
                         <Inbody
                             isUnpaired={isUnpaired}
                             setInbodyOpen={setInbodyOpen}
+                            dataInbody={dataInbody}
                         />
                         <Photo
                             isUnpaired={isUnpaired}
                             setModalImgsOpen={setModalImgsOpen}
                             imgs={imgs}
+                            lastRegDate={lastRegDate}
                         />
                         <Ai
                             isUnpaired={isUnpaired}
                             setModalAIOpen={setModalAIOpen}
+                            dataFepa={dataFepa}
                         />
                     </div>
                     <CustomBtn
                         text={
-                            isUnpaired
+                            isUnpaired && !dataOpeInfo
                                 ? "수술 대상이 아직 선택되지 않았습니다."
                                 : "시작하기"
                         }
@@ -272,7 +308,7 @@ export default function Home() {
                 <Process isProcess={1} />
             </main>
             <Footer />
-            <ModalSelectOpe isOpen={isOpeOpen} setOpeOpen={setOpeOpen} />
+            <ModalSelectOpe isOpen={isOpeOpenNext} setOpeOpen={setOpeOpen} />
             <ModalInbody
                 isInbodyOpen={isInbodyOpen && !isUnpaired}
                 setInbodyOpen={setInbodyOpen}

@@ -5,13 +5,13 @@ import { maskIdNumber } from "@/function";
 interface Props {
     isUnpaired: boolean;
     setOpeOpen: (v: boolean) => void;
-    isOpeInfo: never[];
+    dataOpeInfo: never[];
 }
-const Client = ({ isUnpaired, setOpeOpen, isOpeInfo }: Props) => {
-    const info = isOpeInfo?.[0];
+const Client = ({ isUnpaired, setOpeOpen, dataOpeInfo }: Props) => {
+    const info = dataOpeInfo?.[0];
     return (
         <button
-            className="flex flex-col text-start bg-[rgba(58,62,89,0.50)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
+            className="flex flex-col text-start bg-[rgba(58,62,89,0.50)] p-[30px] rounded-[15px] w-[228px] h-[285px]"
             onClick={() => setOpeOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
