@@ -2,8 +2,9 @@ interface Props {
     setModalImgsOpen: (v: boolean) => void;
     imgs: never[];
     isUnpaired: boolean;
+    lastRegDate : string;
 }
-const Photo = ({ setModalImgsOpen, imgs, isUnpaired }: Props) => {
+const Photo = ({ setModalImgsOpen, imgs, isUnpaired, lastRegDate }: Props) => {
     return (
         <button
             className="flex flex-col  text-start bg-[#169B7C] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
@@ -12,7 +13,7 @@ const Photo = ({ setModalImgsOpen, imgs, isUnpaired }: Props) => {
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 사진
             </p>
-            {!isUnpaired ? (
+            {imgs.length > 0 && lastRegDate && !isUnpaired ? (
                 <>
                     <div className="w-full h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
                         {Array.from({ length: 15 }, (_, i) => {
