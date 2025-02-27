@@ -42,7 +42,6 @@ export async function GET(req: Request) {
                     AND A.PROMDATE = '${today}' 
                     AND A.PROMSTATE = '001'
                     AND A.PROMTIME > '${time}'
-                    -- AND A.PROMTIME > '$currentTime'
                 `;
         const results: any[] = await queryDB(sql);
         return new Response(JSON.stringify({ success: true, list: results }));

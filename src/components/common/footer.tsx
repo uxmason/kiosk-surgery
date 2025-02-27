@@ -4,8 +4,8 @@ interface Props {
 const Footer = ({ isOther }: Props) => {
     return (
         <div
-            className={`absolute w-full
-        ${isOther ? "bottom-0" : "mt-[1820px]"}
+            className={`absolute flex justify-center w-full
+        ${isOther ? "mt-[400px] pb-[52px]" : "mt-[1820px]"}
         `}
         >
             <p className="text-white whitespace-pre-line text-center font-normal leading-6 text-[14px]">

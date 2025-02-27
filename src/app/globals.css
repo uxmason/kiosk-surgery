@@ -29,7 +29,6 @@
     }
 
     body {
-        block-size: 100%;
         block-size: 100dvb;
         font-family: inherit;
         -webkit-font-smoothing: antialiased;
@@ -57,8 +56,7 @@
 
 .isHidedScrollBar {
     min-width: 1080px;
-    max-height: 1920px;
-    height: "100%";
+    height: 1920px;
     scroll-behavior: smooth;
     -ms-overflow-style: none;
     scrollbar-width: none;

@@ -9,16 +9,32 @@ import {
     UpcomingTime,
 } from "@/components/common";
 import { FirstImgs, SecondImgs } from "@/components/record";
+import { handleSelectDoctor } from "@/function";
+import { useStore } from "@/store";
 import { PhotsArrType } from "@/type";
 import { useEffect, useState } from "react";
 
 export default function Info() {
+    const { deviceId } = useStore();
     const psEntry = "210040378";
     // const { psEntry } = usePsentryStore();
     const [isFirstOpen, setIsFirstOpen] = useState(true);
     const [isSecondOpen, setIsSecondOpen] = useState(false);
     const [isOpenOpeModal, setIsOpenOpeModal] = useState(false);
     const [imgs, setImgs] = useState<PhotsArrType[]>([]);
+    const [unpaired, setUnpaired] = useState(false);
+
+    // 키오스크에 등록된 의사 찾기
+    useEffect(() => {
+        if (!deviceId) return;
+        handleSelectDoctor(deviceId).then((res) => {
+            if (res.success) {
+                setUnpaired(false);
+            } else {
+                setUnpaired(true);
+            }
+        });
+    }, [deviceId]);
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
@@ -44,6 +60,7 @@ export default function Info() {
     // 고객 이미지 담기
     useEffect(() => {
         // if (!psEntry) return;
+        if (unpaired) return;
         handleSelectImgLst(psEntry).then((res) => {
             if (res.success) {
                 setImgs(res.list);
@@ -51,11 +68,11 @@ export default function Info() {
                 console.log("FAIL");
             }
         });
-    }, [psEntry]);
+    }, [unpaired, psEntry]);
 
     return (
         <>
-            <main className="absolute w-full h-full">
+            <main className="relative w-full h-full min-h-[1920px]">
                 <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
                 <FirstImgs
                     isFirstOpen={isFirstOpen}
