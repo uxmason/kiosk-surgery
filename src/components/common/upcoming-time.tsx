@@ -5,7 +5,7 @@ interface Props {
     isOther?: boolean;
 }
 
-const UpcomingTime = ({ text, time, color, isOther }: Props) => {
+const UpcomingTime = ({ text, time, color }: Props) => {
     const timeStyle = {
         color: color,
     };

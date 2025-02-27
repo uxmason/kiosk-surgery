@@ -1,7 +1,7 @@
 interface Props {
     isOther?: boolean;
 }
-const Footer = ({ isOther }: Props) => {
+const Footer = ({}: Props) => {
     return (
         <div className="absolute mt-[1820px] w-full">
             <p className="text-white whitespace-pre-line text-center font-normal leading-6 text-[14px]">

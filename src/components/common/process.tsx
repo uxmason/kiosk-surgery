@@ -6,7 +6,7 @@ interface Props {
 const baseClass =
     "w-full max-w-[228px] h-[285px] rounded-[15px] py-[30px] px-[30px]";
 
-const Process = ({ isProcess, isOther }: Props) => {
+const Process = ({ isProcess }: Props) => {
     const getBgClass = (step: number) =>
         isProcess === step
             ? "bg-[rgba(58,62,89,0.75)]"
