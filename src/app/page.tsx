@@ -90,6 +90,9 @@ export default function Home() {
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setOpeInfo(res.list);
+                setInbody([]);
+                setFepa([]);
+                setLastRegDate('');
             } else {
                 console.log("FAIL");
             }
@@ -154,10 +157,7 @@ export default function Home() {
     const handleSelectImgLst = async (psEntry: string) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
-                {
-                    method: "GET",
-                }
+                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,{method: "GET",}
             );
 
             if (!response.ok) {
@@ -194,6 +194,7 @@ export default function Home() {
             const response = await fetch(`/api/kiosk-surgery/schedule/`, {method: "GET",});
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
+            console.log(result);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -201,7 +202,6 @@ export default function Home() {
     };
     useEffect(() => {
         if (isOpeOpen) {
-            console.log('asdfasdf')
             handleSelectAllOpe().then((res) => {
                 if (res.success) {
                     setAllOpe(res.list);
@@ -211,6 +211,8 @@ export default function Home() {
                     toast.error(res.message);
                 }
             });
+        }else {
+            setOpeOpenNext(false);
         }
     }, [isOpeOpen]);
 
