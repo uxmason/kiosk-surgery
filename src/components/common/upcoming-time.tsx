@@ -10,7 +10,7 @@ const UpcomingTime = ({ text, time, color }: Props) => {
     };
 
     return (
-        <div className="absoulte mt-[1370px] flex w-full mx-auto justify-center pt-10 pb-[108px]">
+        <div className="absoulte mt-[1370px] flex w-full mx-auto justify-center">
             <p className="text-white text-center text-[20px] font-normal leading-[32px]">
                 {text}:
                 <span

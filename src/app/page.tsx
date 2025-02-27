@@ -189,7 +189,6 @@ export default function Home() {
 
     // 키오스크 고유 번호
     useEffect(() => {
-      console.log('a');
         const getFingerprint = async () => {
             const fp = await FingerprintJS.load();
             const result = await fp.get();
@@ -205,9 +204,9 @@ export default function Home() {
 
     return (
         <>
-          <main className="w-[724px] h=[1980px] relative" style={{margin: '0 auto'}}>
+          <main className="w-[724px] h=[1980px] absolute" style={{left: 'calc(50% - 362px)'}}>
             <div className="absolute w-full gap-y-[15px]">
-              <p className={`absolute mt-[120px] text-[26px] text-center font-bold leading-9 
+              <p className={`absolute w-full mt-[120px] text-[26px] text-center font-bold leading-9 
                   ${!isUnpaired ? "text-[#15CF8F]" : "text-[#1d1f2d]"}
                   `} >부산365mc병원</p>
               <p className="absolute mt-[200px] w-full text-white text-[70px] font-bold leading-normal text-center">지방 하나만! 365mc</p>
@@ -249,7 +248,7 @@ export default function Home() {
                             ? "수술 대상이 아직 선택되지 않았습니다."
                             : "시작하기"
                     }
-                    bg={isUnpaired ? "rgba(58,62,89,0.50)" : '"#15CF8F"'}
+                    bg={isUnpaired ? "rgba(58,62,89,0.50)" : '#15CF8F'}
                     isShow={false}
                     path="/record"
                     isUnpaired={isUnpaired}
