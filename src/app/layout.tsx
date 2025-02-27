@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "react-hot-toast"
 import "./globals.css";
 export const metadata: Metadata = {
     title: "365MC 키오스크",
@@ -12,7 +13,12 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="kr" className="isHidedScrollBar">
-            <body>{children}</body>
+            <body>
+                {children}
+                <Toaster
+                position="bottom-right"
+                />
+            </body>
         </html>
     );
 }

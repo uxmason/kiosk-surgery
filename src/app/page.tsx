@@ -8,6 +8,7 @@ import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorIdStore, usePsentryStore, useStore } from "@/store";
+import toast from "react-hot-toast";
 
 export default function Home() {
     const [isUnpaired, setUnpaired] = useState(false);
@@ -46,12 +47,13 @@ export default function Home() {
     useEffect(() => {
         if (!deviceId) return;
         handleSelectDoctor().then((res) => {
-            const doctorInfo = res.doctorInfo?.[0];
             if (res.success) {
+                const doctorInfo = res.doctorInfo?.[0];
                 setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
                 setUnpaired(false);
             } else {
-                console.log(doctorInfo?.message)
+                console.log('error', res.message);
+                toast.error(res.message);
                 setUnpaired(true);
             }
         });
