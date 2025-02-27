@@ -2,6 +2,7 @@ interface Props {
     text: string;
     time: string;
     color: string;
+    isOther?: boolean;
 }
 
 const UpcomingTime = ({ text, time, color }: Props) => {

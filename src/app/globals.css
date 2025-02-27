@@ -57,7 +57,8 @@
 
 .isHidedScrollBar {
     min-width: 1080px;
-    min-height: 1920px;
+    max-height: 1920px;
+    height: "100%";
     scroll-behavior: smooth;
     -ms-overflow-style: none;
     scrollbar-width: none;

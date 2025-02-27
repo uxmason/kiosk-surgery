@@ -85,3 +85,7 @@ export type UpdatedButtonDataType = {
     id: number;
     selected?: boolean;
 };
+export type PhotsArrType = {
+    regdate: string;
+    image: { idx: number; filename: string }[];
+};

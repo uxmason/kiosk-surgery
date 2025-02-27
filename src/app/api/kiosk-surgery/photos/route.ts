@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { PhotsArrType } from "@/type";
 import queryDB from "../../../../../lib/db";
 const confidence1 = 0.7;
 
@@ -10,17 +11,13 @@ export async function GET(req: Request) {
             FROM IMAGE_SECTION_INFO 
             WHERE confidence1 >= ${confidence1}
                 AND surgeryID = ${psEntry} 
-            ORDER BY op_data DESC, top1`;
+            ORDER BY op_data ASC, top1`;
 
         const resultsArrPhoto: any[] = await queryDB(sqlArrPhoto);
-
-        const finalPhoto: {
-            regdate: string;
-            image: { idx: any; filename: any; regdate: string }[];
-        }[] = [];
+        const finalPhoto: PhotsArrType[] = [];
 
         resultsArrPhoto.forEach((photo) => {
-            const opData = photo?.["op_data"];
+            const opData = String(photo?.["op_data"]);
             const selectedRegDate = `${opData.slice(0, 4)}-${opData.slice(
                 4,
                 6
@@ -38,7 +35,6 @@ export async function GET(req: Request) {
             existingEntry.image.push({
                 idx: photo["index"],
                 filename: photo["PATH"],
-                regdate: selectedRegDate,
             });
         });
 

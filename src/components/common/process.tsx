@@ -1,5 +1,6 @@
 interface Props {
     isProcess: number;
+    isOther?: boolean;
 }
 
 const baseClass =

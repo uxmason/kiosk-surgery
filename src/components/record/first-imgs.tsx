@@ -4,25 +4,46 @@ import { useEffect, useState } from "react";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 import { Thumbs } from "swiper/modules";
 import "swiper/css";
+import { PhotsArrType } from "@/type";
+import { imgOriginalUrl, imgThumbUrl } from "@/variables";
 
 interface Props {
     isFirstOpen: boolean;
     isSecondOpen: boolean;
     setIsFirstOpen: (v: boolean) => void;
+    imgs: PhotsArrType[];
 }
-const serverDates = ["2025-01-21", "2025-01-22", "2025-01-23"];
-const FirstImgs = ({ isFirstOpen, isSecondOpen, setIsFirstOpen }: Props) => {
+const FirstImgs = ({
+    isFirstOpen,
+    isSecondOpen,
+    setIsFirstOpen,
+    imgs,
+}: Props) => {
+    const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>(
+        null
+    );
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | null>(null);
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
+    const dates = imgs?.map((v) => v?.regdate);
+    const selectedImgs = imgs?.[currentDateIndex]?.image;
 
     useEffect(() => {
-        setCurrentDateIndex(serverDates?.length - 1);
-    }, []);
+        if (swiperInstance && currentDateIndex !== undefined) {
+            if (currentDateIndex === 1 || currentDateIndex === 2) {
+                swiperInstance.slideTo(0);
+            } else {
+                swiperInstance.slideTo(currentDateIndex);
+            }
+        }
+    }, [currentDateIndex, swiperInstance]);
 
+    useEffect(() => {
+        setCurrentDateIndex(imgs?.length - 1);
+    }, [imgs]);
     return (
         <>
-            <div className="flex w-full gap-x-5 pt-5">
+            <div className="flex w-full gap-x-5 pt-5 px-5">
                 {isFirstOpen ? (
                     <>
                         <div className="flex flex-col w-[885px] gap-y-5">
@@ -41,17 +62,19 @@ const FirstImgs = ({ isFirstOpen, isSecondOpen, setIsFirstOpen }: Props) => {
                                     setCurrentImgIndex(activeIndex)
                                 }
                             >
-                                {Array.from({ length: 7 }, (_, i) => {
+                                {selectedImgs?.map((img, imgIdx) => {
                                     return (
                                         <SwiperSlide
-                                            key={i}
+                                            key={imgIdx}
                                             className="flex flex-col h-[95px] items-center justify-center"
                                         >
                                             <img
-                                                src="/images/client.png"
+                                                src={`${imgOriginalUrl}/${img?.filename?.slice(
+                                                    4
+                                                )}`}
                                                 width={885}
                                                 height={565}
-                                                className="object-cover"
+                                                className="object-cover w-[885px] h-[565px] rounded-[15px] aspect-[885/565]"
                                             />
                                         </SwiperSlide>
                                     );
@@ -71,32 +94,49 @@ const FirstImgs = ({ isFirstOpen, isSecondOpen, setIsFirstOpen }: Props) => {
                                         />
                                     </button>
                                 )}
-                                <div className="flex items-center justify-center w-full h-[135px] py-5 gap-x-5 bg-[rgba(58,62,89,0.15)] rounded-[15px]">
-                                    {serverDates?.map((_, i) => {
+                                <Swiper
+                                    onSwiper={setSwiperInstance}
+                                    spaceBetween={20}
+                                    centeredSlides={dates?.length <= 3}
+                                    slidesPerView="auto"
+                                    className="flex w-full h-[135px] py-5 bg-[rgba(58,62,89,0.15)] rounded-[15px]"
+                                    onSlideChange={() =>
+                                        setCurrentDateIndex(currentDateIndex)
+                                    }
+                                >
+                                    {dates?.map((d, i) => {
                                         return (
-                                            <button
+                                            <SwiperSlide
                                                 key={i}
-                                                className={`flex flex-col items-start w-[190px] bg-[rgba(255,255,255,0.05);] rounded-[10px] py-[15px] px-[25px] gap-y-[14px] border-[3px] border-solid
-                                            ${
-                                                i === currentDateIndex
-                                                    ? "border-[#15CF8F]"
-                                                    : "border-[rgba(255,255,255,0.15)]"
-                                            }
-                                            `}
-                                                onClick={() =>
-                                                    setCurrentDateIndex(i)
-                                                }
+                                                className="flex justify-center pt-5"
+                                                style={{
+                                                    width: "190px",
+                                                    height: "95px",
+                                                }}
                                             >
-                                                <p className="text-[rgba(255,255,255,0.50)] text-[18px] font-bold leading-6">
-                                                    촬영일
-                                                </p>
-                                                <p className="text-white text-[24px] font-bold leading-6">{`2025-01-2${
-                                                    i + 1
-                                                }`}</p>
-                                            </button>
+                                                <button
+                                                    className={`flex flex-col shrink-0 items-start w-[190px] h-[95px] bg-[rgba(255,255,255,0.05)] rounded-[10px] py-[15px] px-[25px] gap-y-[14px] border-[3px] border-solid
+                                                ${
+                                                    i === currentDateIndex
+                                                        ? "border-[#15CF8F]"
+                                                        : "border-[rgba(255,255,255,0.15)]"
+                                                }
+                                                `}
+                                                    onClick={() =>
+                                                        setCurrentDateIndex(i)
+                                                    }
+                                                >
+                                                    <p className="text-[rgba(255,255,255,0.50)] text-[18px] font-bold leading-6">
+                                                        촬영일
+                                                    </p>
+                                                    <p className="text-white text-[24px] font-bold leading-6">
+                                                        {d}
+                                                    </p>
+                                                </button>
+                                            </SwiperSlide>
                                         );
                                     })}
-                                </div>
+                                </Swiper>
                             </div>
                         </div>
                         <div className="flex flex-col h-[720px] w-[135px] py-5 px-5 bg-[rgba(58,62,89,0.15)] rounded-[15px] overflow-y-scroll">
@@ -109,19 +149,22 @@ const FirstImgs = ({ isFirstOpen, isSecondOpen, setIsFirstOpen }: Props) => {
                                 spaceBetween={10}
                                 slidesPerView={6.5}
                             >
-                                {Array.from({ length: 7 }, (_, i) => {
+                                {selectedImgs?.map((thumb, thumdIdx) => {
                                     return (
                                         <SwiperSlide
                                             style={{ height: 95 }}
-                                            key={i}
+                                            key={thumdIdx}
                                             className="h-[95px] flex items-center justify-center"
                                         >
                                             <img
-                                                src="/images/client.png"
+                                                src={`${imgThumbUrl}/${thumb?.filename?.slice(
+                                                    4
+                                                )}`}
                                                 width={95}
                                                 height={95}
                                                 className={`${
-                                                    currentImgIndex === i &&
+                                                    currentImgIndex ===
+                                                        thumdIdx &&
                                                     "border-[3px] border-solid border-[#15CF8F]"
                                                 } object-cover w-[95px] h-[95px] aspect-square rounded-[10px]`}
                                             />
