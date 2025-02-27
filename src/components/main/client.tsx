@@ -17,7 +17,7 @@ const Client = ({ isUnpaired, setOpeOpen, isOpeInfo }: Props) => {
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 고객정보
             </p>
-            {!isUnpaired ? (
+            {info && !isUnpaired ? (
                 <>
                     <p className="text-[rgba(21,207,143)] text-[36px] font-bold leading-[32px] pt-[31px] pb-[41px]">
                         {info?.["고객명"]}
@@ -28,15 +28,16 @@ const Client = ({ isUnpaired, setOpeOpen, isOpeInfo }: Props) => {
                     <p className="text-white text-[16px] font-bold leaing-[16px]">
                         {info?.["고객번호"]}
                     </p>
-                    <div className="bg-[url('/assets/setting.svg')] w-[22px] h-[22px] mt-9 bg-no-repeat" />
+                    <div className="absolute top-[200px] bg-[url('/assets/setting.svg')] w-[22px] h-[22px] mt-9 bg-no-repeat" />
                 </>
             ) : (
-                <div className="flex justify-center mt-[64px] ml-[34px] items-center w-[100px] h-[50px] bg-[#15CF8F] rounded-[10px]">
+                <div className="absolute flex justify-center top-[120px] left-[64px] items-center w-[100px] h-[50px] bg-[#15CF8F] rounded-[10px]" style={{filter: 'drop-shadow(0px 4px 40px rgba(21, 207, 143, .75))'}}>
                     <p className="text-white text-[16px] font-bold leading-[16px]">
                         선택하기
                     </p>
                 </div>
-            )}
+            )
+        }
         </button>
     );
 };

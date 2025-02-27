@@ -13,11 +13,7 @@ const Process = ({ isProcess, isOther }: Props) => {
             : "bg-[rgba(58,62,89,0.15)]";
 
     return (
-        <div
-            className={`absolute flex w-full justify-center gap-x-5
-        ${isOther ? "mt-[0px] pb-[108px]" : "mt-[1510px]"}
-        `}
-        >
+        <div className="absolute mt-[1510px] flex w-full justify-center gap-x-5 top-0">
             {[1, 2, 3].map((step) => (
                 <div key={step} className={`${getBgClass(step)} ${baseClass}`}>
                     <p className="text-white/50 text-[18px] font-bold leading-[24px]">
