@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorIdStore, usePsentryStore, useStore } from "@/store";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie"
 
 export default function Home() {
     const [isUnpaired, setUnpaired] = useState(false);
@@ -218,13 +219,16 @@ export default function Home() {
 
     // 키오스크 고유 번호
     useEffect(() => {
-        const getFingerprint = async () => {
-            const fp = await FingerprintJS.load();
-            const result = await fp.get();
-            setFingerprint(result.visitorId);
-        };
-
-        getFingerprint();
+        if(Cookies.get("FINGERPRINT_HASH")) {
+            setFingerprint(Cookies.get("FINGERPRINT_HASH"));
+        } else {
+            const getFingerprint = async () => {
+                const fp = await FingerprintJS.load();
+                const result = await fp.get();
+                setFingerprint(result.visitorId);
+            };
+            getFingerprint();
+        }
     }, []);
 
     useEffect(() => {
