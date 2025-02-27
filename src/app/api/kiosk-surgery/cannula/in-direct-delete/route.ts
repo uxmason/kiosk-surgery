@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
         const { deviceId, cannulaID, psEntry, opDate } = await req.json();
 
         // 디바이스 확인
-        const deviceSql = `SELECT * FROM KIOSK_DEVICES WHERE DEVICE_HASH = ${deviceId} AND AVAILABLE = '1'`;
+        const deviceSql = `SELECT * FROM KIOSK_DEVICES WHERE DEVICE_HASH = '${deviceId}' AND AVAILABLE = '1'`;
         const deviceResult = await queryDB(deviceSql);
         if (deviceResult?.length === 0) {
             return NextResponse.json({

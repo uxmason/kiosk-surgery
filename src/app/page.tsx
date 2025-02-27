@@ -1,14 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { CustomBtn, Footer, Process, UpcomingTime } from "@/components/common";
-import {
-    Ai,
-    Client,
-    Inbody,
-    Info,
-    ModalImgs,
-    Photo,
-} from "@/components/main";
+import { Ai, Client, Inbody, Info, ModalImgs, Photo } from "@/components/main";
 import { ModalAI } from "@/components/main/modal-ai";
 import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
@@ -204,80 +197,95 @@ export default function Home() {
 
     return (
         <>
-          <main className="w-[724px] h=[1980px] absolute" style={{left: 'calc(50% - 362px)'}}>
-            <div className="absolute w-full gap-y-[15px]">
-              <p className={`absolute w-full mt-[120px] text-[26px] text-center font-bold leading-9 
+            <main
+                className="w-[724px] h=[1980px] absolute"
+                style={{ left: "calc(50% - 362px)" }}
+            >
+                <div className="absolute w-full gap-y-[15px]">
+                    <p
+                        className={`absolute w-full mt-[120px] text-[26px] text-center font-bold leading-9 
                   ${!isUnpaired ? "text-[#15CF8F]" : "text-[#1d1f2d]"}
-                  `} >부산365mc병원</p>
-              <p className="absolute mt-[200px] w-full text-white text-[70px] font-bold leading-normal text-center">지방 하나만! 365mc</p>
-              <p className="absolute mt-[330px] w-full text-white text-[30px] font-[250] leading-[50px] whitespace-pre-line text-center">
-                  <span>“안녕하세요.</span>  <span className="font-bold">허설</span><span>님. 전문 의료진이 철저히 준비했으니 안 심하시고 편안하게 기다려 주세요. 궁금한 점이 있으면 간호 사에게 언제든 말씀해 주세요.”</span>
-              </p>
-            </div>
-            <div className="absolute mt-[600px] w-full">
-                <div className="flex w-full gap-x-5">
-                    <Client
+                  `}
+                    >
+                        부산365mc병원
+                    </p>
+                    <p className="absolute mt-[200px] w-full text-white text-[70px] font-bold leading-normal text-center">
+                        지방 하나만! 365mc
+                    </p>
+                    <p className="absolute mt-[330px] w-full text-white text-[30px] font-[250] leading-[50px] whitespace-pre-line text-center">
+                        <span>“안녕하세요.</span>{" "}
+                        <span className="font-bold">허설</span>
+                        <span>
+                            님. 전문 의료진이 철저히 준비했으니 안 심하시고
+                            편안하게 기다려 주세요. 궁금한 점이 있으면 간호
+                            사에게 언제든 말씀해 주세요.”
+                        </span>
+                    </p>
+                </div>
+                <div className="absolute mt-[600px] w-full">
+                    <div className="flex w-full gap-x-5">
+                        <Client
+                            isUnpaired={isUnpaired}
+                            setOpeOpen={setOpeOpen}
+                            isOpeInfo={isOpeInfo}
+                        />
+                        <Info
+                            isUnpaired={isUnpaired}
+                            setOpeOpen={setOpeOpen}
+                            isOpeInfo={isOpeInfo}
+                        />
+                    </div>
+                    <div className="flex w-full gap-x-5 py-5">
+                        <Inbody
+                            isUnpaired={isUnpaired}
+                            setInbodyOpen={setInbodyOpen}
+                        />
+                        <Photo
+                            isUnpaired={isUnpaired}
+                            setModalImgsOpen={setModalImgsOpen}
+                            imgs={imgs}
+                        />
+                        <Ai
+                            isUnpaired={isUnpaired}
+                            setModalAIOpen={setModalAIOpen}
+                        />
+                    </div>
+                    <CustomBtn
+                        text={
+                            isUnpaired
+                                ? "수술 대상이 아직 선택되지 않았습니다."
+                                : "시작하기"
+                        }
+                        bg={isUnpaired ? "rgba(58,62,89,0.50)" : "#15CF8F"}
+                        isShow={false}
+                        path="/record"
                         isUnpaired={isUnpaired}
-                        setOpeOpen={setOpeOpen}
-                        isOpeInfo={isOpeInfo}
-                    />
-                    <Info
-                        isUnpaired={isUnpaired}
-                        setOpeOpen={setOpeOpen}
-                        isOpeInfo={isOpeInfo}
                     />
                 </div>
-                <div className="flex w-full gap-x-5 py-5">
-                    <Inbody
-                        isUnpaired={isUnpaired}
-                        setInbodyOpen={setInbodyOpen}
+                {!isUnpaired && (
+                    <UpcomingTime
+                        text="시작까지 남은 시간"
+                        time={formattedTime}
+                        color="#15CF8F"
                     />
-                    <Photo
-                        isUnpaired={isUnpaired}
-                        setModalImgsOpen={setModalImgsOpen}
-                        imgs={imgs}
-                    />
-                    <Ai
-                        isUnpaired={isUnpaired}
-                        setModalAIOpen={setModalAIOpen}
-                    />
-                </div>
-                <CustomBtn
-                    text={
-                        isUnpaired
-                            ? "수술 대상이 아직 선택되지 않았습니다."
-                            : "시작하기"
-                    }
-                    bg={isUnpaired ? "rgba(58,62,89,0.50)" : '#15CF8F'}
-                    isShow={false}
-                    path="/record"
-                    isUnpaired={isUnpaired}
-                />
-            </div>
-            {!isUnpaired && (
-                <UpcomingTime
-                    text="시작까지 남은 시간"
-                    time={formattedTime}
-                    color="#15CF8F"
-                />
-            )}
-            <Process isProcess={1} />
-          </main>
-          <Footer />
-          <ModalSelectOpe isOpen={isOpeOpen} setOpeOpen={setOpeOpen} />
-          <ModalInbody
-              isInbodyOpen={isInbodyOpen && !isUnpaired}
-              setInbodyOpen={setInbodyOpen}
-          />
-          <ModalImgs
-              imgs={imgs}
-              isModalImgsOpen={isModalImgsOpen && !isUnpaired}
-              setModalImgsOpen={setModalImgsOpen}
-          />
-          <ModalAI
-              isModalAIOpen={isModalAIOpen && !isUnpaired}
-              setModalAIOpen={setModalAIOpen}
-          />
+                )}
+                <Process isProcess={1} />
+            </main>
+            <Footer />
+            <ModalSelectOpe isOpen={isOpeOpen} setOpeOpen={setOpeOpen} />
+            <ModalInbody
+                isInbodyOpen={isInbodyOpen && !isUnpaired}
+                setInbodyOpen={setInbodyOpen}
+            />
+            <ModalImgs
+                imgs={imgs}
+                isModalImgsOpen={isModalImgsOpen && !isUnpaired}
+                setModalImgsOpen={setModalImgsOpen}
+            />
+            <ModalAI
+                isModalAIOpen={isModalAIOpen && !isUnpaired}
+                setModalAIOpen={setModalAIOpen}
+            />
         </>
     );
 }

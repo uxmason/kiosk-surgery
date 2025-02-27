@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
             } else {
                 return NextResponse.json({
                     success: false,
-                    doctorId: "키오스크 등록을 기다려 주세요.",
+                    message: "키오스크 등록을 기다려 주세요.",
                 });
             }
         } else {
