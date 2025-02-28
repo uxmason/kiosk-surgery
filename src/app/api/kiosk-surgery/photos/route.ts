@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PhotsArrType } from "@/type";
 import queryDB from "../../../../../lib/db";
+import { NextResponse } from "next/server";
 const confidence1 = 0.7;
 
 export async function GET(req: Request) {
@@ -37,16 +38,13 @@ export async function GET(req: Request) {
                 filename: photo["PATH"],
             });
         });
-
-        return new Response(
-            JSON.stringify({ success: true, list: finalPhoto })
-        );
+        return NextResponse.json({ success: true, list: finalPhoto });
     } catch {
-        return new Response(
-            JSON.stringify({
+        return NextResponse.json(
+            {
                 success: false,
                 message: "사진을 불러오는데 실패했습니다.",
-            }),
+            },
             { status: 500 }
         );
     }

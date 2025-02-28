@@ -1,17 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextResponse } from "next/server";
 import queryDB from "../../../../../lib/db";
 import { getCurrentTimeHHMM, getFormattedDate } from "@/function";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
-        const { doctorId, psEntry } = Object.fromEntries(
-            url.searchParams.entries()
-        );
+        const { doctorId } = Object.fromEntries(url.searchParams.entries());
         const today = getFormattedDate();
         const time = getCurrentTimeHHMM();
-        const isAddWhere = psEntry
-            ? `AND A.PSENTRY = '${psEntry}'`
-            : ``;
         const sql = `SELECT top 1
                     A.STARTBRAN AS 지점,
                     A.PROMTIME AS 시작시간, 
@@ -57,16 +53,16 @@ export async function GET(req: Request) {
                     AND K.OPDATE  = A.PROMDATE 
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND (A.PROMDATE = '${today}' AND A.PROMTIME >= '${time}') OR A.PROMDATE > '${today}' ${isAddWhere}
+                    AND (A.PROMDATE = '${today}' AND A.PROMTIME >= '${time}') OR A.PROMDATE > '${today}'
                 ORDER BY A.PROMDATE, A.PROMTIME`;
         const results: any[] = await queryDB(sql);
-        return new Response(JSON.stringify({ success: true, list: results }));
+        return NextResponse.json({ success: true, list: results });
     } catch {
-        return new Response(
-            JSON.stringify({
+        return NextResponse.json(
+            {
                 success: false,
                 message: "의사 선생님의 수술 일정을 가져오지 못했습니다.",
-            }),
+            },
             { status: 500 }
         );
     }

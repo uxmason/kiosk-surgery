@@ -26,7 +26,7 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
     const onHandleSelectOpe = async () => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/surgery?doctorId=${doctorId}&psEntry=${psEntry}`,
+                `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
                 {
                     method: "GET",
                 }
