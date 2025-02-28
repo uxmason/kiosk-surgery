@@ -4,7 +4,7 @@ export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
         const { psEntry } = Object.fromEntries(url.searchParams.entries());
-        const sql = `SELECT * FROM ADM700T 
+        const sql = `SELECT * FROM tsfmc_data.dbo.ADM700T 
                     WHERE PSENTRY = '${psEntry}' 
                     ORDER BY PRODATE DESC
                     `;
