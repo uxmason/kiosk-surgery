@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextResponse } from "next/server";
 import queryDB from "../../../../../lib/db";
 export async function GET(req: Request) {
     try {
@@ -9,13 +10,13 @@ export async function GET(req: Request) {
                     ORDER BY PRODATE DESC
                     `;
         const results: any[] = await queryDB(sql);
-        return new Response(JSON.stringify({ success: true, inbody: results }));
+        return NextResponse.json({ success: true, inbody: results });
     } catch {
-        return new Response(
-            JSON.stringify({
+        return NextResponse.json(
+            {
                 success: false,
                 message: "인바디 정보를 가져오지 못했습니다.",
-            }),
+            },
             { status: 500 }
         );
     }

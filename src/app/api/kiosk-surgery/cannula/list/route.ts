@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextResponse } from "next/server";
 import queryDB from "../../../../../../lib/db";
 export async function GET() {
     try {
@@ -18,13 +19,13 @@ export async function GET() {
                     ORDER BY 갯수 DESC
                     `;
         const results: any[] = await queryDB(sql);
-        return new Response(JSON.stringify({ success: true, list: results }));
+        return NextResponse.json({ success: true, list: results });
     } catch {
-        return new Response(
-            JSON.stringify({
+        return NextResponse.json(
+            {
                 success: false,
                 message: "캐뉼라 리스트를 가져오지 못했습니다.",
-            }),
+            },
             { status: 500 }
         );
     }
