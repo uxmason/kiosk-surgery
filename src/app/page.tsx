@@ -7,7 +7,7 @@ import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { useDoctorIdStore, usePsentryStore, useStore } from "@/store";
+import { useDoctorStore, usePsentryStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 
@@ -25,7 +25,7 @@ export default function Home() {
     const [dataAllOpe, setAllOpe] = useState([]);
     const { deviceId, setDeviceId } = useStore();
     const { psEntry, setPsEntry } = usePsentryStore();
-    const { doctorId, setDoctorId } = useDoctorIdStore();
+    const { doctor, getDoctor, setDoctor } = useDoctorStore();
     const [fingerprint, setFingerprint] = useState("");
     const [lastRegDate, setLastRegDate] = useState("");
 
@@ -55,7 +55,11 @@ export default function Home() {
             handleSelectDoctor().then((res) => {
                 if (res.success) {
                     const doctorInfo = res.doctorInfo?.[0];
-                    setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
+                    setDoctor({
+                        id: doctorInfo?.["USER_ID"],
+                        name: doctorInfo?.["USER_NAME"], 
+                        branch: doctorInfo?.["STARTBRAN"]
+                    });
                     setUnpaired(false);
                 } else {
                     console.log('error', res.message);
@@ -70,7 +74,7 @@ export default function Home() {
     const onHandleSelectOpe = async () => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/surgery?doctorId=${doctorId}`,
+                `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`,
                 {
                     method: "GET",
                 }
@@ -87,7 +91,7 @@ export default function Home() {
         }
     };
     useEffect(() => {
-        if (!doctorId) return;
+        if (!doctor.id) return;
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setOpeInfo(res.list);
@@ -98,7 +102,7 @@ export default function Home() {
                 console.log("FAIL");
             }
         });
-    }, [doctorId]);
+    }, [doctor]);
 
     // 숫자 카운트
     const [count, setCount] = useState(180);
@@ -219,14 +223,15 @@ export default function Home() {
 
     // 키오스크 고유 번호
     useEffect(() => {
-        if (Cookies.get("FINGERPRINT_HASH")) {
-            const cookieVal = Cookies.get("FINGERPRINT_HASH");
+        if (Cookies.get("FINGERPRINT_HASH_KIOSK")) {
+            const cookieVal = Cookies.get("FINGERPRINT_HASH_KIOSK");
             setFingerprint(cookieVal ?? "");
         } else {
             const getFingerprint = async () => {
                 const fp = await FingerprintJS.load();
                 const result = await fp.get();
                 setFingerprint(result.visitorId);
+                document.cookie = `FINGERPRINT_HASH_KIOSK=${result.visitorId}; path=/`;
             };
             getFingerprint();
         }

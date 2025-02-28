@@ -20,15 +20,24 @@ export const usePsentryStore = create<PsentryStore>((set) => ({
     setPsEntry: (newPsEntry: string) => set({ psEntry: newPsEntry }),
 }));
 
-interface DoctorIdStore {
-    doctorId: string;
+interface Doctor {
+    id: string;
+    name: string;
     branch: string;
-    setDoctorId: (newDoctorId: string, newBranch: string) => void;
 }
 
-export const useDoctorIdStore = create<DoctorIdStore>((set) => ({
-    doctorId: "",
-    branch: "",
-    setDoctorId: (newDoctorId: string, newBranch: string) =>
-        set({ doctorId: newDoctorId, branch: newBranch }),
+interface DoctorStore {
+    doctor: Doctor;
+    setDoctor: (doctor: Doctor) => void;
+    getDoctor: () => Doctor;
+}
+
+export const useDoctorStore = create<DoctorStore>((set, get) => ({
+    doctor: {
+        id: "",
+        name: "",
+        branch: "",
+    },
+    setDoctor: (newDoctor) => set({ doctor: newDoctor }),
+    getDoctor: () => get().doctor,
 }));
