@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { CustomModal } from "../../common";
 import { ModalError} from ".";
-import { useRouter } from "next/navigation";
 // import _ from "lodash";
 // import { useDoctorIdStore } from "@/store";
 
@@ -40,8 +39,6 @@ interface Props {
 }
 
 const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe, fingerprint}: Props) => {
-    // const { doctorId, branch } = useDoctorIdStore();
-    const router = useRouter();
     const [hospitalIndex, setHospitalIndex] = useState(0);
     const [doctorIndex, setDoctorIndex] = useState(0);
     const [isErrorMessage, setIsErrorMessage] = useState(false);

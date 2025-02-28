@@ -12,7 +12,7 @@ export async function GET(req: Request) {
             FROM IMAGE_SECTION_INFO 
             WHERE confidence1 >= ${confidence1}
                 AND surgeryID = ${psEntry} 
-            ORDER BY op_data ASC, top1`;
+            ORDER BY op_data DESC, top1`;
 
         const resultsArrPhoto: any[] = await queryDB(sqlArrPhoto);
         const finalPhoto: PhotsArrType[] = [];

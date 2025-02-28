@@ -2,10 +2,10 @@ import InbodyGraph from "./inbody-graph";
 
 interface Props {
     setInbodyOpen: (v: boolean) => void;
-    isUnpaired: boolean;
+    isPaired: boolean;
     dataInbody: never[];
 }
-const Inbody = ({ dataInbody, setInbodyOpen, isUnpaired }: Props) => {
+const Inbody = ({ dataInbody, setInbodyOpen, isPaired }: Props) => {
     return (
         <button
             className="flex flex-col text-start bg-[rgba(56,171,190)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
@@ -14,7 +14,7 @@ const Inbody = ({ dataInbody, setInbodyOpen, isUnpaired }: Props) => {
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 인바디
             </p>
-            {dataInbody.length > 0 && !isUnpaired ? (
+            {dataInbody.length > 0 && isPaired ? (
                 <>
                     <InbodyGraph />
                     <div className="flex w-full justify-between items-center">

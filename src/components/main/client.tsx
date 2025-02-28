@@ -3,11 +3,11 @@
 import { maskIdNumber } from "@/function";
 
 interface Props {
-    isUnpaired: boolean;
+    isPaired: boolean;
     setOpeOpen: (v: boolean) => void;
     dataOpeInfo: never[];
 }
-const Client = ({ isUnpaired, setOpeOpen, dataOpeInfo }: Props) => {
+const Client = ({ isPaired, setOpeOpen, dataOpeInfo }: Props) => {
     const info = dataOpeInfo?.[0];
     return (
         <button
@@ -17,7 +17,7 @@ const Client = ({ isUnpaired, setOpeOpen, dataOpeInfo }: Props) => {
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 고객정보
             </p>
-            {info && !isUnpaired ? (
+            {info && isPaired ? (
                 <>
                     <p className="text-[rgba(21,207,143)] text-[36px] font-bold leading-[32px] pt-[31px] pb-[41px]">
                         {info?.["고객명"]}

@@ -1,9 +1,9 @@
 interface Props {
     setModalAIOpen: (v: boolean) => void;
-    isUnpaired: boolean;
+    isPaired: boolean;
     dataFepa: never[];
 }
-const Ai = ({ setModalAIOpen, isUnpaired, dataFepa }: Props) => {
+const Ai = ({ setModalAIOpen, isPaired, dataFepa }: Props) => {
     return (
         <button
             className="flex flex-col text-start bg-[rgba(91,135,237,0.60)] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
@@ -12,7 +12,7 @@ const Ai = ({ setModalAIOpen, isUnpaired, dataFepa }: Props) => {
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 AI 예측
             </p>
-            {dataFepa.length > 0 && !isUnpaired ? (
+            {dataFepa.length > 0 && isPaired ? (
                 <>
                     <div className="h-full">예측</div>
                     <div className="flex w-full justify-between items-center">

@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 
 export default function Home() {
-    const [isUnpaired, setUnpaired] = useState(false);
+    const [isPaired, setPaired] = useState(false);
     const [isOpeOpen, setOpeOpen] = useState(false);
     const [isOpeOpenNext, setOpeOpenNext] = useState(false);
     const [isInbodyOpen, setInbodyOpen] = useState(false);
@@ -20,14 +20,15 @@ export default function Home() {
     const [isModalAIOpen, setModalAIOpen] = useState(false);
     const [imgs, setImgs] = useState([]);
     const [dataOpeInfo, setOpeInfo] = useState([]);
-    const [dataInbody, setInbody] = useState([]);
-    const [dataFepa, setFepa] = useState([]);
+    const [dataInbody, ] = useState([]);
+    const [dataFepa, ] = useState([]);
     const [dataAllOpe, setAllOpe] = useState([]);
     const { deviceId, setDeviceId } = useStore();
-    const { client, getClient, setClient } = useClientStore();
-    const { doctor, getDoctor, setDoctor } = useDoctorStore();
+    const { client, setClient } = useClientStore();
+    const { doctor, setDoctor } = useDoctorStore();
     const [fingerprint, setFingerprint] = useState("");
     const [lastRegDate, setLastRegDate] = useState("");
+    const [isBoostCheckStatus, setBoostCheckStatus] = useState(false);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -51,24 +52,27 @@ export default function Home() {
     };
 
     useEffect(() => {
-        if (deviceId) {
+        if (deviceId && isBoostCheckStatus) {
             handleSelectDoctor().then((res) => {
+                setImgs([]);
                 if (res.success) {
                     const doctorInfo = res.doctorInfo?.[0];
                     setDoctor({
                         id: doctorInfo?.["USER_ID"],
                         name: doctorInfo?.["USER_NAME"], 
-                        branch: doctorInfo?.["STARTBRAN"]
+                        branch: doctorInfo?.["STARTBRAN"],
+                        branchName: doctorInfo?.["HOS_NAME"]
                     });
-                    setUnpaired(false);
+                    setPaired(true);
                 } else {
                     console.log('error', res.message);
                     toast.error(res.message);
-                    setUnpaired(true);
+                    setPaired(false);
                 }
+                setBoostCheckStatus(false)
             });
         }
-    }, [deviceId]);
+    }, [deviceId, isBoostCheckStatus]);
 
     // 가까운 미래의 수술 고객 정보
     const onHandleSelectOpe = async () => {
@@ -90,9 +94,6 @@ export default function Home() {
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setOpeInfo(res.list);
-                // setInbody([]);
-                // setFepa([]);
-                // setLastRegDate('');
             } else {
                 console.log("FAIL");
             }
@@ -119,7 +120,7 @@ export default function Home() {
     ).padStart(2, "0")}`;
 
     // 고객 인바디 정보 불러오기
-    const handleSelectInbodyLst = async (psEntry: string) => {
+    // const handleSelectInbodyLst = async (psEntry: string) => {
         // try {
         //     const response = await fetch(
         //         `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
@@ -137,7 +138,7 @@ export default function Home() {
         // } catch (error) {
         //     console.error("Error fetching data:", error);
         // }
-    };
+    // };
 
     // 고객 인바디 정보 담기
     useEffect(() => {
@@ -176,7 +177,10 @@ export default function Home() {
         if (!client.psEntry) return;
         handleSelectImgLst(client.psEntry).then((res) => {
             if (res.success) {
-                setImgs(res.album);
+                if(res.list.length > 0) {
+                    setImgs(res.list);
+                    setLastRegDate(res.list[0].regdate);
+                }
             } else {
                 console.log("FAIL");
             }
@@ -217,6 +221,7 @@ export default function Home() {
             });
         }else {
             setOpeOpenNext(false);
+            setBoostCheckStatus(true)
         }
     }, [isOpeOpen]);
 
@@ -244,22 +249,16 @@ export default function Home() {
         <>
             <main
                 className="w-[724px] h=[1980px] absolute"
-                style={{ left: "calc(50% - 362px)" }}
-            >
+                style={{ left: "calc(50% - 362px)" }}>
                 <div className="absolute w-full gap-y-[15px]">
                     <p
                         className={`absolute w-full mt-[120px] text-[26px] text-center font-bold leading-9 
-                  ${!isUnpaired ? "text-[#15CF8F]" : "text-[#1d1f2d]"}
-                  `}
-                    >
-                        부산365mc병원
-                    </p>
-                    <p className="absolute mt-[200px] w-full text-white text-[70px] font-bold leading-normal text-center">
-                        지방 하나만! 365mc
-                    </p>
+                  ${isPaired ? "text-[#15CF8F]" : "text-[#1d1f2d]"}
+                  `}>{doctor.branchName}</p>
+                    <p className="absolute mt-[200px] w-full text-white text-[70px] font-bold leading-normal text-center">지방 하나만! 365mc</p>
                     <p className="absolute mt-[330px] w-full text-white text-[30px] font-[250] leading-[50px] whitespace-pre-line text-center">
                         <span>“안녕하세요.</span>{" "}
-                        <span className="font-bold">허설</span>
+                        <span className="font-bold">{client.name}</span>
                         <span>
                             님. 전문 의료진이 철저히 준비했으니 안 심하시고
                             편안하게 기다려 주세요. 궁금한 점이 있으면 간호
@@ -270,47 +269,47 @@ export default function Home() {
                 <div className="absolute mt-[600px] w-full">
                     <div className="flex w-full gap-x-5">
                         <Client
-                            isUnpaired={isUnpaired}
+                            isPaired={isPaired}
                             setOpeOpen={setOpeOpen}
                             dataOpeInfo={dataOpeInfo}
                         />
                         <Info
-                            isUnpaired={isUnpaired}
+                            isPaired={isPaired}
                             setOpeOpen={setOpeOpen}
                             dataOpeInfo={dataOpeInfo}
                         />
                     </div>
                     <div className="flex w-full gap-x-5 py-5">
                         <Inbody
-                            isUnpaired={isUnpaired}
+                            isPaired={isPaired}
                             setInbodyOpen={setInbodyOpen}
                             dataInbody={dataInbody}
                         />
                         <Photo
-                            isUnpaired={isUnpaired}
+                            isPaired={isPaired}
                             setModalImgsOpen={setModalImgsOpen}
                             imgs={imgs}
                             lastRegDate={lastRegDate}
                         />
                         <Ai
-                            isUnpaired={isUnpaired}
+                            isPaired={isPaired}
                             setModalAIOpen={setModalAIOpen}
                             dataFepa={dataFepa}
                         />
                     </div>
                     <CustomBtn
                         text={
-                            isUnpaired && !dataOpeInfo
+                            !isPaired && !dataOpeInfo
                                 ? "수술 대상이 아직 선택되지 않았습니다."
                                 : "시작하기"
                         }
-                        bg={isUnpaired ? "rgba(58,62,89,0.50)" : "#15CF8F"}
+                        bg={isPaired ? "rgba(58,62,89,0.50)" : "#15CF8F"}
                         isShow={false}
                         path="/record"
-                        isUnpaired={isUnpaired}
+                        isPaired={isPaired}
                     />
                 </div>
-                {!isUnpaired && (
+                {isPaired && (
                     <UpcomingTime
                         text="시작까지 남은 시간"
                         time={formattedTime}
@@ -322,16 +321,16 @@ export default function Home() {
             <Footer />
             <ModalSelectOpe isOpen={isOpeOpenNext} setOpeOpen={setOpeOpen} dataAllOpe={dataAllOpe} fingerprint={fingerprint} />
             <ModalInbody
-                isInbodyOpen={isInbodyOpen && !isUnpaired}
+                isInbodyOpen={isInbodyOpen && isPaired}
                 setInbodyOpen={setInbodyOpen}
             />
             <ModalImgs
                 imgs={imgs}
-                isModalImgsOpen={isModalImgsOpen && !isUnpaired}
+                isModalImgsOpen={isModalImgsOpen && isPaired}
                 setModalImgsOpen={setModalImgsOpen}
             />
             <ModalAI
-                isModalAIOpen={isModalAIOpen && !isUnpaired}
+                isModalAIOpen={isModalAIOpen && isPaired}
                 setModalAIOpen={setModalAIOpen}
             />
         </>

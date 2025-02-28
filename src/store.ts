@@ -38,6 +38,7 @@ interface Doctor {
     id: string;
     name: string;
     branch: string;
+    branchName: string;
 }
 
 interface DoctorStore {
@@ -51,6 +52,7 @@ export const useDoctorStore = create<DoctorStore>((set, get) => ({
         id: "",
         name: "",
         branch: "",
+        branchName: "",
     },
     setDoctor: (newDoctor) => set({ doctor: newDoctor }),
     getDoctor: () => get().doctor,

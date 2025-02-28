@@ -7,17 +7,17 @@ interface OpeInfoItem {
 }
 interface Props {
     dataOpeInfo: OpeInfoItem[];
-    isUnpaired: boolean;
+    isPaired: boolean;
     setOpeOpen: (v: boolean) => void;
 }
-const Info = ({ dataOpeInfo, setOpeOpen, isUnpaired }: Props) => {
+const Info = ({ dataOpeInfo, setOpeOpen, isPaired }: Props) => {
     const info = dataOpeInfo[0];
     return (
         <button
             className="relative flex flex-col text-start w-[476px] h-[285px] bg-[#3A3E59] rounded-[15px] p-[30px]"
             onClick={() => setOpeOpen(true)}>
             <p className="text-white text-[24px] font-[250] leading-[24px]">담당의</p>
-            {info && !isUnpaired ? (
+            {info && isPaired ? (
                 <>
                     <div className={`isPortrait I${info.담당의ID} absolute w-[150px] h-[220px] bg-no-repeat bottom-0 right-10`} />
                     <p className="absolute top-[80px] text-white text-[32px] font-bold leading-[32px] text-justify">
