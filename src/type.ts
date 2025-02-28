@@ -89,3 +89,24 @@ export type PhotsArrType = {
     regdate: string;
     image: { idx: number; filename: string }[];
 };
+export type OpeClientType = {
+    고객명: string;
+    고객번호: string;
+    기수: string;
+    담당의ID: string;
+    담당의명: string;
+    병실: string | null;
+    수술부위: string;
+    수술명: string;
+    수술코드: string;
+    시작시간: string;
+    예상시간: number;
+    우선순위여부: string;
+    이식용지방: string;
+    종료시간: string;
+    주민번호: string;
+    지점: string;
+    참관구분: "Y" | "N" | null;
+    추가시간: number;
+    통역여부: "Y" | "N" | null;
+};
