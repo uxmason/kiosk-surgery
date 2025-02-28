@@ -131,3 +131,8 @@ export type FatListType = {
     평균예측지방량: number;
     최대예측지방량: number;
 };
+export type WeightsType = {
+    WC_WEIGHT: number;
+    BD_WEIGHT: number;
+    MUST_WEIGHTL: number;
+};

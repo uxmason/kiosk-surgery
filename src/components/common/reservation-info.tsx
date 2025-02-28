@@ -19,7 +19,7 @@ const ReservationInfo = ({ isOpeInfo }: Props) => {
             },
             {
                 name: "추가시간",
-                content: info?.추가시간 ? `${info?.추가시간}` : "0시간",
+                content: info?.추가시간 ? `${info?.추가시간}시간` : "0시간",
             },
             { name: "수술기수", content: info?.기수 },
             { name: "병실", content: info?.병실 ? info?.병실 : "." },
