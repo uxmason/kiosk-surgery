@@ -61,7 +61,7 @@ export async function GET(req: Request) {
                     ${isAddWhere}
                 `;
         const results: any[] = await queryDB(sql);
-        return new Response(JSON.stringify({ success: true, list: results }));
+        return new Response(JSON.stringify({ success: true, sdf:sql,  list: results }));
     } catch {
         return new Response(
             JSON.stringify({
