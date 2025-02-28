@@ -65,8 +65,8 @@ const GraphAi = ({ children, aiType }: Props) => {
                         <div className="flex items-center justify-center w-[50px] h-[50px] bg-white rounded-[15px] border-[5px] border-solid border-[#ED6B5B]">
                             <img
                                 src="/assets/abdomen.svg"
-                                width={33}
-                                height={25}
+                                width={35.5}
+                                height={29}
                             />
                         </div>
                         <p className="text-[#ED6B5B] text-[44px] font-light leading-11">

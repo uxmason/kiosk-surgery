@@ -40,7 +40,6 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
         }
     };
     useEffect(() => {
-        if (!isOpenOpeModal) return;
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setIsOpeInfo(res.list);
@@ -48,8 +47,7 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
                 console.log("!#!@");
             }
         });
-    }, [isOpenOpeModal]);
-    console.log(isOpeInfo);
+    }, []);
     return (
         <CustomModal
             isOpen={isOpenOpeModal}

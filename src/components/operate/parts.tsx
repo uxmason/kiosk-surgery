@@ -169,12 +169,12 @@ const Parts = ({ incisionList }: Props) => {
 export default Parts;
 
 const frontButtonData: ButtonDataType[] = [
-    { style: { top: "14%", right: "8%" }, id: 2 },
-    { style: { top: "14%", left: "8%" }, id: 1 },
+    { style: { top: "14%", left: "8%" }, id: 2 },
+    { style: { top: "14%", right: "8%" }, id: 1 },
     { style: { top: "48%", left: "44%" }, id: 3 },
     { style: { top: "62%", left: "44%" }, id: 4 },
-    { style: { top: "70%", right: "26%" }, id: 5 },
-    { style: { top: "70%", left: "26%" }, id: 6 },
+    { style: { top: "70%", left: "26%" }, id: 5 },
+    { style: { top: "70%", right: "26%" }, id: 6 },
 ];
 
 const backButtonData: ButtonDataType[] = [
