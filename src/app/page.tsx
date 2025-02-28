@@ -121,37 +121,37 @@ export default function Home() {
 
     // 고객 인바디 정보 불러오기
     const handleSelectInbodyLst = async (psEntry: string) => {
-        try {
-            const response = await fetch(
-                `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
-                {
-                    method: "GET",
-                }
-            );
+        // try {
+        //     const response = await fetch(
+        //         `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
+        //         {
+        //             method: "GET",
+        //         }
+        //     );
 
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
+        //     if (!response.ok) {
+        //         throw new Error("Network response was not ok");
+        //     }
 
-            const result = await response.json();
-            return result;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
+        //     const result = await response.json();
+        //     return result;
+        // } catch (error) {
+        //     console.error("Error fetching data:", error);
+        // }
     };
 
     // 고객 인바디 정보 담기
     useEffect(() => {
-        if (!psEntry) return;
-        handleSelectInbodyLst(psEntry).then(
-            (res: { success: boolean; doctorId: string }) => {
-                if (res.success) {
-                    console.log("INBODY_SUCCESS");
-                } else {
-                    console.log("INBODY_FAIL");
-                }
-            }
-        );
+        // if (!psEntry) return;
+        // handleSelectInbodyLst(psEntry).then(
+        //     (res: { success: boolean; doctorId: string }) => {
+        //         if (res.success) {
+        //             console.log("INBODY_SUCCESS");
+        //         } else {
+        //             console.log("INBODY_FAIL");
+        //         }
+        //     }
+        // );
     }, [psEntry]);
 
     // 고객 사진 정보 불러오기
@@ -316,7 +316,7 @@ export default function Home() {
                 <Process isProcess={1} />
             </main>
             <Footer />
-            <ModalSelectOpe isOpen={isOpeOpenNext} setOpeOpen={setOpeOpen} dataAllOpe={dataAllOpe} />
+            <ModalSelectOpe isOpen={isOpeOpenNext} setOpeOpen={setOpeOpen} dataAllOpe={dataAllOpe} fingerprint={fingerprint} />
             <ModalInbody
                 isInbodyOpen={isInbodyOpen && !isUnpaired}
                 setInbodyOpen={setInbodyOpen}

@@ -55,8 +55,8 @@
 }
 
 .styleSheet {
-    background-image: url('/public/images/styleSheet.png');
-    background-size: cover;
+    background-image: url('/images/styleSheet.png');
+    background-size: 250px 2500px;
 }
 
 .isHidedScrollBar {

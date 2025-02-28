@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { CustomModal } from "../../common";
 import { ModalError} from ".";
+import { useRouter } from "next/navigation";
 // import _ from "lodash";
 // import { useDoctorIdStore } from "@/store";
 
@@ -19,7 +20,7 @@ interface SurgeryItem {
     고객명: string;
     주민번호: string;
     추가시간: number | null;
-    state: string | null;
+    STATUS: number | null;
 }
 interface DoctorItem {
     doctorId: string;
@@ -35,21 +36,15 @@ interface Props {
     isOpen: boolean;
     setOpeOpen: (v: boolean) => void;
     dataAllOpe: DataAllOpeItem[];
+    fingerprint: string;
 }
 
-const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe }: Props) => {
+const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe, fingerprint}: Props) => {
     // const { doctorId, branch } = useDoctorIdStore();
+    const router = useRouter();
     const [hospitalIndex, setHospitalIndex] = useState(0);
     const [doctorIndex, setDoctorIndex] = useState(0);
     const [isErrorMessage, setIsErrorMessage] = useState(false);
-
-    // const groupedByBranch = _.groupBy(dataAllOpe, "지점");
-    // const finalGroupedData = Object.entries(groupedByBranch).map(
-    //     ([branch, branchData]) => ({
-    //         branch,
-    //         doctors: Object.entries(_.groupBy(branchData, "담당의ID")),
-    //     })
-    // );
 
     return (
         <>
@@ -77,9 +72,44 @@ const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe }: Props) => {
                             {(dataAllOpe?.[hospitalIndex]?.doctor?.[doctorIndex]?.surgeries ?? []).map((item, index) => {
                                 return (
                                     <div key={index}
-                                        className={`absolute p-[20px] bg-[#ffffff08] text-white rounded-[15px] left-[75px] w-[470px]`} style={{top: 60 + (Number(item.시작시간.substring(0,2))-9)*100 + Number(item.시작시간.substring(2,4))/60*100+'px', height: Number(item.예상시간)*100-20 +'px'}}>
-                                            <div className={`styleSheet absolute w-[50px] h-[50px] rounded-[15px] border-[5px] ${item.수술부위 == '팔' ? 'border-[#15CF8F]' : item.수술부위 == '복부' ? 'border-[#ED6B5B]' : item.수술부위 == '허벅지' ? 'border-[#38ABBE]' : item.수술부위 == '얼굴' ? 'border-[#F9AC68]' : item.수술부위 == '러브핸들' ? 'border-[#F05579]' : item.수술부위 == '엉덩이' ? 'border-[#F9AC68]' : item.수술부위 == '종아리' ? 'border-[#5B87ED]' : null} bg-no-repeat bg-center bg-white`} style={{backgroundPositionX: `${item.수술부위 == '팔' ? 0 : item.수술부위 == '복부' ? -50 : item.수술부위 == '허벅지' ? -100 : item.수술부위 == '얼굴' ? -150 : item.수술부위 == '러브핸들' ? -200 : item.수술부위 == '엉덩이' ? 0 : item.수술부위 == '종아리' ? -50 : 0}px`}}></div>
-                                        {item.시작시간} {Number(item.예상시간)*100} {item.수술부위}
+                                        className={`absolute p-[20px] ${Number(item.예상시간) <= 1 ? 'py-[10px]' : ''} ${item.수술부위 == '가슴' ? 'bg-[#55DAF222]' : item.수술부위 == '팔' ? 'bg-[#15CF8F22]' : item.수술부위 == '복부' ? 'bg-[#ED6B5B22]' : item.수술부위 == '허벅지' ? 'bg-[#38ABBE22]' : item.수술부위 == '얼굴' ? 'bg-[#F9AC6822]' : item.수술부위 == '러브핸들' ? 'bg-[#F0557922]' : item.수술부위 == '힙' ? 'bg-[#F9AC6822]' : item.수술부위 == '종아리' ? 'bg-[#5B87ED22]' : item.수술부위 == '등' ? 'bg-[#ED8E5B22]' : null} text-white rounded-[15px] left-[75px] w-[470px]`} style={{top: 60 + (Number(item.시작시간.substring(0,2))-9)*100 + Number(item.시작시간.substring(2,4))/60*100+'px', height: Number(item.예상시간)*100-20 +'px', minHeight: Number(item.예상시간) <= 1 ? '70px': '90px'}}>
+                                        <div className={`styleSheet absolute w-[50px] h-[50px] rounded-[15px] border-[5px] ${item.수술부위 == '가슴' ? 'border-[#55DAF2]' : item.수술부위 == '팔' ? 'border-[#15CF8F]' : item.수술부위 == '복부' ? 'border-[#ED6B5B]' : item.수술부위 == '허벅지' ? 'border-[#38ABBE]' : item.수술부위 == '얼굴' ? 'border-[#F9AC68]' : item.수술부위 == '러브핸들' ? 'border-[#F05579]' : item.수술부위 == '힙' ? 'border-[#F9AC68]' : item.수술부위 == '종아리' ? 'border-[#5B87ED]' : item.수술부위 == '등' ? 'border-[#ED8E5B]' : null} bg-no-repeat bg-white`} style={{backgroundPositionX: `${item.수술부위 == '가슴' ? -5 : item.수술부위 == '복부' ? -55 : item.수술부위 == '힙' ? -105 : item.수술부위 == '허벅지' ? -155 : item.수술부위 == '종아리' ? -205 : item.수술부위 == '팔' ? -5 : item.수술부위 == '등' ? -55 : item.수술부위 == '러브핸들' ? -105 : item.수술부위 == '얼굴' ? -155 : 50}px`, backgroundPositionY: `${item.수술부위 == '가슴' ? -5 : item.수술부위 == '복부' ? -5 : item.수술부위 == '힙' ? -5 : item.수술부위 == '허벅지' ? -5 : item.수술부위 == '종아리' ? -5 : item.수술부위 == '팔' ? -55 : item.수술부위 == '등' ? -55 : item.수술부위 == '러브핸들' ? -55 : item.수술부위 == '얼굴' ? -55 : 50}px`}}></div>
+                                        <div className={`ml-[65px] float-left w-[110px]`}>
+                                            <p className={`text-[24px] leading-[24px] ${item.수술부위 == '가슴' ? 'text-[#55DAF2]' : item.수술부위 == '팔' ? 'text-[#15CF8F]' : item.수술부위 == '복부' ? 'text-[#ED6B5B]' : item.수술부위 == '허벅지' ? 'text-[#38ABBE]' : item.수술부위 == '얼굴' ? 'text-[#F9AC68]' : item.수술부위 == '러브핸들' ? 'text-[#F05579]' : item.수술부위 == '힙' ? 'text-[#F9AC68]' : item.수술부위 == '종아리' ? 'text-[#5B87ED]' : item.수술부위 == '등' ? 'text-[#ED8E5B]' : null}`}>{item.수술부위}</p>
+                                            <p className={`text-[16px] leading-[24px] font-bold`}>{item.수술코드}</p>
+                                        </div>
+                                        <div className={`float-left w-[150px]`}>
+                                            <p className={`text-[24px] leading-[24px] font-bold`}>{item.고객명}</p>
+                                            <p className={`text-[14px] leading-[24px]`}>{item.고객번호}</p>
+                                        </div>
+                                        {item.STATUS == null || item.STATUS == 0 ? 
+                                        <p className={`float-right w-[100px] bg-[#15cf8f] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`} style={{filter:'drop-shadow(0px 4px 40px rgba(21,207,143,.5))'}} onClick={async () => {
+                                            const url = `/api/kiosk-surgery/schedule/add/`;
+                                            try {
+                                                const response = await fetch(url, {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type": "application/json",
+                                                    },
+                                                    body: JSON.stringify({
+                                                        deviceID: fingerprint,
+                                                        userID: dataAllOpe?.[hospitalIndex]?.doctor?.[doctorIndex]?.surgeries[index]?.담당의ID
+                                                    }),
+                                                });
+                                                if (response.ok) {
+                                                    const result = await response.json();
+                                                    if(result.success) {
+                                                        setOpeOpen(false);
+                                                    } else {
+                                                        
+                                                    }
+                                                } else {
+                                                    console.error("API 호출 실패", response.status);
+                                                }
+                                            } catch (error) {
+                                                console.error("에러 발생", error);
+                                            }
+                                        }}>선택하기</p> : item.STATUS == 1 ? <p className={`float-right w-[100px] bg-[#ED6B5B] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}>수술중</p> : item.STATUS == 2 ? <p className={`float-right w-[100px] bg-[#ED6B5B] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}>수술완료</p> : item.STATUS == 3 ? <p className={`float-right w-[100px] bg-[#5B87ED] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}>기록완료</p> : null }
                                     </div>)
                                 }
                             )}

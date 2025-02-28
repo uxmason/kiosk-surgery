@@ -26,7 +26,7 @@ export async function GET() {
                     WHERE STARTBRAN = A.STARTBRAN 
                     AND OPDOCTOR = A.PROMDOCTOR 
                     AND PACKAGE = A.PACKAGE) AS 추가시간,
-                    K.STATUS AS state
+                    K.STATUS AS STATUS
                 FROM tsfmc_data.dbo.ADM090T A 
                 LEFT OUTER JOIN tsfmc_data.dbo.PEO010T P 
                     ON P.PSENTRY = A.PSENTRY 
@@ -36,12 +36,13 @@ export async function GET() {
                 LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_SURGERY K
                     ON K.PSENTRY  = A.PSENTRY 
                     AND K.OPDATE  = A.PROMDATE
+                    AND K.OPCODE  = A.PACKAGE
                 LEFT OUTER JOIN tsfmc_data.dbo.HOS000T H
                     ON H.HOS_CODE = A.STARTBRAN
                 WHERE A.PROMDATE = '${today}' 
                     AND A.PROMSTATE = '001'
                     -- AND A.PROMTIME > '$currentTime'
-                `;
+                ORDER BY A.PROMTIME`;
         const results: any[] = await queryDB(sql);
         const nested: {
             branch: string;
