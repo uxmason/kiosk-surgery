@@ -8,16 +8,16 @@ import {
 import CustomModal from "./custom-modal";
 import { useEffect, useState } from "react";
 import { OpeClientType } from "@/type";
+import { handleBirthToAge } from "@/function";
 interface Props {
     isOpenOpeModal: boolean;
     setIsOpenOpeModal: (v: boolean) => void;
 }
 const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
-    // const { psEntry } = usePsentryStore();
-    const psEntry = "210040378";
-    const doctorId = "pyc21";
-    // const { doctorId } = useDoctorIdStore();
+    const psEntry = "210046823";
+    const doctorId = "drh82";
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
+    const [isAge, setIsAge] = useState(0);
 
     // 수술 고객 정보
     const onHandleSelectOpe = async () => {
@@ -39,6 +39,7 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
             console.error("Error fetching data:", error);
         }
     };
+
     useEffect(() => {
         onHandleSelectOpe().then((res) => {
             if (res.success) {
@@ -48,6 +49,11 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
             }
         });
     }, []);
+
+    useEffect(() => {
+        const age = handleBirthToAge(isOpeInfo?.[0]?.주민번호);
+        setIsAge(Math.floor(Number(age)));
+    }, [isOpeInfo]);
     return (
         <CustomModal
             isOpen={isOpenOpeModal}
@@ -59,13 +65,25 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
                 </p>
                 <ClientInfoForModal isOpeInfo={isOpeInfo} />
                 <ReservationInfo isOpeInfo={isOpeInfo} />
-                <GraphAi aiType="DOCTOR">
-                    <>
-                        <p className="text-white text-[24px] font-bold leading-6">
-                            예측 지방 추출량
-                        </p>
-                    </>
-                </GraphAi>
+                {isAge !== 0 && (
+                    <GraphAi
+                        aiType="DOCTOR"
+                        age={isAge}
+                        sex={
+                            Number(isOpeInfo?.[0]?.주민번호.slice(6, 7)) ===
+                                1 ||
+                            Number(isOpeInfo?.[0]?.주민번호.slice(6, 7)) === 3
+                                ? "M"
+                                : "F"
+                        }
+                    >
+                        <>
+                            <p className="text-white text-[24px] font-bold leading-6">
+                                예측 지방 추출량
+                            </p>
+                        </>
+                    </GraphAi>
+                )}
                 <div className="w-full grid grid-cols-3 gap-x-5">
                     <GraphWeight />
                     <Weights />

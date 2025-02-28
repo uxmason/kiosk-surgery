@@ -10,7 +10,7 @@ export async function GET(req: Request) {
         const today = getFormattedDate();
         const time = getCurrentTimeHHMM();
         const isAddWhere = psEntry
-            ? `AND A.PSENTRY > '${psEntry}'`
+            ? `AND A.PSENTRY = '${psEntry}'`
             : `AND A.PROMTIME > '${time}'`;
         const sql = `SELECT DISTINCT top 1
                     A.STARTBRAN AS 지점,

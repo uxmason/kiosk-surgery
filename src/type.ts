@@ -4,6 +4,7 @@ export type TipType = {
 export type ShapeType = {
     type: "직선형" | "컨케이브";
 };
+export type FatPartType = "복부" | "팔" | "허벅지";
 export type PartType =
     | "THIGH"
     | "ABDOMEN"
@@ -109,4 +110,24 @@ export type OpeClientType = {
     참관구분: "Y" | "N" | null;
     추가시간: number;
     통역여부: "Y" | "N" | null;
+};
+
+export type LimitFatPartsType = {
+    메인부위명: FatPartType;
+    평균예측지방량최대치: number;
+    평균예측지방량평균치: number;
+    평균예측지방량최소치: number;
+    최대예측지방량최소치: number;
+    최대예측지방량평균치: number;
+    최대예측지방량최대치: number;
+};
+export type FatListType = {
+    지점명: string;
+    수술의ID: string;
+    수술의: string;
+    메인부위명: FatPartType;
+    데이터갯수: number;
+    최소예측지방량: number;
+    평균예측지방량: number;
+    최대예측지방량: number;
 };

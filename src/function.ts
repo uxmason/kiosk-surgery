@@ -85,3 +85,36 @@ export const handleBirthToAge = (rrn: string | undefined) => {
 
     return ageInYears.toFixed(1);
 };
+export const getKoreanAge = (rrn: string) => {
+    if (!rrn) return;
+
+    let birthYear = parseInt(rrn.substring(0, 2), 10);
+    const firstDigit = parseInt(rrn.charAt(6), 10);
+
+    if (
+        firstDigit === 1 ||
+        firstDigit === 2 ||
+        firstDigit === 5 ||
+        firstDigit === 6
+    ) {
+        birthYear += 1900;
+    } else if (
+        firstDigit === 3 ||
+        firstDigit === 4 ||
+        firstDigit === 7 ||
+        firstDigit === 8
+    ) {
+        birthYear += 2000;
+    } else if (firstDigit === 9 || firstDigit === 0) {
+        birthYear += 1800;
+    } else {
+        throw new Error("유효하지 않은 주민등록번호입니다.");
+    }
+
+    const today = new Date();
+    const currentYear = today.getFullYear();
+
+    const koreanAge = currentYear - birthYear + 1;
+
+    return koreanAge;
+};
