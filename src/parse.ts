@@ -8,6 +8,10 @@ function generateParseKeyForObject<T extends string>(
 ) {
     return (v: Nullish<T>) => (v ? obj[v] : fallback);
 }
+export const parseSexType = generateParseKeyForObject<"F" | "M">({
+    F: { text: "여성", color: "#F05579" },
+    M: { text: "남성", color: "#38ABBE" },
+});
 export const parseCannulTipType = generateParseKeyForObject<
     "사선형" | "블런트형" | "샤프형"
 >({
