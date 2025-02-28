@@ -28,7 +28,6 @@ export default function Home() {
     const { doctor, getDoctor, setDoctor } = useDoctorStore();
     const [fingerprint, setFingerprint] = useState("");
     const [lastRegDate, setLastRegDate] = useState("");
-    const [isBoostFirst, setBoostFirst] = useState(false);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -61,8 +60,7 @@ export default function Home() {
                         name: doctorInfo?.["USER_NAME"], 
                         branch: doctorInfo?.["STARTBRAN"]
                     });
-                    setBoostFirst(true);
-                    // setUnpaired(false);
+                    setUnpaired(false);
                 } else {
                     console.log('error', res.message);
                     toast.error(res.message);
