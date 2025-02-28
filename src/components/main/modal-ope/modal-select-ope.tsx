@@ -77,8 +77,9 @@ const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe }: Props) => {
                             {(dataAllOpe?.[hospitalIndex]?.doctor?.[doctorIndex]?.surgeries ?? []).map((item, index) => {
                                 return (
                                     <div key={index}
-                                        className={`absolute p-[20px] bg-[#ffffff05] text-white rounded-[15px] left-[75px] w-[470px]`} style={{top: 60 + (Number(item.시작시간.substring(0,2))-9)*100 + Number(item.시작시간.substring(2,4))/60*100+'px', height: Number(item.예상시간)*100-20 +'px'}}>
-                                        {item.시작시간} {Number(item.예상시간)*100} 
+                                        className={`absolute p-[20px] bg-[#ffffff08] text-white rounded-[15px] left-[75px] w-[470px]`} style={{top: 60 + (Number(item.시작시간.substring(0,2))-9)*100 + Number(item.시작시간.substring(2,4))/60*100+'px', height: Number(item.예상시간)*100-20 +'px'}}>
+                                            <div className={`styleSheet absolute w-[50px] h-[50px] rounded-[15px] border-[5px] ${item.수술부위 == '팔' ? 'border-[#15CF8F]' : item.수술부위 == '복부' ? 'border-[#ED6B5B]' : item.수술부위 == '허벅지' ? 'border-[#38ABBE]' : item.수술부위 == '얼굴' ? 'border-[#F9AC68]' : item.수술부위 == '러브핸들' ? 'border-[#F05579]' : item.수술부위 == '엉덩이' ? 'border-[#F9AC68]' : item.수술부위 == '종아리' ? 'border-[#5B87ED]' : null} bg-no-repeat bg-center bg-white`} style={{backgroundPositionX: `${item.수술부위 == '팔' ? 0 : item.수술부위 == '복부' ? -50 : item.수술부위 == '허벅지' ? -100 : item.수술부위 == '얼굴' ? -150 : item.수술부위 == '러브핸들' ? -200 : item.수술부위 == '엉덩이' ? 0 : item.수술부위 == '종아리' ? -50 : 0}px`}}></div>
+                                        {item.시작시간} {Number(item.예상시간)*100} {item.수술부위}
                                     </div>)
                                 }
                             )}

@@ -54,6 +54,11 @@
     }
 }
 
+.styleSheet {
+    background-image: url('/public/images/styleSheet.png');
+    background-size: cover;
+}
+
 .isHidedScrollBar {
     min-width: 1080px;
     height: 1920px;
