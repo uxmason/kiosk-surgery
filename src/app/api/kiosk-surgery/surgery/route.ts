@@ -11,8 +11,8 @@ export async function GET(req: Request) {
         const time = getCurrentTimeHHMM();
         const isAddWhere = psEntry
             ? `AND A.PSENTRY = '${psEntry}'`
-            : `AND A.PROMTIME > '${time}'`;
-        const sql = `SELECT DISTINCT top 1
+            : ``;
+        const sql = `SELECT top 1
                     A.STARTBRAN AS 지점,
                     A.PROMTIME AS 시작시간, 
                     A.OPETIME AS 종료시간,  
@@ -56,12 +56,11 @@ export async function GET(req: Request) {
                     ON K.PSENTRY  = A.PSENTRY 
                     AND K.OPDATE  = A.PROMDATE 
                 WHERE A.PROMDOCTOR = '${doctorId}'
-                    AND A.PROMDATE = '${today}' 
                     AND A.PROMSTATE = '001'
-                    ${isAddWhere}
-                `;
+                    AND (A.PROMDATE = '${today}' AND A.PROMTIME >= '${time}') OR A.PROMDATE > '${today}' ${isAddWhere}
+                ORDER BY A.PROMDATE, A.PROMTIME`;
         const results: any[] = await queryDB(sql);
-        return new Response(JSON.stringify({ success: true, sdf:sql,  list: results }));
+        return new Response(JSON.stringify({ success: true, list: results }));
     } catch {
         return new Response(
             JSON.stringify({

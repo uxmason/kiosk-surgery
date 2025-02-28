@@ -13,7 +13,7 @@ const Photo = ({ setModalImgsOpen, imgs, isUnpaired, lastRegDate }: Props) => {
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 사진
             </p>
-            {imgs.length > 0 && lastRegDate && !isUnpaired ? (
+            {imgs && imgs.length > 0 && lastRegDate && !isUnpaired ? (
                 <>
                     <div className="w-full h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
                         {Array.from({ length: 15 }, (_, i) => {

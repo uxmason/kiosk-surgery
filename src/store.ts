@@ -10,14 +10,28 @@ export const useStore = create<Store>((set) => ({
     setDeviceId: (newDeviceId: string) => set({ deviceId: newDeviceId }),
 }));
 
-interface PsentryStore {
+interface Client {
     psEntry: string;
-    setPsEntry: (newPsEntry: string) => void;
+    name: string;
+    branch: string;
+    licence: string;
 }
 
-export const usePsentryStore = create<PsentryStore>((set) => ({
-    psEntry: "",
-    setPsEntry: (newPsEntry: string) => set({ psEntry: newPsEntry }),
+interface ClientStore {
+    client: Client;
+    setClient: (client: Client) => void;
+    getClient: () => Client;
+}
+
+export const useClientStore = create<ClientStore>((set, get) => ({
+    client: {
+        psEntry: "",
+        name: "",
+        branch: "",
+        licence: "",
+    },
+    setClient: (newClient) => set({ client: newClient }),
+    getClient: () => get().client,
 }));
 
 interface Doctor {

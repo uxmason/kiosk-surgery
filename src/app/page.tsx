@@ -7,7 +7,7 @@ import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { useDoctorStore, usePsentryStore, useStore } from "@/store";
+import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 
@@ -24,7 +24,7 @@ export default function Home() {
     const [dataFepa, setFepa] = useState([]);
     const [dataAllOpe, setAllOpe] = useState([]);
     const { deviceId, setDeviceId } = useStore();
-    const { psEntry, setPsEntry } = usePsentryStore();
+    const { client, getClient, setClient } = useClientStore();
     const { doctor, getDoctor, setDoctor } = useDoctorStore();
     const [fingerprint, setFingerprint] = useState("");
     const [lastRegDate, setLastRegDate] = useState("");
@@ -74,19 +74,13 @@ export default function Home() {
 
     // 가까운 미래의 수술 고객 정보
     const onHandleSelectOpe = async () => {
-        console.log(`/api/kiosk-surgery/surgery?doctorId=${doctor.id}`)
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`,
-                {
-                    method: "GET",
-                }
+                `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`, {method: "GET"}
             );
-
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-
             const result = await response.json();
             return result;
         } catch (error) {
@@ -95,10 +89,8 @@ export default function Home() {
     };
     useEffect(() => {
         if (!doctor.id) return;
-        console.log('cccc', doctor)
         onHandleSelectOpe().then((res) => {
             if (res.success) {
-                console.log('cccc', res)
                 setOpeInfo(res.list);
                 // setInbody([]);
                 // setFepa([]);
@@ -161,7 +153,7 @@ export default function Home() {
         //         }
         //     }
         // );
-    }, [psEntry]);
+    }, [client]);
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
@@ -183,20 +175,24 @@ export default function Home() {
 
     // 고객 이미지 담기
     useEffect(() => {
-        if (!psEntry) return;
-        handleSelectImgLst(psEntry).then((res) => {
+        if (!client.psEntry) return;
+        handleSelectImgLst(client.psEntry).then((res) => {
             if (res.success) {
                 setImgs(res.album);
             } else {
                 console.log("FAIL");
             }
         });
-    }, [psEntry]);
+    }, [client]);
 
     useEffect(() => {
         if (!dataOpeInfo) return;
-        const psEntry = dataOpeInfo?.[0]?.["고객번호"];
-        setPsEntry(psEntry);
+        setClient({
+            psEntry: dataOpeInfo?.[0]?.["고객번호"],
+            branch: dataOpeInfo?.[0]?.["지점"],
+            name: dataOpeInfo?.[0]?.["고객명"],
+            licence: dataOpeInfo?.[0]?.["주민번호"],
+        });
     }, [dataOpeInfo]);
 
     const handleSelectAllOpe = async () => {
