@@ -134,7 +134,7 @@ export default function Info() {
                     cannulaInSurgeryList={cannulaInSurgeryList}
                 />
                 <Parts incisionList={incisionList} />
-                <div className="flex w-full justify-center pt-5">
+                <div className="flex w-full justify-center pt-5 px-5">
                     <CustomBtn
                         text="기록 완료"
                         bg="#5B87ED"

@@ -85,7 +85,7 @@ export default function Info() {
                     setIsSecondOpen={setIsSecondOpen}
                     imgs={imgs}
                 />
-                <div className="flex w-full justify-center pt-5">
+                <div className="flex w-full justify-center pt-5 px-5">
                     <CustomBtn
                         text="수술 완료"
                         bg="#ED6B5B"

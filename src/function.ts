@@ -4,6 +4,13 @@ export const maskIdNumber = (idNumber: string) => {
 export const removeSpace = (str: string) => {
     return str.replace(/\s/g, "");
 };
+export const formatTime = (time: string) => {
+    const hours = time?.substring(0, 2);
+    const minutes = time?.substring(2, 4);
+
+    return `${hours}:${minutes}`;
+};
+
 export const formatDate = () => {
     const now = new Date();
     const yy = String(now.getFullYear()).slice(2);
@@ -47,4 +54,67 @@ export const handleSelectDoctor = async (deviceId: string) => {
     } catch (error) {
         console.error("Error fetching data:", error);
     }
+};
+export const handleBirthToAge = (rrn: string | undefined) => {
+    if (!rrn) return;
+    if (!/^\d{13}$/.test(rrn)) {
+        throw new Error("올바른 주민등록번호 형식이 아닙니다. (13자리 숫자)");
+    }
+
+    let birthYear: number = parseInt(rrn.substring(0, 2), 10);
+    const birthMonth: number = parseInt(rrn.substring(2, 4), 10);
+    const birthDay: number = parseInt(rrn.substring(4, 6), 10);
+    const firstDigit: number = parseInt(rrn.charAt(6), 10);
+
+    if ([1, 2, 5, 6].includes(firstDigit)) {
+        birthYear += 1900;
+    } else if ([3, 4, 7, 8].includes(firstDigit)) {
+        birthYear += 2000;
+    } else if ([9, 0].includes(firstDigit)) {
+        birthYear += 1800;
+    } else {
+        throw new Error("유효하지 않은 주민등록번호입니다.");
+    }
+
+    const birthDate: Date = new Date(birthYear, birthMonth - 1, birthDay);
+    const today: Date = new Date();
+
+    const ageInMilliseconds: number = today.getTime() - birthDate.getTime();
+    const ageInYears: number =
+        ageInMilliseconds / (1000 * 60 * 60 * 24 * 365.25);
+
+    return ageInYears.toFixed(1);
+};
+export const getKoreanAge = (rrn: string) => {
+    if (!rrn) return;
+
+    let birthYear = parseInt(rrn.substring(0, 2), 10);
+    const firstDigit = parseInt(rrn.charAt(6), 10);
+
+    if (
+        firstDigit === 1 ||
+        firstDigit === 2 ||
+        firstDigit === 5 ||
+        firstDigit === 6
+    ) {
+        birthYear += 1900;
+    } else if (
+        firstDigit === 3 ||
+        firstDigit === 4 ||
+        firstDigit === 7 ||
+        firstDigit === 8
+    ) {
+        birthYear += 2000;
+    } else if (firstDigit === 9 || firstDigit === 0) {
+        birthYear += 1800;
+    } else {
+        throw new Error("유효하지 않은 주민등록번호입니다.");
+    }
+
+    const today = new Date();
+    const currentYear = today.getFullYear();
+
+    const koreanAge = currentYear - birthYear + 1;
+
+    return koreanAge;
 };
