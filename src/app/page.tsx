@@ -28,6 +28,7 @@ export default function Home() {
     const { doctor, getDoctor, setDoctor } = useDoctorStore();
     const [fingerprint, setFingerprint] = useState("");
     const [lastRegDate, setLastRegDate] = useState("");
+    const [isBoostFirst, setBoostFirst] = useState(false);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -60,7 +61,8 @@ export default function Home() {
                         name: doctorInfo?.["USER_NAME"], 
                         branch: doctorInfo?.["STARTBRAN"]
                     });
-                    setUnpaired(false);
+                    setBoostFirst(true);
+                    // setUnpaired(false);
                 } else {
                     console.log('error', res.message);
                     toast.error(res.message);
@@ -72,6 +74,7 @@ export default function Home() {
 
     // 가까운 미래의 수술 고객 정보
     const onHandleSelectOpe = async () => {
+        console.log(`/api/kiosk-surgery/surgery?doctorId=${doctor.id}`)
         try {
             const response = await fetch(
                 `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`,
@@ -92,12 +95,14 @@ export default function Home() {
     };
     useEffect(() => {
         if (!doctor.id) return;
+        console.log('cccc', doctor)
         onHandleSelectOpe().then((res) => {
             if (res.success) {
+                console.log('cccc', res)
                 setOpeInfo(res.list);
-                setInbody([]);
-                setFepa([]);
-                setLastRegDate('');
+                // setInbody([]);
+                // setFepa([]);
+                // setLastRegDate('');
             } else {
                 console.log("FAIL");
             }
