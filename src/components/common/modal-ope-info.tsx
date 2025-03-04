@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { OpeClientType, WeightsType } from "@/type";
 import { handleBirthToAge } from "@/function";
 import { useClientStore } from "@/store";
+import toast from "react-hot-toast";
 interface Props {
     isOpeInfo: OpeClientType[];
     isOpenOpeModal: boolean;
@@ -56,7 +57,7 @@ const ModalOpeInfo = ({
                     MUST_WEIGHTL: res?.inbody?.[0]?.["MUST_WEIGHTL"],
                 });
             } else {
-                console.log("INBODY_FAIL");
+                toast.error(res.message);
             }
         });
     }, [client]);

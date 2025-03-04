@@ -13,6 +13,7 @@ import { handleSelectDoctor } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { OpeClientType, PhotsArrType } from "@/type";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Info() {
     const { deviceId } = useStore();
@@ -75,6 +76,7 @@ export default function Info() {
                 setUnpaired(false);
             } else {
                 setUnpaired(true);
+                toast.error(res.message);
             }
         });
     }, [deviceId]);
@@ -86,10 +88,10 @@ export default function Info() {
             if (res.success) {
                 setIsOpeInfo(res.list);
             } else {
-                console.log("!#!@");
+                toast.error(res.message);
             }
         });
-    }, []);
+    }, [unpaired, client, doctor]);
 
     // 고객 이미지 담기
     useEffect(() => {
@@ -98,10 +100,10 @@ export default function Info() {
             if (res.success) {
                 setImgs(res.list);
             } else {
-                console.log("FAIL");
+                toast.error(res.message);
             }
         });
-    }, []);
+    }, [unpaired, client]);
 
     return (
         <>

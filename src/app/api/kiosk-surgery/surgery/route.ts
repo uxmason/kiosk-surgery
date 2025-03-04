@@ -7,7 +7,7 @@ export async function GET(req: Request) {
         const url = new URL(req.url);
         const { doctorId } = Object.fromEntries(url.searchParams.entries());
         const today = getFormattedDate();
-        const time = getCurrentTimeHHMM();
+        const nowTime = getCurrentTimeHHMM();
         const sql = `SELECT top 1
                     A.STARTBRAN AS 지점,
                     A.PROMTIME AS 시작시간, 
@@ -53,7 +53,7 @@ export async function GET(req: Request) {
                     AND K.OPDATE  = A.PROMDATE 
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME >= '${time}') OR A.PROMDATE > '${today}')
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}')
                 ORDER BY A.PROMDATE, A.PROMTIME`;
         const results: any[] = await queryDB(sql);
         return NextResponse.json({ success: true, list: results });

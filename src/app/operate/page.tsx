@@ -14,6 +14,7 @@ import { handleSelectDoctor } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { CannulaListType, IncisionListType, OpeClientType } from "@/type";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Info() {
     const { deviceId } = useStore();
@@ -56,7 +57,7 @@ export default function Info() {
             if (res.success) {
                 setIsOpeInfo(res.list);
             } else {
-                console.log("!#!@");
+                toast.error(res.message);
             }
         });
     }, [unpaired, client, doctor]);
@@ -94,6 +95,7 @@ export default function Info() {
                 setUnpaired(false);
             } else {
                 setUnpaired(true);
+                toast.error(res.message);
             }
         });
     }, [deviceId]);
@@ -121,7 +123,9 @@ export default function Info() {
         handleSelectCannulaList().then((res) => {
             if (res.success) {
                 setCannulaInSurgeryList(res.list);
-            } else console.log("FAIL_CANNULA_LIST");
+            } else {
+                toast.error(res.message);
+            }
         });
     }, [unpaired]);
 
@@ -150,7 +154,7 @@ export default function Info() {
             if (res.success) {
                 setIncisionList(res.list);
             } else {
-                console.log("FAIL_INCISION_LIST");
+                toast.error(res.message);
             }
         });
     }, [unpaired]);
