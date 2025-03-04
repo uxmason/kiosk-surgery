@@ -50,7 +50,7 @@ const Holes = ({ holeCounts }: Props) => {
                                         >
                                             <p className="text-white text-[18px] font-bold leading-5">
                                                 {m?.HOLE_COUNT}
-                                                <span className="pl-1">H</span>
+                                                <span className="pl-1"></span>
                                             </p>
                                         </button>
                                     );
