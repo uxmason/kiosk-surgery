@@ -25,6 +25,18 @@ export default function Info() {
     const [imgs, setImgs] = useState<PhotsArrType[]>([]);
     const [unpaired, setUnpaired] = useState(false);
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
+    const [seconds, setSeconds] = useState(0);
+
+    // 초를 HH:mm:ss 형식으로 변환하는 함수
+    const formatTime = (totalSeconds: number) => {
+        const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
+            2,
+            "0"
+        );
+        const secs = String(totalSeconds % 60).padStart(2, "0");
+        return `${hours}:${minutes}:${secs}`;
+    };
 
     // 수술 고객 정보
     const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
@@ -105,6 +117,15 @@ export default function Info() {
         });
     }, [unpaired, client]);
 
+    // 카운트 업
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeconds((prev) => prev + 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <>
             <main className="relative w-full h-full min-h-[1920px]">
@@ -136,7 +157,7 @@ export default function Info() {
                 <UpcomingTime
                     isOther
                     text="수술 경과 시간"
-                    time="00:03:23"
+                    time={formatTime(seconds)}
                     color="#ED6B5B"
                 />
                 <Process isProcess={2} isOther />
