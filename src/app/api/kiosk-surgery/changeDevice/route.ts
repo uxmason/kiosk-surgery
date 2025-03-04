@@ -10,8 +10,7 @@ export async function POST(req: NextRequest) {
             psEntry,
             opCode,
             part,
-            status,
-            forced
+            status
         } = await req.json();
         const today = getFormattedDate();
         const deviceSql = `SELECT * FROM KIOSK_DEVICES WHERE DEVICE_HASH='${deviceID}' AND USER_ID='${userID}' AND AVAILABLE = 1`;
