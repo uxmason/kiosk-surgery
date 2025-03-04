@@ -10,15 +10,21 @@ import {
     LengthType,
     ThicknessType,
 } from "@/type";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 interface Props {
     isOpenAddCannualModal: boolean;
+    selectedCannulaIds: string[];
     setIsOpenAddCannualModal: (v: boolean) => void;
+    setSelectedCannulaIds: Dispatch<SetStateAction<string[]>>;
+    reloadCannulaList: () => void;
 }
 const MoodalAddNewCannula = ({
     isOpenAddCannualModal,
+    selectedCannulaIds,
     setIsOpenAddCannualModal,
+    setSelectedCannulaIds,
+    reloadCannulaList,
 }: Props) => {
     const [isExistCannula, setExistCannula] = useState(false);
     const [modelNames, setModelNames] = useState<ModelNameType[]>([]);
@@ -27,6 +33,7 @@ const MoodalAddNewCannula = ({
     const [shapes, setShapes] = useState<ShapesType[]>([]);
     const [lengths, setLengths] = useState<LengthType[]>([]);
     const [thickness, setThickness] = useState<ThicknessType[]>([]);
+    const [isExistCannulaId, setIsExistCannulaId] = useState("");
 
     // 캐뉼라 정보 불러오기
     const handleSelectCannulaSpec = async () => {
@@ -60,6 +67,7 @@ const MoodalAddNewCannula = ({
             }
         });
     }, [isOpenAddCannualModal]);
+
     const method = useForm<AddNewCunnulaType>();
     const { reset, watch } = method;
     const model = watch()?.model;
@@ -110,12 +118,14 @@ const MoodalAddNewCannula = ({
             handleExistCannula().then((res) => {
                 if (res.success) {
                     setExistCannula(true);
+                    setIsExistCannulaId(res.cannulaID);
                 } else {
                     setExistCannula(false);
+                    setIsExistCannulaId("");
                 }
             });
         }
-    }, [isComplete, watch()]);
+    }, [model, shape, tip, length, , hole, thick]);
 
     useEffect(() => {
         reset({
@@ -126,6 +136,8 @@ const MoodalAddNewCannula = ({
             length: undefined,
             thick: undefined,
         });
+        setExistCannula(false);
+        setIsExistCannulaId("");
     }, [isOpenAddCannualModal]);
 
     return (
@@ -147,6 +159,10 @@ const MoodalAddNewCannula = ({
                         <Thickness thickness={thickness} />
                     </div>
                     <BtnAdd
+                        reloadCannulaList={reloadCannulaList}
+                        selectedCannulaIds={selectedCannulaIds}
+                        isExistCannulaId={isExistCannulaId}
+                        setSelectedCannulaIds={setSelectedCannulaIds}
                         isExistCannula={isExistCannula}
                         setIsOpenAddCannualModal={setIsOpenAddCannualModal}
                     />

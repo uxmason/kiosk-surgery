@@ -29,6 +29,7 @@ export default function Info() {
     >([]);
     const [incisionList, setIncisionList] = useState<IncisionListType[]>([]);
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
+    const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
 
     // 수술 고객 정보
     const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
@@ -103,9 +104,12 @@ export default function Info() {
     // 캐뉼라 리스트 불러오기
     const handleSelectCannulaList = async () => {
         try {
-            const response = await fetch(`/api/kiosk-surgery/cannula/list`, {
-                method: "GET",
-            });
+            const response = await fetch(
+                `/api/kiosk-surgery/cannula/list?psEntry=${client?.psEntry}`,
+                {
+                    method: "GET",
+                }
+            );
 
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -118,12 +122,31 @@ export default function Info() {
         }
     };
 
+    // API 재요청하는 함수 (특정 버튼 클릭 시 호출)
+    const reloadCannulaList = () => {
+        handleSelectCannulaList().then((res) => {
+            if (res.success) {
+                setCannulaInSurgeryList(res.list);
+            } else {
+                toast.error(res.message);
+            }
+        });
+    };
+
     // 캐뉼라 리스트 담기
     useEffect(() => {
         if (unpaired) return;
         handleSelectCannulaList().then((res) => {
             if (res.success) {
-                setCannulaInSurgeryList(res.list);
+                const list: CannulaListType[] = res.list;
+                setCannulaInSurgeryList(list);
+                if (list?.map((v) => v.SELECTED === 1)) {
+                    setSelectedCannulaIds(
+                        list
+                            ?.filter((v) => v.SELECTED === 1)
+                            ?.map((s) => s.CANNULA_ID)
+                    );
+                }
             } else {
                 toast.error(res.message);
             }
@@ -174,13 +197,13 @@ export default function Info() {
     return (
         <>
             <main className="relative w-full h-full min-h-[1920px]">
-                <div className="">
-                    <ClientInfo
-                        setIsOpenOpeModal={setIsOpenOpeModal}
-                        isOpeInfo={isOpeInfo}
-                    />
-                </div>
+                <ClientInfo
+                    setIsOpenOpeModal={setIsOpenOpeModal}
+                    isOpeInfo={isOpeInfo}
+                />
                 <Cannulas
+                    selectedCannulaIds={selectedCannulaIds}
+                    setSelectedCannulaIds={setSelectedCannulaIds}
                     setIsOpenAddCannualModal={setIsOpenAddCannualModal}
                     cannulaInSurgeryList={cannulaInSurgeryList}
                 />
@@ -209,6 +232,9 @@ export default function Info() {
                 setIsOpenOpeModal={setIsOpenOpeModal}
             />
             <MoodalAddNewCannula
+                reloadCannulaList={reloadCannulaList}
+                selectedCannulaIds={selectedCannulaIds}
+                setSelectedCannulaIds={setSelectedCannulaIds}
                 isOpenAddCannualModal={isOpenAddCannualModal}
                 setIsOpenAddCannualModal={setIsOpenAddCannualModal}
             />

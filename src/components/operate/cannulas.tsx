@@ -4,22 +4,25 @@ import { CannulaListType } from "@/type";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { getFormattedDate, removeSpace } from "@/function";
 import { useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 interface Props {
+    selectedCannulaIds: string[];
+    setSelectedCannulaIds: Dispatch<SetStateAction<string[]>>;
     setIsOpenAddCannualModal: (v: boolean) => void;
     cannulaInSurgeryList: CannulaListType[];
 }
 const Cannulas = ({
+    selectedCannulaIds,
+    setSelectedCannulaIds,
     setIsOpenAddCannualModal,
     cannulaInSurgeryList,
 }: Props) => {
     const today = getFormattedDate();
     const { deviceId } = useStore();
     const { client } = useClientStore();
-    const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
 
     const handleSelectCannula = (id: string) => {
         const data: DataType = {
@@ -28,21 +31,16 @@ const Cannulas = ({
             psEntry: client?.psEntry,
             opDate: today,
         };
-
         if (selectedCannulaIds?.includes(id)) {
             handleInDirectDeleteCannula(data).then((res) => {
-                if (res.success) {
-                    toast.success("캐뉼라 정보를 삭제했습니다.");
-                } else {
-                    toast.error(res.message);
+                if (!res.success) {
+                    return toast.error(res.message);
                 }
             });
         } else {
             handleDirectAddCannula(data).then((res) => {
-                if (res.success) {
-                    toast.success("캐뉼라 정보를 등록했습니다.");
-                } else {
-                    toast.error(res.message);
+                if (!res.success) {
+                    return toast.error(res.message);
                 }
             });
         }

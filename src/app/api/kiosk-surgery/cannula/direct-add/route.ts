@@ -31,7 +31,7 @@ export async function POST(req: Request) {
                         `;
         await queryDB(insertSql);
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ success: true, cannulaID: cannulaID });
     } catch {
         return NextResponse.json(
             { success: false, message: "사용할 수 없는 디바이스 정보입니다." },

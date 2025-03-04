@@ -48,7 +48,7 @@ const Lengths = ({ lengths }: Props) => {
                                             }}
                                         >
                                             <p className="text-white text-[18px] font-bold leading-5">
-                                                {m?.LENGTH}
+                                                {Number(m?.LENGTH) / 10}
                                                 <span className="pl-1">cm</span>
                                             </p>
                                         </button>

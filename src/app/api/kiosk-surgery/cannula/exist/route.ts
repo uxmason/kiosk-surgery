@@ -23,11 +23,12 @@ export async function POST(req: Request) {
 
             return NextResponse.json({
                 success: true,
-                cannulaID,
+                cannulaID: cannulaID,
             });
         } else {
             return NextResponse.json({
                 success: false,
+                message: "캐뉼라 존재 여부를 확인하지 못했습니다.",
             });
         }
     } catch (error) {

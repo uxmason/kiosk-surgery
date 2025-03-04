@@ -49,6 +49,7 @@ export type CannulaListType = {
     SHAPE: string;
     LENGTH: string;
     THICKNESS: string;
+    SELECTED: number;
 };
 
 export type AddNewCunnulaType = {

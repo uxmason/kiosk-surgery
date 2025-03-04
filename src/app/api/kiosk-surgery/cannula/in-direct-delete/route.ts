@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true });
     } catch {
         return NextResponse.json(
-            { success: false, message: "서버 오류 발생" },
+            { success: false, message: "캐뉼라 삭제를 실패했습니다." },
             { status: 500 }
         );
     }
