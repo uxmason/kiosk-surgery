@@ -4,44 +4,43 @@ import { CannulaListType } from "@/type";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { getFormattedDate, removeSpace } from "@/function";
 import { useClientStore, useStore } from "@/store";
+import toast from "react-hot-toast";
 interface Props {
+    selectedCannulaIds: string[];
+    setSelectedCannulaIds: Dispatch<SetStateAction<string[]>>;
     setIsOpenAddCannualModal: (v: boolean) => void;
     cannulaInSurgeryList: CannulaListType[];
 }
 const Cannulas = ({
+    selectedCannulaIds,
+    setSelectedCannulaIds,
     setIsOpenAddCannualModal,
     cannulaInSurgeryList,
 }: Props) => {
     const today = getFormattedDate();
     const { deviceId } = useStore();
     const { client } = useClientStore();
-    const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
-    const [isCurrentCannulaId, setIsCurrentCannulaId] = useState("");
+
     const handleSelectCannula = (id: string) => {
         const data: DataType = {
             deviceId: deviceId,
-            cannulaID: isCurrentCannulaId,
+            cannulaID: id,
             psEntry: client?.psEntry,
             opDate: today,
         };
-
         if (selectedCannulaIds?.includes(id)) {
             handleInDirectDeleteCannula(data).then((res) => {
-                if (res.success) {
-                    console.log(res);
-                } else {
-                    console.log(res);
+                if (!res.success) {
+                    return toast.error(res.message);
                 }
             });
         } else {
             handleDirectAddCannula(data).then((res) => {
-                if (res.success) {
-                    console.log(res);
-                } else {
-                    console.log("FAIL_CANNULA_ DIRECTADD");
+                if (!res.success) {
+                    return toast.error(res.message);
                 }
             });
         }
@@ -160,9 +159,6 @@ const Cannulas = ({
                                         }
                                         `}
                                         onClick={() => {
-                                            setIsCurrentCannulaId(
-                                                c?.CANNULA_ID
-                                            );
                                             handleSelectCannula(c?.CANNULA_ID);
                                         }}
                                     >
@@ -170,7 +166,7 @@ const Cannulas = ({
                                             {c?.MODEL_NAME}
                                         </p>
                                         <p className="text-white text-[20px] font-light leading-5 pt-[21px]">
-                                            {c?.갯수}H /{" "}
+                                            {c?.HOLE_COUNT} /{" "}
                                             {Number(c?.LENGTH) / 10}cm /{" "}
                                             {c?.THICKNESS}
                                             mm

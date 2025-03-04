@@ -1,16 +1,20 @@
 "use client";
 
-import { formatDate } from "@/function";
+import { formatDate, getFormattedDate } from "@/function";
+import { useClientStore, useStore } from "@/store";
 import {
     ButtonDataType,
     IncisionListType,
     UpdatedButtonDataType,
 } from "@/type";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 interface Props {
     incisionList: IncisionListType[];
 }
 const Parts = ({ incisionList }: Props) => {
+    const { deviceId } = useStore();
+    const { client } = useClientStore();
     const [updatedFrontButtonData, setUpdatedFrontButtonData] = useState<
         UpdatedButtonDataType[]
     >([]);
@@ -27,7 +31,7 @@ const Parts = ({ incisionList }: Props) => {
                 (data) => String(data.AJAX_ID) === String(button.id)
             );
 
-            return { ...button, ...match, selected: false };
+            return { ...button, ...match };
         });
     };
 
@@ -35,32 +39,117 @@ const Parts = ({ incisionList }: Props) => {
         ...updatedFrontButtonData,
         ...updatedBackButtonData,
     ];
+    const [selectedButtons, setSelectedButtons] = useState<
+        UpdatedButtonDataType[] | undefined
+    >(updatedButtonData);
 
-    const [selectedButtons, setSelectedButtons] =
-        useState<UpdatedButtonDataType[]>(updatedButtonData);
+    const isSelectedButtons = selectedButtons?.filter((s) => s?.SELECTED === 1);
 
-    const isSelectedButtons = selectedButtons?.filter(
-        (s) => s?.selected === true
-    );
-    const handleButtonClick = (id: string | undefined) => {
-        setSelectedButtons((prev) => {
-            const exists = prev.find((button) => button?.AJAX_ID === id);
+    const handleButtonClick = async (
+        id: string | undefined,
+        surgeryId: number | undefined
+    ) => {
+        const data: AddDataType = {
+            incisionID: Number(id),
+            psEntry: client?.psEntry,
+            opDate: getFormattedDate(),
+        };
 
-            if (exists) {
-                return prev.map((button) =>
-                    button?.AJAX_ID === id
-                        ? { ...button, selected: !button.selected }
-                        : button
-                );
-            } else {
-                const newButton = updatedButtonData.find(
-                    (button) => button?.AJAX_ID === id
-                );
-                return newButton
-                    ? [...prev, { ...newButton, selected: true }]
-                    : prev;
+        const exists = selectedButtons?.find(
+            (button) => button?.AJAX_ID === id
+        );
+
+        if (exists) {
+            const res = await handleDeleteIncision({
+                deviceId: deviceId,
+                incisionInSurgeryID: surgeryId ?? 0,
+            });
+
+            if (!res.success) {
+                return toast.error(res.message);
             }
-        });
+
+            setSelectedButtons((prev) =>
+                prev?.filter((button) => button?.AJAX_ID !== id)
+            );
+        } else {
+            const newButton = updatedButtonData.find(
+                (button) => button?.AJAX_ID === id
+            );
+
+            if (newButton) {
+                const res = await handleAddIncision(data);
+
+                if (res.success) {
+                    setSelectedButtons((prev) =>
+                        prev
+                            ? [
+                                  ...prev,
+                                  {
+                                      ...newButton,
+                                      SURGERY_ID: res.SURGERY_ID,
+                                      SELECTED: 1,
+                                  },
+                              ]
+                            : [
+                                  {
+                                      ...newButton,
+                                      SURGERY_ID: res.SURGERY_ID,
+                                      SELECTED: 1,
+                                  },
+                              ]
+                    );
+                } else {
+                    return toast.error(res.message);
+                }
+            }
+        }
+    };
+
+    // 인시젼 정보 등록
+    const handleAddIncision = async (data: AddDataType) => {
+        const url = `/api/kiosk-surgery/incision/add/`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                return result;
+            } else {
+                console.error("API 호출 실패", response.status);
+            }
+        } catch (error) {
+            console.error("에러 발생", error);
+        }
+    };
+
+    // 인시젼 정보 삭제
+    const handleDeleteIncision = async (data: DeleteDataType) => {
+        const url = `/api/kiosk-surgery/incision/delete/`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                return result;
+            } else {
+                console.error("API 호출 실패", response.status);
+            }
+        } catch (error) {
+            console.error("에러 발생", error);
+        }
     };
 
     useEffect(() => {
@@ -77,6 +166,11 @@ const Parts = ({ incisionList }: Props) => {
         setUpdatedBackButtonData(updatedBackButtonData);
     }, [incisionList]);
 
+    useEffect(() => {
+        const aaa = updatedButtonData?.filter((s) => s.SELECTED === 1);
+        setSelectedButtons(aaa);
+    }, [incisionList]);
+
     return (
         <div className="flex flex-col pt-[50px] w-full px-5">
             <p className="text-white text-[32px] font-bold leading-8">
@@ -87,17 +181,20 @@ const Parts = ({ incisionList }: Props) => {
             <div className="flex w-full h-[440px] bg-[rgba(58,62,89,0.15)] gap-x-5 rounded-[15px] mt-7 mb-[5px] px-5 py-5">
                 <div className="relative">
                     {updatedFrontButtonData?.map((button) => {
-                        const selectedButton = selectedButtons?.find(
-                            (item) => item?.id === button?.id
+                        const aaa = isSelectedButtons?.find(
+                            (a) => a.id === button?.id
                         );
-                        const isSelected = selectedButton?.selected || false;
+                        const isSelected = aaa?.SELECTED === 1;
 
                         return (
                             <button
                                 key={button?.id}
-                                onClick={() =>
-                                    handleButtonClick(button?.AJAX_ID)
-                                }
+                                onClick={() => {
+                                    handleButtonClick(
+                                        button?.AJAX_ID,
+                                        button?.SURGERY_ID
+                                    );
+                                }}
                                 className={`absolute rounded-full border-solid transition-all duration-300 ease-in-out ${
                                     isSelected
                                         ? "w-15 h-15 border-[12px] border-[#15CF8F] bg-white"
@@ -115,16 +212,18 @@ const Parts = ({ incisionList }: Props) => {
                 </div>
                 <div className="relative">
                     {updatedBackButtonData?.map((button) => {
-                        const selectedButton = selectedButtons?.find(
-                            (item) => item?.id === button?.id
+                        const aaa = isSelectedButtons?.find(
+                            (a) => a.id === button?.id
                         );
-                        const isSelected = selectedButton?.selected || false;
-
+                        const isSelected = aaa?.SELECTED === 1;
                         return (
                             <button
                                 key={button?.id}
                                 onClick={() =>
-                                    handleButtonClick(button?.AJAX_ID)
+                                    handleButtonClick(
+                                        button?.AJAX_ID,
+                                        button?.SURGERY_ID
+                                    )
                                 }
                                 className={`absolute rounded-full border-solid transition-all duration-300 ease-in-out ${
                                     isSelected
@@ -141,9 +240,14 @@ const Parts = ({ incisionList }: Props) => {
                     {isSelectedButtons?.map((sb) => {
                         return (
                             <button
-                                key={`${sb?.id}_${sb.selected}`}
+                                key={`${sb?.id}_${sb.POINT_NAME}`}
                                 className="flex items-center justify-between w-full bg-[rgba(58,62,89,0.50)] rounded-[10px] px-[25px] py-5"
-                                onClick={() => handleButtonClick(sb?.AJAX_ID)}
+                                onClick={() =>
+                                    handleButtonClick(
+                                        sb?.AJAX_ID,
+                                        sb?.SURGERY_ID
+                                    )
+                                }
                             >
                                 <div className="flex flex-col items-start w-full gap-y-3">
                                     <p className="text-white text-[22px] font-bold leading-[22px]">
@@ -186,3 +290,14 @@ const backButtonData: ButtonDataType[] = [
     { style: { top: "85%", right: "32%" }, id: 12 },
     { style: { top: "85%", left: "32%" }, id: 13 },
 ];
+
+type AddDataType = {
+    incisionID: number;
+    psEntry: string;
+    opDate: string;
+};
+
+type DeleteDataType = {
+    deviceId: string;
+    incisionInSurgeryID: number;
+};

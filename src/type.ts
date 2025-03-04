@@ -44,10 +44,12 @@ export type CannulaListType = {
     갯수: string;
     CANNULA_ID: string;
     MODEL_NAME: string;
+    HOLE_COUNT: string;
     TIP: string;
     SHAPE: string;
     LENGTH: string;
     THICKNESS: string;
+    SELECTED: number;
 };
 
 export type AddNewCunnulaType = {
@@ -71,8 +73,10 @@ export type OpeType = {
 };
 export type IncisionListType = {
     _id: string;
+    SURGERY_ID: number;
     POINT_NAME: string;
     AJAX_ID: string;
+    SELECTED: number;
 };
 export type ButtonDataType = {
     style: { top: string; left?: string; right?: string };
@@ -80,11 +84,12 @@ export type ButtonDataType = {
 };
 export type UpdatedButtonDataType = {
     _id?: string;
+    SURGERY_ID?: number;
     POINT_NAME?: string;
     AJAX_ID?: string;
     style: { top: string; left?: string; right?: string };
     id: number;
-    selected?: boolean;
+    SELECTED?: number;
 };
 export type PhotsArrType = {
     regdate: string;

@@ -13,7 +13,7 @@ const UpcomingTime = ({ text, time, color, isOther }: Props) => {
     return (
         <div
             className={`absoulte flex w-full mx-auto justify-center
-        ${isOther ? "bottom-0 pt-[45px]" : "mt-[1370px]"}
+        ${isOther ? "bottom-0 pt-10" : "mt-[1370px]"}
         `}
         >
             <p className="text-white text-center text-[20px] font-normal leading-[32px]">

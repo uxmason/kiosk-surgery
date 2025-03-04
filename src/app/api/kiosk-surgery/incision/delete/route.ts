@@ -3,7 +3,7 @@ import queryDB from "../../../../../../lib/db";
 
 export async function POST(req: NextRequest) {
     try {
-        const { deviceId, cannulaID, psEntry, opDate } = await req.json();
+        const { deviceId, incisionInSurgeryID } = await req.json();
 
         // 디바이스 확인
         const deviceSql = `SELECT * FROM KIOSK_DEVICES WHERE DEVICE_HASH = '${deviceId}' AND AVAILABLE = 1`;
@@ -15,29 +15,14 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // 🔹 CANNULA 존재 여부 확인
-        const checkResult = await queryDB(
-            `SELECT TOP 1 * FROM CNL_CANNULA 
-            WHERE _id = ${cannulaID}`
-        );
-        if (checkResult?.length === 0) {
-            return NextResponse.json({
-                success: false,
-                message: "이 _id로 등록된 캐뉼라 정보는 없습니다.",
-            });
-        }
-
         await queryDB(
-            `DELETE FROM CNL_SURGERY 
-            WHERE CANNULA_ID = ${cannulaID} 
-            AND PSENTRY = ${psEntry} 
-            AND OPDATE = ${opDate}`
+            `DELETE FROM ICS_SURGERY WHERE _id = ${incisionInSurgeryID}`
         );
 
         return NextResponse.json({ success: true });
     } catch {
         return NextResponse.json(
-            { success: false, message: "캐뉼라 삭제를 실패했습니다." },
+            { success: false, message: "인시젼 정보를 삭제할 수 없습니다." },
             { status: 500 }
         );
     }

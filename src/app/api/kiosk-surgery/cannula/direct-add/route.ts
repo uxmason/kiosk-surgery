@@ -6,7 +6,7 @@ export async function POST(req: Request) {
         const { deviceId, cannulaID, psEntry, opDate } = await req.json();
 
         // 디바이스 확인
-        const deviceSql = `SELECT * FROM KIOSK_DEVICES WHERE DEVICE_HASH = '${deviceId}' AND AVAILABLE = 1`;
+        const deviceSql = `SELECT * FROM tsfmc_mailsystem.dbo.KIOSK_DEVICES WHERE DEVICE_HASH = '${deviceId}' AND AVAILABLE = 1`;
         const deviceResult = await queryDB(deviceSql);
         if (deviceResult?.length === 0) {
             return NextResponse.json({
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
                         `;
         await queryDB(insertSql);
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ success: true, cannulaID: cannulaID });
     } catch {
         return NextResponse.json(
             { success: false, message: "사용할 수 없는 디바이스 정보입니다." },

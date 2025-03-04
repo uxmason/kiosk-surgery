@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         } = await req.json();
 
         // 디바이스 확인
-        const deviceSql = `SELECT * FROM KIOSK_DEVICES WHERE DEVICE_HASH = ${deviceId} AND AVAILABLE = 1`;
+        const deviceSql = `SELECT * FROM KIOSK_DEVICES WHERE DEVICE_HASH = '${deviceId}' AND AVAILABLE = 1`;
         const deviceResult = await queryDB(deviceSql);
         if (deviceResult?.length === 0) {
             return NextResponse.json({
@@ -51,14 +51,13 @@ export async function POST(req: NextRequest) {
             // 🔹 새로운 CANNULA 추가
             const insertQuery = branchName
                 ? `INSERT INTO CNL_CANNULA (MODEL_NAME_ID, HOLE_COUNT_ID, TIP_ID, SHAPE_ID, LENGTH_ID, THICKNESS_ID, ${branchName}, createdAt)
-                   VALUES (modelNameID, ${holeCountID}, ${tipID}, ${shapeID}, ${lengthID}, ${thicknessID}, 1, SYSDATETIME()); 
-                   SELECT SCOPE_IDENTITY() AS id;`
+                    VALUES (${modelNameID}, ${holeCountID}, ${tipID}, ${shapeID}, ${lengthID}, ${thicknessID}, 1, SYSDATETIME()); 
+                    SELECT SCOPE_IDENTITY() AS id`
                 : `INSERT INTO CNL_CANNULA (MODEL_NAME_ID, HOLE_COUNT_ID, TIP_ID, SHAPE_ID, LENGTH_ID, THICKNESS_ID, createdAt)
-                   VALUES (${modelNameID}, ${holeCountID}, ${tipID}, ${shapeID}, ${lengthID}, ${thicknessID}, SYSDATETIME());
-                   SELECT SCOPE_IDENTITY() AS id;`;
+                    VALUES (${modelNameID}, ${holeCountID}, ${tipID}, ${shapeID}, ${lengthID}, ${thicknessID}, SYSDATETIME());
+                    SELECT SCOPE_IDENTITY() AS id`;
 
             const insertResult = await queryDB(insertQuery);
-
             cannulaID = insertResult?.[0].id;
         } else {
             cannulaID = checkCannula?.[0]._id;
@@ -67,14 +66,14 @@ export async function POST(req: NextRequest) {
         // 🔹 CNL_SURGERY에 데이터 추가
         const insertCannulSql = `
                 INSERT INTO CNL_SURGERY (CANNULA_ID, PSENTRY, OPDATE, createdAt) 
-                VALUES (${cannulaID}, ${psEntry}, ${opDate}, SYSDATETIME())
+                VALUES (${cannulaID}, '${psEntry}', '${opDate}', SYSDATETIME())
             `;
         await queryDB(insertCannulSql);
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ success: true, cannulaID: cannulaID });
     } catch {
         return NextResponse.json(
-            { success: false, message: "서버 오류 발생" },
+            { success: false, message: "새로운 캐뉼라를 등록하지 못했습니다." },
             { status: 500 }
         );
     }
