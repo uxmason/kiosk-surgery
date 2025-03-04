@@ -30,22 +30,20 @@ export default function Home() {
     const [fingerprint, setFingerprint] = useState("");
     const [lastRegDate, setLastRegDate] = useState("");
     const [isBoostCheckStatus, setBoostCheckStatus] = useState(false);
-    const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
+    const [isOpeInfo] = useState<OpeClientType[]>([]);
+    const [count, setCount] = useState(24*60*60);
+    const [isReversCount, setReversCount] = useState(false);
+    const [targetPsEntry, setTargetPsEntry] = useState<string | null>(null);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/check-device?deviceId=${deviceId}`,
-                {
-                    method: "GET",
-                }
+                `/api/kiosk-surgery/check-device?deviceId=${deviceId}`,{method: "GET",}
             );
-
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-
             const result = await response.json();
             return result;
         } catch (error) {
@@ -79,17 +77,22 @@ export default function Home() {
     // 가까운 미래의 수술 고객 정보
     const onHandleSelectOpe = async () => {
         try {
+            let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
+            if(targetPsEntry != null) url += `&psEntry=${targetPsEntry}`;
             const response = await fetch(
-                `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`,
-                { method: "GET" }
+                url,{ method: "GET" }
             );
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
             const result = await response.json();
+            const currentTime = new Date().getHours()*60*60+new Date().getMinutes()*60+new Date().getSeconds();
+            setCount(Number(result.list[0].시작시간.substring(0,2))*60*60+Number(result.list[0].시작시간.substring(2,4))*60-currentTime);
+            setTargetPsEntry(null);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
+            setTargetPsEntry(null);
         }
     };
     useEffect(() => {
@@ -102,25 +105,22 @@ export default function Home() {
             }
         });
     }, [doctor]);
-
-    // 숫자 카운트
-    const [count, setCount] = useState(180);
     useEffect(() => {
-        if (count <= 0) return;
-
+        if (count <= 0) setReversCount(true);
+      
         const timer = setInterval(() => {
-            setCount((prevCount) => prevCount - 1);
+          setCount((prevCount) => prevCount - 1);
         }, 1000);
-
-        return clearInterval(timer);
+      
+        return () => clearInterval(timer);
+      
     }, [count]);
 
-    const minutes = Math.floor(count / 60);
-    const seconds = count % 60;
+    const hours = Math.floor((isReversCount ? -count : count)/60/60);
+    const minutes = Math.floor((isReversCount ? -count : count)/60%60);
+    const seconds = (isReversCount ? -count : count)%60;
 
-    const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
-        seconds
-    ).padStart(2, "0")}`;
+    const formattedTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
     // 고객 인바디 정보 불러오기
     // const handleSelectInbodyLst = async (psEntry: string) => {
@@ -156,39 +156,6 @@ export default function Home() {
         //     }
         // );
     }, [client]);
-
-    // 수술 고객 정보
-    const onHandleSelectOpeInfo = async () => {
-        try {
-            const response = await fetch(
-                `/api/kiosk-surgery/surgery/client?doctorId=${doctor?.id}&psEntry=${client?.psEntry}`,
-                {
-                    method: "GET",
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const result = await response.json();
-            return result;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
-
-    // 수술 고객 정보 담기
-    useEffect(() => {
-        if (!isPaired || !client || !doctor) return;
-        onHandleSelectOpeInfo().then((res) => {
-            if (res.success) {
-                setIsOpeInfo(res.list);
-            } else {
-                console.log("!#!@");
-            }
-        });
-    }, [isPaired, client, doctor]);
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
@@ -241,7 +208,6 @@ export default function Home() {
             });
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
-            console.log(result);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -360,9 +326,9 @@ export default function Home() {
                 </div>
                 {isPaired && (
                     <UpcomingTime
-                        text="시작까지 남은 시간"
+                        text={isReversCount ? `수술 예정 시각 이후 경과 시간` : `수술 시작까지 남은 시간`}
                         time={formattedTime}
-                        color="#15CF8F"
+                        color={isReversCount ? `#F9AC68` : `#15CF8F`}
                     />
                 )}
                 <Process isProcess={1} />
@@ -371,6 +337,7 @@ export default function Home() {
             <ModalSelectOpe
                 isOpen={isOpeOpenNext}
                 setOpeOpen={setOpeOpen}
+                setTargetPsEntry={setTargetPsEntry}
                 dataAllOpe={dataAllOpe}
                 fingerprint={fingerprint}
             />

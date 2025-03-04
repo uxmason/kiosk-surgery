@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { CustomModal } from "../../common";
 import { ModalError} from ".";
+import { returnDoubleFormatNumber } from "@/function";
+import toast from "react-hot-toast";
 // import _ from "lodash";
 // import { useDoctorIdStore } from "@/store";
 
@@ -33,15 +35,18 @@ interface DataAllOpeItem {
 
 interface Props {
     isOpen: boolean;
+    setTargetPsEntry: (v: string) => void;
     setOpeOpen: (v: boolean) => void;
     dataAllOpe: DataAllOpeItem[];
     fingerprint: string;
 }
 
-const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe, fingerprint}: Props) => {
+const ModalSelecOpe = ({ isOpen, setOpeOpen, setTargetPsEntry, dataAllOpe, fingerprint}: Props) => {
     const [hospitalIndex, setHospitalIndex] = useState(0);
     const [doctorIndex, setDoctorIndex] = useState(0);
     const [isErrorMessage, setIsErrorMessage] = useState(false);
+
+    const currentTimeHHMM = new Date().getHours()+''+returnDoubleFormatNumber(new Date().getMinutes())
 
     return (
         <>
@@ -79,7 +84,7 @@ const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe, fingerprint}: Props) =>
                                             <p className={`text-[24px] leading-[24px] font-bold`}>{item.고객명}</p>
                                             <p className={`text-[14px] leading-[24px]`}>{item.고객번호}</p>
                                         </div>
-                                        {item.STATUS == null || item.STATUS == 0 ? 
+                                        {Number(currentTimeHHMM) >= Number(item.종료시간) ? <p className={`float-right w-[100px] bg-[#fff2] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}>수술종료</p> : item.STATUS == null || item.STATUS == 0 ? 
                                         <p className={`float-right w-[100px] bg-[#15cf8f] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`} style={{filter:'drop-shadow(0px 4px 40px rgba(21,207,143,.5))'}} onClick={async () => {
                                             const url = `/api/kiosk-surgery/schedule/add/`;
                                             try {
@@ -90,15 +95,18 @@ const ModalSelecOpe = ({ isOpen, setOpeOpen, dataAllOpe, fingerprint}: Props) =>
                                                     },
                                                     body: JSON.stringify({
                                                         deviceID: fingerprint,
-                                                        userID: dataAllOpe?.[hospitalIndex]?.doctor?.[doctorIndex]?.surgeries[index]?.담당의ID
+                                                        userID: dataAllOpe?.[hospitalIndex]?.doctor?.[doctorIndex]?.surgeries[index]?.담당의ID,
+                                                        opCode: dataAllOpe?.[hospitalIndex]?.doctor?.[doctorIndex]?.surgeries[index]?.수술코드,
+                                                        psEntry: dataAllOpe?.[hospitalIndex]?.doctor?.[doctorIndex]?.surgeries[index]?.고객번호
                                                     }),
                                                 });
                                                 if (response.ok) {
                                                     const result = await response.json();
                                                     if(result.success) {
+                                                        setTargetPsEntry(result.client.PSENTRY);
                                                         setOpeOpen(false);
                                                     } else {
-                                                        
+                                                        toast.error(result.message);
                                                     }
                                                 } else {
                                                     console.error("API 호출 실패", response.status);

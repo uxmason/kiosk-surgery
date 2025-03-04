@@ -4,6 +4,9 @@ interface OpeInfoItem {
     "수술부위": string;
     "시작시간": string;
     "수술코드": string;
+    "고객번호": string;
+    "고객명": string;
+    "주민번호": string;
 }
 interface Props {
     dataOpeInfo: OpeInfoItem[];
@@ -15,7 +18,9 @@ const Info = ({ dataOpeInfo, setOpeOpen, isPaired }: Props) => {
     return (
         <button
             className="relative flex flex-col text-start w-[476px] h-[285px] bg-[#3A3E59] rounded-[15px] p-[30px]"
-            onClick={() => setOpeOpen(true)}>
+            onClick={() => {
+                setOpeOpen(true);
+            }}>
             <p className="text-white text-[24px] font-[250] leading-[24px]">담당의</p>
             {info && isPaired ? (
                 <>

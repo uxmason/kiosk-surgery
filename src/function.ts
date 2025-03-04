@@ -4,6 +4,13 @@ export const maskIdNumber = (idNumber: string) => {
 export const removeSpace = (str: string) => {
     return str.replace(/\s/g, "");
 };
+export const returnDoubleFormatNumber = (num: number) => {
+    if(num > 9) {
+        return num.toString();
+    } else {
+        return '0'+num;
+    }
+};
 export const formatTime = (time: string) => {
     const hours = time?.substring(0, 2);
     const minutes = time?.substring(2, 4);

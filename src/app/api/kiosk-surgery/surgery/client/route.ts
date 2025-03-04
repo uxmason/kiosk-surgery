@@ -55,8 +55,8 @@ export async function GET(req: Request) {
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
                     AND A.PROMDATE = '${today}' 
-                    AND A.PSENTRY = '${psEntry}';
-                `;
+                    AND A.PSENTRY = '${psEntry}'
+                ORDER BY A.PROMDATE, A.PROMTIME`;
         const results: any[] = await queryDB(sql);
         return NextResponse.json({ success: true, list: results });
     } catch {
