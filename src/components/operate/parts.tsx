@@ -31,7 +31,7 @@ const Parts = ({ incisionList }: Props) => {
                 (data) => String(data.AJAX_ID) === String(button.id)
             );
 
-            return { ...button, ...match, selected: false };
+            return { ...button, ...match };
         });
     };
 
@@ -43,9 +43,8 @@ const Parts = ({ incisionList }: Props) => {
         UpdatedButtonDataType[] | undefined
     >(updatedButtonData);
 
-    const isSelectedButtons = selectedButtons?.filter(
-        (s) => s?.selected === true
-    );
+    const isSelectedButtons = selectedButtons?.filter((s) => s?.SELECTED === 1);
+
     const handleButtonClick = async (
         id: string | undefined,
         surgeryId: number | undefined
@@ -89,14 +88,14 @@ const Parts = ({ incisionList }: Props) => {
                                   {
                                       ...newButton,
                                       SURGERY_ID: res.SURGERY_ID,
-                                      selected: true,
+                                      SELECTED: 1,
                                   },
                               ]
                             : [
                                   {
                                       ...newButton,
                                       SURGERY_ID: res.SURGERY_ID,
-                                      selected: true,
+                                      SELECTED: 1,
                                   },
                               ]
                     );
@@ -166,6 +165,12 @@ const Parts = ({ incisionList }: Props) => {
         );
         setUpdatedBackButtonData(updatedBackButtonData);
     }, [incisionList]);
+
+    useEffect(() => {
+        const aaa = updatedButtonData?.filter((s) => s.SELECTED === 1);
+        setSelectedButtons(aaa);
+    }, [incisionList]);
+
     return (
         <div className="flex flex-col pt-[50px] w-full px-5">
             <p className="text-white text-[32px] font-bold leading-8">
@@ -176,10 +181,10 @@ const Parts = ({ incisionList }: Props) => {
             <div className="flex w-full h-[440px] bg-[rgba(58,62,89,0.15)] gap-x-5 rounded-[15px] mt-7 mb-[5px] px-5 py-5">
                 <div className="relative">
                     {updatedFrontButtonData?.map((button) => {
-                        const selectedButton = selectedButtons?.find(
-                            (item) => item?.id === button?.id
+                        const aaa = isSelectedButtons?.find(
+                            (a) => a.id === button?.id
                         );
-                        const isSelected = selectedButton?.selected || false;
+                        const isSelected = aaa?.SELECTED === 1;
 
                         return (
                             <button
@@ -207,11 +212,10 @@ const Parts = ({ incisionList }: Props) => {
                 </div>
                 <div className="relative">
                     {updatedBackButtonData?.map((button) => {
-                        const selectedButton = selectedButtons?.find(
-                            (item) => item?.id === button?.id
+                        const aaa = isSelectedButtons?.find(
+                            (a) => a.id === button?.id
                         );
-                        const isSelected = selectedButton?.selected || false;
-
+                        const isSelected = aaa?.SELECTED === 1;
                         return (
                             <button
                                 key={button?.id}
@@ -236,7 +240,7 @@ const Parts = ({ incisionList }: Props) => {
                     {isSelectedButtons?.map((sb) => {
                         return (
                             <button
-                                key={`${sb?.id}_${sb.selected}`}
+                                key={`${sb?.id}_${sb.POINT_NAME}`}
                                 className="flex items-center justify-between w-full bg-[rgba(58,62,89,0.50)] rounded-[10px] px-[25px] py-5"
                                 onClick={() =>
                                     handleButtonClick(

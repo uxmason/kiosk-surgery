@@ -89,7 +89,7 @@ export type UpdatedButtonDataType = {
     AJAX_ID?: string;
     style: { top: string; left?: string; right?: string };
     id: number;
-    selected?: boolean;
+    SELECTED?: number;
 };
 export type PhotsArrType = {
     regdate: string;

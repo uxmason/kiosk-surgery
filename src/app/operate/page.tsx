@@ -185,7 +185,7 @@ export default function Info() {
                         SURGERY_ID: v?.SURGERY_ID,
                         POINT_NAME: v?.POINT_NAME,
                         AJAX_ID: v?.AJAX_ID,
-                        SELECTED: v?.SELECTED === 1,
+                        SELECTED: v?.SELECTED,
                     }))
                 );
             } else {
