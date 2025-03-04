@@ -7,6 +7,7 @@ import "swiper/css";
 import { useState } from "react";
 import { getFormattedDate, removeSpace } from "@/function";
 import { useClientStore, useStore } from "@/store";
+import toast from "react-hot-toast";
 interface Props {
     setIsOpenAddCannualModal: (v: boolean) => void;
     cannulaInSurgeryList: CannulaListType[];
@@ -19,11 +20,11 @@ const Cannulas = ({
     const { deviceId } = useStore();
     const { client } = useClientStore();
     const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
-    const [isCurrentCannulaId, setIsCurrentCannulaId] = useState("");
+
     const handleSelectCannula = (id: string) => {
         const data: DataType = {
             deviceId: deviceId,
-            cannulaID: isCurrentCannulaId,
+            cannulaID: id,
             psEntry: client?.psEntry,
             opDate: today,
         };
@@ -31,17 +32,17 @@ const Cannulas = ({
         if (selectedCannulaIds?.includes(id)) {
             handleInDirectDeleteCannula(data).then((res) => {
                 if (res.success) {
-                    console.log(res);
+                    toast.success("캐뉼라 정보를 삭제했습니다.");
                 } else {
-                    console.log(res);
+                    toast.error(res.message);
                 }
             });
         } else {
             handleDirectAddCannula(data).then((res) => {
                 if (res.success) {
-                    console.log(res);
+                    toast.success("캐뉼라 정보를 등록했습니다.");
                 } else {
-                    console.log("FAIL_CANNULA_ DIRECTADD");
+                    toast.error(res.message);
                 }
             });
         }
@@ -160,9 +161,6 @@ const Cannulas = ({
                                         }
                                         `}
                                         onClick={() => {
-                                            setIsCurrentCannulaId(
-                                                c?.CANNULA_ID
-                                            );
                                             handleSelectCannula(c?.CANNULA_ID);
                                         }}
                                     >

@@ -1,13 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getFormattedDate } from "@/function";
 import queryDB from "../../../../../../lib/db";
-export async function GET() {
+import { NextResponse } from "next/server";
+export async function GET(req: Request) {
     try {
-        const sql = `SELECT _id, POINT_NAME, AJAX_ID
-                    FROM tsfmc_mailsystem.dbo.ICS_INCISION 
+        const url = new URL(req.url);
+        const { psEntry } = Object.fromEntries(url.searchParams.entries());
+        const opDate = getFormattedDate();
+        const sql = `SELECT I._id, S._id AS SURGERY_ID, POINT_NAME, AJAX_ID, 
+                        CASE WHEN EXISTS (
+                        SELECT 1 FROM tsfmc_mailsystem.dbo.ICS_SURGERY S 
+                        WHERE S.INCISION_ID = I._id AND S.PSENTRY = '${psEntry}' AND S.OPDATE = '${opDate}'
+                        ) THEN 1 ELSE 0 END AS SELECTED
+                    FROM tsfmc_mailsystem.dbo.ICS_INCISION I
+                    LEFT JOIN tsfmc_mailsystem.dbo.ICS_SURGERY S
+                    ON S.INCISION_ID = I._id AND S.PSENTRY = '${psEntry}' AND S.OPDATE = '${opDate}'
                     ORDER BY AJAX_ID
                     `;
         const results: any[] = await queryDB(sql);
-        return new Response(JSON.stringify({ success: true, list: results }));
+        return NextResponse.json({ success: true, list: results });
     } catch {
         return new Response(
             JSON.stringify({

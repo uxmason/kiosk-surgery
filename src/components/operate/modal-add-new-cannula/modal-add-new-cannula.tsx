@@ -11,6 +11,7 @@ import {
     ThicknessType,
 } from "@/type";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 interface Props {
     isOpenAddCannualModal: boolean;
     setIsOpenAddCannualModal: (v: boolean) => void;
@@ -55,7 +56,7 @@ const MoodalAddNewCannula = ({
                 setLengths(res.length);
                 setThickness(res.thickness);
             } else {
-                console.log("SPEC_ERROR");
+                toast.error(res.message);
             }
         });
     }, [isOpenAddCannualModal]);

@@ -117,6 +117,7 @@ export default function Info() {
             console.error("Error fetching data:", error);
         }
     };
+
     // 캐뉼라 리스트 담기
     useEffect(() => {
         if (unpaired) return;
@@ -132,9 +133,12 @@ export default function Info() {
     // 인시젼 리스트 불러오기
     const handleSelectIncisionList = async () => {
         try {
-            const response = await fetch(`/api/kiosk-surgery/incision/list`, {
-                method: "GET",
-            });
+            const response = await fetch(
+                `/api/kiosk-surgery/incision/list?psEntry=${client?.psEntry}`,
+                {
+                    method: "GET",
+                }
+            );
 
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -152,7 +156,15 @@ export default function Info() {
         if (unpaired) return;
         handleSelectIncisionList().then((res) => {
             if (res.success) {
-                setIncisionList(res.list);
+                setIncisionList(
+                    res.list?.map((v: IncisionListType) => ({
+                        _id: v?._id,
+                        SURGERY_ID: v?.SURGERY_ID,
+                        POINT_NAME: v?.POINT_NAME,
+                        AJAX_ID: v?.AJAX_ID,
+                        SELECTED: v?.SELECTED === 1,
+                    }))
+                );
             } else {
                 toast.error(res.message);
             }
