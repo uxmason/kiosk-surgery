@@ -1,8 +1,18 @@
+import { handleBirthToAge } from "@/function";
+import { parseSexType } from "@/parse";
+import { OpeClientType } from "@/type";
+
 interface Props {
     setIsOpenOpeModal: (v: boolean) => void;
+    isOpeInfo: OpeClientType[];
 }
-const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
-    const sex = "F";
+const ClientInfo = ({ setIsOpenOpeModal, isOpeInfo }: Props) => {
+    const info = isOpeInfo?.[0];
+    const sex =
+        info?.주민번호?.slice(6, 7) === "2" ||
+        info?.주민번호?.slice(6, 7) === "4"
+            ? "F"
+            : "M";
     return (
         <div className="flex w-full gap-x-5 px-5 pt-5">
             <div className="flex w-[885px] h-[135px] pt-[30px] pb-[41px] px-10 rounded-[15px] bg-[rgba(58,62,89,0.15)]">
@@ -11,7 +21,7 @@ const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
                         고객번호
                     </p>
                     <p className="text-white text-[24px] font-bold leading-6">
-                        210040378
+                        {info?.고객번호}
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[150px]">
@@ -19,7 +29,7 @@ const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
                         고객명
                     </p>
                     <p className="text-white text-[32px] font-light leading-6">
-                        김서현
+                        {info?.고객명}
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[100px]">
@@ -27,11 +37,12 @@ const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
                         성별
                     </p>
                     <p
-                        className={`${
-                            sex === "F" ? "text-[#F05579]" : "text-[#38ABBE]"
-                        } text-[24px] font-bold leading-6`}
+                        style={{
+                            color: parseSexType(sex).color,
+                        }}
+                        className="text-[24px] font-bold leading-6"
                     >
-                        여성
+                        {parseSexType(sex).text}
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[150px]">
@@ -39,7 +50,7 @@ const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
                         나이
                     </p>
                     <p className="text-white text-[24px] font-bold leading-6">
-                        36.1세
+                        {handleBirthToAge(info?.주민번호)}세
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[150px]">
@@ -47,7 +58,7 @@ const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
                         부위
                     </p>
                     <p className="text-[#38ABBE] text-[32px] font-light leading-6">
-                        허벅지
+                        {info?.수술부위}
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[150px]">
@@ -55,7 +66,7 @@ const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
                         수술코드
                     </p>
                     <p className="text-white text-[24px] font-bold leading-6">
-                        OPE0385
+                        {info?.수술코드}
                     </p>
                 </div>
             </div>

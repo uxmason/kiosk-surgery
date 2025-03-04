@@ -1,6 +1,6 @@
 "use client";
 import { getFormattedDate } from "@/function";
-import { usePsentryStore, useStore } from "@/store";
+import { useClientStore, useStore } from "@/store";
 import { AddNewCunnulaType } from "@/type";
 import { useFormContext } from "react-hook-form";
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 const BtnAdd = ({ isExistCannula, setIsOpenAddCannualModal }: Props) => {
     const { deviceId } = useStore();
-    const { psEntry } = usePsentryStore();
+    const { client } = useClientStore();
     const { watch } = useFormContext<AddNewCunnulaType>();
     const model = watch()?.model;
     const hole = watch()?.hole;
@@ -42,7 +42,7 @@ const BtnAdd = ({ isExistCannula, setIsOpenAddCannualModal }: Props) => {
                     shapeID: shape,
                     lengthID: length,
                     thicknessID: thick,
-                    psEntry: psEntry,
+                    psEntry: client?.psEntry,
                     opDate: getFormattedDate(),
                 }),
             });

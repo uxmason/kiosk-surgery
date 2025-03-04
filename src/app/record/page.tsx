@@ -10,31 +10,41 @@ import {
 } from "@/components/common";
 import { FirstImgs, SecondImgs } from "@/components/record";
 import { handleSelectDoctor } from "@/function";
-import { useStore } from "@/store";
-import { PhotsArrType } from "@/type";
+import { useClientStore, useDoctorStore, useStore } from "@/store";
+import { OpeClientType, PhotsArrType } from "@/type";
 import { useEffect, useState } from "react";
 
 export default function Info() {
     const { deviceId } = useStore();
-    const psEntry = "210040378";
-    // const { psEntry } = usePsentryStore();
+    const { client } = useClientStore();
+    const { doctor } = useDoctorStore();
     const [isFirstOpen, setIsFirstOpen] = useState(true);
     const [isSecondOpen, setIsSecondOpen] = useState(false);
     const [isOpenOpeModal, setIsOpenOpeModal] = useState(false);
     const [imgs, setImgs] = useState<PhotsArrType[]>([]);
     const [unpaired, setUnpaired] = useState(false);
+    const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
 
-    // 키오스크에 등록된 의사 찾기
-    useEffect(() => {
-        if (!deviceId) return;
-        handleSelectDoctor(deviceId).then((res) => {
-            if (res.success) {
-                setUnpaired(false);
-            } else {
-                setUnpaired(true);
+    // 수술 고객 정보
+    const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
+        try {
+            const response = await fetch(
+                `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
+                {
+                    method: "GET",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
             }
-        });
-    }, [deviceId]);
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
@@ -57,23 +67,49 @@ export default function Info() {
         }
     };
 
+    // 키오스크에 등록된 의사 찾기
+    useEffect(() => {
+        if (!deviceId) return;
+        handleSelectDoctor(deviceId).then((res) => {
+            if (res.success) {
+                setUnpaired(false);
+            } else {
+                setUnpaired(true);
+            }
+        });
+    }, [deviceId]);
+
+    // 수술 고객 정보 담기
+    useEffect(() => {
+        if (unpaired || !client || !doctor) return;
+        onHandleSelectOpe(doctor?.id, client?.psEntry).then((res) => {
+            if (res.success) {
+                setIsOpeInfo(res.list);
+            } else {
+                console.log("!#!@");
+            }
+        });
+    }, []);
+
     // 고객 이미지 담기
     useEffect(() => {
-        // if (!psEntry) return;
-        if (unpaired) return;
-        handleSelectImgLst(psEntry).then((res) => {
+        if (unpaired || !client) return;
+        handleSelectImgLst(client?.psEntry).then((res) => {
             if (res.success) {
                 setImgs(res.list);
             } else {
                 console.log("FAIL");
             }
         });
-    }, [unpaired, psEntry]);
+    }, []);
 
     return (
         <>
             <main className="relative w-full h-full min-h-[1920px]">
-                <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
+                <ClientInfo
+                    setIsOpenOpeModal={setIsOpenOpeModal}
+                    isOpeInfo={isOpeInfo}
+                />
                 <FirstImgs
                     isFirstOpen={isFirstOpen}
                     isSecondOpen={isSecondOpen}
@@ -90,6 +126,7 @@ export default function Info() {
                         text="수술 완료"
                         bg="#ED6B5B"
                         isShow={true}
+                        isPaired={!unpaired}
                         isShowBtnText="준비 단계로"
                         path="/operate"
                     />
@@ -104,6 +141,7 @@ export default function Info() {
                 <Footer isOther />
             </main>
             <ModalOpeInfo
+                isOpeInfo={isOpeInfo}
                 isOpenOpeModal={isOpenOpeModal}
                 setIsOpenOpeModal={setIsOpenOpeModal}
             />

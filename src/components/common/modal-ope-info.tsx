@@ -9,38 +9,20 @@ import CustomModal from "./custom-modal";
 import { useEffect, useState } from "react";
 import { OpeClientType, WeightsType } from "@/type";
 import { handleBirthToAge } from "@/function";
-import { useClientStore, useDoctorStore } from "@/store";
+import { useClientStore } from "@/store";
 interface Props {
+    isOpeInfo: OpeClientType[];
     isOpenOpeModal: boolean;
     setIsOpenOpeModal: (v: boolean) => void;
 }
-const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
+const ModalOpeInfo = ({
+    isOpeInfo,
+    isOpenOpeModal,
+    setIsOpenOpeModal,
+}: Props) => {
     const { client } = useClientStore();
-    const { doctor } = useDoctorStore();
-    const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
     const [isAge, setIsAge] = useState(0);
     const [isWeights, setIsWeights] = useState<WeightsType>();
-
-    // 수술 고객 정보
-    const onHandleSelectOpe = async () => {
-        try {
-            const response = await fetch(
-                `/api/kiosk-surgery/surgery/client?doctorId=${doctor?.id}&psEntry=${client?.psEntry}`,
-                {
-                    method: "GET",
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const result = await response.json();
-            return result;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
 
     // 고객 인바디 정보 불러오기
     const handleSelectInbodyLst = async (psEntry: string) => {
@@ -62,17 +44,6 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
             console.error("Error fetching data:", error);
         }
     };
-
-    // 수술 고객 정보 담기
-    useEffect(() => {
-        onHandleSelectOpe().then((res) => {
-            if (res.success) {
-                setIsOpeInfo(res.list);
-            } else {
-                console.log("!#!@");
-            }
-        });
-    }, []);
 
     // 고객 인바디 정보 담기
     useEffect(() => {
@@ -105,7 +76,7 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
                 <p className="text-white text-[54px] font-bold leading-[54px]">
                     수술 정보
                 </p>
-                <ClientInfoForModal />
+                <ClientInfoForModal isOpeInfo={isOpeInfo} />
                 <ReservationInfo isOpeInfo={isOpeInfo} />
                 {isAge !== 0 && (
                     <GraphAi

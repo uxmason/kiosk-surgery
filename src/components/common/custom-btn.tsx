@@ -25,7 +25,7 @@ const CustomBtn = ({
     };
 
     const handleClick = () => {
-        if (isPaired) return;
+        if (!isPaired) return;
         if (path) {
             router.push(path);
         } else {

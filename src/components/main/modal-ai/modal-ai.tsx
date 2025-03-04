@@ -1,13 +1,15 @@
 "use client";
+import { OpeClientType } from "@/type";
 import { ClientInfoForModal, CustomModal, GraphAi } from "../../common";
 import "swiper/css";
 
 interface Props {
     isModalAIOpen: boolean;
     setModalAIOpen: (v: boolean) => void;
+    isOpeInfo: OpeClientType[];
 }
 
-const ModalAI = ({ isModalAIOpen, setModalAIOpen }: Props) => {
+const ModalAI = ({ isModalAIOpen, setModalAIOpen, isOpeInfo }: Props) => {
     return (
         <CustomModal
             isOpen={isModalAIOpen}
@@ -17,7 +19,7 @@ const ModalAI = ({ isModalAIOpen, setModalAIOpen }: Props) => {
                 <p className="text-white text-[54px] font-bold leading-[54px]">
                     예측 지방 추출량
                 </p>
-                <ClientInfoForModal />
+                <ClientInfoForModal isOpeInfo={isOpeInfo} />
                 <GraphAi aiType="DOCTOR">
                     <>
                         <p className="text-white text-[24px] font-bold leading-6">
