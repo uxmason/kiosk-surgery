@@ -9,15 +9,14 @@ import CustomModal from "./custom-modal";
 import { useEffect, useState } from "react";
 import { OpeClientType, WeightsType } from "@/type";
 import { handleBirthToAge } from "@/function";
+import { useClientStore, useDoctorStore } from "@/store";
 interface Props {
     isOpenOpeModal: boolean;
     setIsOpenOpeModal: (v: boolean) => void;
 }
 const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
-    const psEntry = "210046823";
-    const doctorId = "drh82";
-    // const { psEntry } = usePsentryStore();
-    // const { doctorId } = useDoctorIdStore();
+    const { client } = useClientStore();
+    const { doctor } = useDoctorStore();
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
     const [isAge, setIsAge] = useState(0);
     const [isWeights, setIsWeights] = useState<WeightsType>();
@@ -26,7 +25,7 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
     const onHandleSelectOpe = async () => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
+                `/api/kiosk-surgery/surgery/client?doctorId=${doctor?.id}&psEntry=${client?.psEntry}`,
                 {
                     method: "GET",
                 }
@@ -77,8 +76,8 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
 
     // 고객 인바디 정보 담기
     useEffect(() => {
-        if (!psEntry) return;
-        handleSelectInbodyLst(psEntry).then((res) => {
+        if (!client) return;
+        handleSelectInbodyLst(client?.psEntry).then((res) => {
             if (res.success) {
                 setIsWeights({
                     BD_WEIGHT: res?.inbody?.[0]?.["BD_WEIGHT"],
@@ -89,13 +88,14 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
                 console.log("INBODY_FAIL");
             }
         });
-    }, [psEntry]);
+    }, [client]);
 
     // 나이
     useEffect(() => {
         const age = handleBirthToAge(isOpeInfo?.[0]?.주민번호);
         setIsAge(Math.floor(Number(age)));
     }, [isOpeInfo]);
+
     return (
         <CustomModal
             isOpen={isOpenOpeModal}
@@ -105,7 +105,7 @@ const ModalOpeInfo = ({ isOpenOpeModal, setIsOpenOpeModal }: Props) => {
                 <p className="text-white text-[54px] font-bold leading-[54px]">
                     수술 정보
                 </p>
-                <ClientInfoForModal isOpeInfo={isOpeInfo} />
+                <ClientInfoForModal />
                 <ReservationInfo isOpeInfo={isOpeInfo} />
                 {isAge !== 0 && (
                     <GraphAi

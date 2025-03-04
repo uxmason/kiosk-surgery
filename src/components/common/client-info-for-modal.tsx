@@ -1,15 +1,43 @@
 import { handleBirthToAge } from "@/function";
 import { parseOpePart, parseSexType } from "@/parse";
+import { useClientStore, useDoctorStore } from "@/store";
 import { OpeClientType } from "@/type";
+import { useEffect, useState } from "react";
 
-interface Props {
-    isOpeInfo?: OpeClientType[];
-}
-const ClientInfoForModal = ({ isOpeInfo }: Props) => {
+const ClientInfoForModal = () => {
+    const { client } = useClientStore();
+    const { doctor } = useDoctorStore();
+    const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
+
+    // 수술 고객 정보
+    const onHandleSelectOpe = async () => {
+        try {
+            const response = await fetch(
+                `/api/kiosk-surgery/surgery/client?doctorId=${doctor?.id}&psEntry=${client?.psEntry}`,
+                {
+                    method: "GET",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
     const info = isOpeInfo?.[0];
     const isPsEntry = info?.고객번호;
     const isClientName = info?.고객명;
-    const isSex = info?.주민번호?.slice(7) === "2" || "4" ? "F" : "M";
+    const isSex =
+        info?.주민번호?.slice(8, 9) === "2" ||
+        info?.주민번호?.slice(8, 9) === "4"
+            ? "F"
+            : "M";
     const isAge = handleBirthToAge(info?.주민번호);
     const isOpeCode = info?.수술코드;
 
@@ -31,6 +59,17 @@ const ClientInfoForModal = ({ isOpeInfo }: Props) => {
             ? "FACE"
             : "CALVES";
 
+    // 수술 고객 정보 담기
+    useEffect(() => {
+        if (!client || !doctor) return;
+        onHandleSelectOpe().then((res) => {
+            if (res.success) {
+                setIsOpeInfo(res.list);
+            } else {
+                console.log("!#!@");
+            }
+        });
+    }, [client, doctor]);
     return (
         <div className="flex justify-between w-full h-[135px] mt-[66px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] pt-[30px] pb-[41px] px-[35px] rounded-[15px]">
             <div className="flex flex-col gap-y-4">
