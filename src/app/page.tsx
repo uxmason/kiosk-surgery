@@ -10,6 +10,7 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
+import { OpeClientType } from "@/type";
 
 export default function Home() {
     const [isPaired, setPaired] = useState(false);
@@ -20,8 +21,8 @@ export default function Home() {
     const [isModalAIOpen, setModalAIOpen] = useState(false);
     const [imgs, setImgs] = useState([]);
     const [dataOpeInfo, setOpeInfo] = useState([]);
-    const [dataInbody, ] = useState([]);
-    const [dataFepa, ] = useState([]);
+    const [dataInbody] = useState([]);
+    const [dataFepa] = useState([]);
     const [dataAllOpe, setAllOpe] = useState([]);
     const { deviceId, setDeviceId } = useStore();
     const { client, setClient } = useClientStore();
@@ -29,6 +30,7 @@ export default function Home() {
     const [fingerprint, setFingerprint] = useState("");
     const [lastRegDate, setLastRegDate] = useState("");
     const [isBoostCheckStatus, setBoostCheckStatus] = useState(false);
+    const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -59,17 +61,17 @@ export default function Home() {
                     const doctorInfo = res.doctorInfo?.[0];
                     setDoctor({
                         id: doctorInfo?.["USER_ID"],
-                        name: doctorInfo?.["USER_NAME"], 
+                        name: doctorInfo?.["USER_NAME"],
                         branch: doctorInfo?.["STARTBRAN"],
-                        branchName: doctorInfo?.["HOS_NAME"]
+                        branchName: doctorInfo?.["HOS_NAME"],
                     });
                     setPaired(true);
                 } else {
-                    console.log('error', res.message);
+                    console.log("error", res.message);
                     toast.error(res.message);
                     setPaired(false);
                 }
-                setBoostCheckStatus(false)
+                setBoostCheckStatus(false);
             });
         }
     }, [deviceId, isBoostCheckStatus]);
@@ -78,7 +80,8 @@ export default function Home() {
     const onHandleSelectOpe = async () => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`, {method: "GET"}
+                `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`,
+                { method: "GET" }
             );
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -121,23 +124,23 @@ export default function Home() {
 
     // 고객 인바디 정보 불러오기
     // const handleSelectInbodyLst = async (psEntry: string) => {
-        // try {
-        //     const response = await fetch(
-        //         `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
-        //         {
-        //             method: "GET",
-        //         }
-        //     );
+    // try {
+    //     const response = await fetch(
+    //         `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
+    //         {
+    //             method: "GET",
+    //         }
+    //     );
 
-        //     if (!response.ok) {
-        //         throw new Error("Network response was not ok");
-        //     }
+    //     if (!response.ok) {
+    //         throw new Error("Network response was not ok");
+    //     }
 
-        //     const result = await response.json();
-        //     return result;
-        // } catch (error) {
-        //     console.error("Error fetching data:", error);
-        // }
+    //     const result = await response.json();
+    //     return result;
+    // } catch (error) {
+    //     console.error("Error fetching data:", error);
+    // }
     // };
 
     // 고객 인바디 정보 담기
@@ -154,11 +157,45 @@ export default function Home() {
         // );
     }, [client]);
 
+    // 수술 고객 정보
+    const onHandleSelectOpeInfo = async () => {
+        try {
+            const response = await fetch(
+                `/api/kiosk-surgery/surgery/client?doctorId=${doctor?.id}&psEntry=${client?.psEntry}`,
+                {
+                    method: "GET",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // 수술 고객 정보 담기
+    useEffect(() => {
+        if (!isPaired || !client || !doctor) return;
+        onHandleSelectOpeInfo().then((res) => {
+            if (res.success) {
+                setIsOpeInfo(res.list);
+            } else {
+                console.log("!#!@");
+            }
+        });
+    }, [isPaired, client, doctor]);
+
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,{method: "GET",}
+                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
+                { method: "GET" }
             );
 
             if (!response.ok) {
@@ -177,7 +214,7 @@ export default function Home() {
         if (!client.psEntry) return;
         handleSelectImgLst(client.psEntry).then((res) => {
             if (res.success) {
-                if(res.list.length > 0) {
+                if (res.list.length > 0) {
                     setImgs(res.list);
                     setLastRegDate(res.list[0].regdate);
                 }
@@ -199,7 +236,9 @@ export default function Home() {
 
     const handleSelectAllOpe = async () => {
         try {
-            const response = await fetch(`/api/kiosk-surgery/schedule/`, {method: "GET",});
+            const response = await fetch(`/api/kiosk-surgery/schedule/`, {
+                method: "GET",
+            });
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
             console.log(result);
@@ -215,13 +254,13 @@ export default function Home() {
                     setAllOpe(res.list);
                     setOpeOpenNext(true);
                 } else {
-                    console.log('error', res.message);
+                    console.log("error", res.message);
                     toast.error(res.message);
                 }
             });
-        }else {
+        } else {
             setOpeOpenNext(false);
-            setBoostCheckStatus(true)
+            setBoostCheckStatus(true);
         }
     }, [isOpeOpen]);
 
@@ -249,13 +288,19 @@ export default function Home() {
         <>
             <main
                 className="w-[724px] h=[1980px] absolute"
-                style={{ left: "calc(50% - 362px)" }}>
+                style={{ left: "calc(50% - 362px)" }}
+            >
                 <div className="absolute w-full gap-y-[15px]">
                     <p
                         className={`absolute w-full mt-[120px] text-[26px] text-center font-bold leading-9 
                   ${isPaired ? "text-[#15CF8F]" : "text-[#1d1f2d]"}
-                  `}>{doctor.branchName}</p>
-                    <p className="absolute mt-[200px] w-full text-white text-[70px] font-bold leading-normal text-center">지방 하나만! 365mc</p>
+                  `}
+                    >
+                        {doctor.branchName}
+                    </p>
+                    <p className="absolute mt-[200px] w-full text-white text-[70px] font-bold leading-normal text-center">
+                        지방 하나만! 365mc
+                    </p>
                     <p className="absolute mt-[330px] w-full text-white text-[30px] font-[250] leading-[50px] whitespace-pre-line text-center">
                         <span>“안녕하세요.</span>{" "}
                         <span className="font-bold">{client.name}</span>
@@ -303,7 +348,11 @@ export default function Home() {
                                 ? "수술 대상이 아직 선택되지 않았습니다."
                                 : "시작하기"
                         }
-                        bg={isPaired ? "rgba(58,62,89,0.50)" : "#15CF8F"}
+                        bg={
+                            !isPaired && !dataOpeInfo
+                                ? "rgba(58,62,89,0.50)"
+                                : "#15CF8F"
+                        }
                         isShow={false}
                         path="/record"
                         isPaired={isPaired}
@@ -319,17 +368,25 @@ export default function Home() {
                 <Process isProcess={1} />
             </main>
             <Footer />
-            <ModalSelectOpe isOpen={isOpeOpenNext} setOpeOpen={setOpeOpen} dataAllOpe={dataAllOpe} fingerprint={fingerprint} />
+            <ModalSelectOpe
+                isOpen={isOpeOpenNext}
+                setOpeOpen={setOpeOpen}
+                dataAllOpe={dataAllOpe}
+                fingerprint={fingerprint}
+            />
             <ModalInbody
+                isOpeInfo={isOpeInfo}
                 isInbodyOpen={isInbodyOpen && isPaired}
                 setInbodyOpen={setInbodyOpen}
             />
             <ModalImgs
+                isOpeInfo={isOpeInfo}
                 imgs={imgs}
                 isModalImgsOpen={isModalImgsOpen && isPaired}
                 setModalImgsOpen={setModalImgsOpen}
             />
             <ModalAI
+                isOpeInfo={isOpeInfo}
                 isModalAIOpen={isModalAIOpen && isPaired}
                 setModalAIOpen={setModalAIOpen}
             />

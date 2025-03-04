@@ -11,14 +11,15 @@ import {
 import { Cannulas, ModalComplete, Parts } from "@/components/operate";
 import { MoodalAddNewCannula } from "@/components/operate/modal-add-new-cannula";
 import { handleSelectDoctor } from "@/function";
-import { useDoctorIdStore, useStore } from "@/store";
-import { CannulaListType, IncisionListType } from "@/type";
+import { useClientStore, useDoctorStore, useStore } from "@/store";
+import { CannulaListType, IncisionListType, OpeClientType } from "@/type";
 import { useEffect, useState } from "react";
 
 export default function Info() {
     const { deviceId } = useStore();
-    const { setDoctorId } = useDoctorIdStore();
-    const [isUnpaired, setUnpaired] = useState(false);
+    const { client } = useClientStore();
+    const { doctor } = useDoctorStore();
+    const [unpaired, setUnpaired] = useState(false);
     const [isOpenOpeModal, setIsOpenOpeModal] = useState(false);
     const [isOpenAddCannualModal, setIsOpenAddCannualModal] = useState(false);
     const [isModalComplete, setIsModalComplete] = useState(false);
@@ -26,6 +27,39 @@ export default function Info() {
         CannulaListType[]
     >([]);
     const [incisionList, setIncisionList] = useState<IncisionListType[]>([]);
+    const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
+
+    // 수술 고객 정보
+    const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
+        try {
+            const response = await fetch(
+                `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
+                {
+                    method: "GET",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+    // 수술 고객 정보 담기
+    useEffect(() => {
+        if (unpaired || !client || !doctor) return;
+        onHandleSelectOpe(doctor?.id, client?.psEntry).then((res) => {
+            if (res.success) {
+                setIsOpeInfo(res.list);
+            } else {
+                console.log("!#!@");
+            }
+        });
+    }, [unpaired, client, doctor]);
 
     // 숫자 카운트
     const [count, setCount] = useState(180);
@@ -57,8 +91,6 @@ export default function Info() {
         if (!deviceId) return;
         handleSelectDoctor(deviceId).then((res) => {
             if (res.success) {
-                const doctorInfo = res.doctorInfo?.[0];
-                setDoctorId(doctorInfo?.["USER_ID"], doctorInfo?.["STARTBRAN"]);
                 setUnpaired(false);
             } else {
                 setUnpaired(true);
@@ -85,13 +117,13 @@ export default function Info() {
     };
     // 캐뉼라 리스트 담기
     useEffect(() => {
-        if (isUnpaired) return;
+        if (unpaired) return;
         handleSelectCannulaList().then((res) => {
             if (res.success) {
                 setCannulaInSurgeryList(res.list);
             } else console.log("FAIL_CANNULA_LIST");
         });
-    }, [isUnpaired]);
+    }, [unpaired]);
 
     // 인시젼 리스트 불러오기
     const handleSelectIncisionList = async () => {
@@ -113,7 +145,7 @@ export default function Info() {
 
     // 인시젼 리스트 담기
     useEffect(() => {
-        if (isUnpaired) return;
+        if (unpaired) return;
         handleSelectIncisionList().then((res) => {
             if (res.success) {
                 setIncisionList(res.list);
@@ -121,13 +153,16 @@ export default function Info() {
                 console.log("FAIL_INCISION_LIST");
             }
         });
-    }, [isUnpaired]);
+    }, [unpaired]);
 
     return (
         <>
             <main className="relative w-full h-full min-h-[1920px]">
                 <div className="">
-                    <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
+                    <ClientInfo
+                        setIsOpenOpeModal={setIsOpenOpeModal}
+                        isOpeInfo={isOpeInfo}
+                    />
                 </div>
                 <Cannulas
                     setIsOpenAddCannualModal={setIsOpenAddCannualModal}
@@ -153,6 +188,7 @@ export default function Info() {
                 <Footer isOther />
             </main>
             <ModalOpeInfo
+                isOpeInfo={isOpeInfo}
                 isOpenOpeModal={isOpenOpeModal}
                 setIsOpenOpeModal={setIsOpenOpeModal}
             />

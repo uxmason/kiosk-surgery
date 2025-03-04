@@ -1,15 +1,18 @@
 import { handleBirthToAge } from "@/function";
 import { parseOpePart, parseSexType } from "@/parse";
 import { OpeClientType } from "@/type";
-
 interface Props {
-    isOpeInfo?: OpeClientType[];
+    isOpeInfo: OpeClientType[];
 }
 const ClientInfoForModal = ({ isOpeInfo }: Props) => {
     const info = isOpeInfo?.[0];
     const isPsEntry = info?.고객번호;
     const isClientName = info?.고객명;
-    const isSex = info?.주민번호?.slice(7) === "2" || "4" ? "F" : "M";
+    const isSex =
+        info?.주민번호?.slice(8, 9) === "2" ||
+        info?.주민번호?.slice(8, 9) === "4"
+            ? "F"
+            : "M";
     const isAge = handleBirthToAge(info?.주민번호);
     const isOpeCode = info?.수술코드;
 

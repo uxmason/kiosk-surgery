@@ -6,7 +6,7 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import { useState } from "react";
 import { getFormattedDate, removeSpace } from "@/function";
-import { usePsentryStore, useStore } from "@/store";
+import { useClientStore, useStore } from "@/store";
 interface Props {
     setIsOpenAddCannualModal: (v: boolean) => void;
     cannulaInSurgeryList: CannulaListType[];
@@ -17,14 +17,14 @@ const Cannulas = ({
 }: Props) => {
     const today = getFormattedDate();
     const { deviceId } = useStore();
-    const { psEntry } = usePsentryStore();
+    const { client } = useClientStore();
     const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
     const [isCurrentCannulaId, setIsCurrentCannulaId] = useState("");
     const handleSelectCannula = (id: string) => {
         const data: DataType = {
             deviceId: deviceId,
             cannulaID: isCurrentCannulaId,
-            psEntry: psEntry,
+            psEntry: client?.psEntry,
             opDate: today,
         };
 
