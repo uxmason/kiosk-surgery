@@ -170,7 +170,7 @@ const Cannulas = ({
                                             {c?.MODEL_NAME}
                                         </p>
                                         <p className="text-white text-[20px] font-light leading-5 pt-[21px]">
-                                            {c?.갯수}H /{" "}
+                                            {c?.HOLE_COUNT} /{" "}
                                             {Number(c?.LENGTH) / 10}cm /{" "}
                                             {c?.THICKNESS}
                                             mm

@@ -44,6 +44,7 @@ export type CannulaListType = {
     갯수: string;
     CANNULA_ID: string;
     MODEL_NAME: string;
+    HOLE_COUNT: string;
     TIP: string;
     SHAPE: string;
     LENGTH: string;
