@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import queryDB from "../../../../../../lib/db";
-import { getFormattedDate } from "@/function";
+import { getCurrentTimeHHMM, getFormattedDate } from "@/function";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
@@ -9,6 +9,7 @@ export async function GET(req: Request) {
             url.searchParams.entries()
         );
         const today = getFormattedDate();
+        const nowTime = getCurrentTimeHHMM();
         const sql = `SELECT top 1
                     A.STARTBRAN AS 지점,
                     A.PROMTIME AS 시작시간, 
@@ -54,9 +55,9 @@ export async function GET(req: Request) {
                     AND K.OPDATE  = A.PROMDATE 
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND A.PROMDATE = '${today}' 
-                    AND A.PSENTRY = '${psEntry}'
-                ORDER BY A.PROMDATE, A.PROMTIME`;
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}')
+                    AND A.PSENTRY = '${psEntry}';
+                `;
         const results: any[] = await queryDB(sql);
         return NextResponse.json({ success: true, list: results });
     } catch {

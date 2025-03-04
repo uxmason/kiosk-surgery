@@ -1,6 +1,8 @@
 "use client";
+import { useClientStore, useDoctorStore } from "@/store";
 import { FatListType, LimitFatPartsType } from "@/type";
 import { ReactNode, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
     children: ReactNode;
@@ -11,8 +13,8 @@ interface Props {
 const order = ["팔", "복부", "허벅지"];
 const GraphAi = ({ children, aiType, age, sex }: Props) => {
     // 수술 고객 정보
-    const psEntry = "210046823";
-    const doctorId = "drh82";
+    const { client } = useClientStore();
+    const { doctor } = useDoctorStore();
     const [isLimitFatParts, setIsLimitFatParts] = useState<LimitFatPartsType[]>(
         []
     );
@@ -23,7 +25,7 @@ const GraphAi = ({ children, aiType, age, sex }: Props) => {
     const onHandleSelectFepa = async () => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/fepa?doctorId=${doctorId}&psEntry=${psEntry}&age=${age}&sex=${sex}`,
+                `/api/kiosk-surgery/fepa?doctorId=${doctor?.id}&psEntry=${client?.psEntry}&age=${age}&sex=${sex}`,
                 {
                     method: "GET",
                 }
@@ -48,7 +50,7 @@ const GraphAi = ({ children, aiType, age, sex }: Props) => {
                 setIsLimitFatParts(res.limitFatPart);
                 setIsFatList(res.fatList);
             } else {
-                console.log("FAIL");
+                toast.error(res.message);
             }
         });
     }, [age]);
@@ -121,9 +123,9 @@ const GraphAi = ({ children, aiType, age, sex }: Props) => {
                                     </span>
                                     {part?.최대예측지방량?.toLocaleString()}
                                 </p>
-                                <div className="w-[440px] h-5 rounded-[10px] bg-[rgba(255,255,255,0.20)] backdrop-blur-[20px]">
+                                <div className="relative w-[440px] h-5 rounded-[10px] bg-[rgba(255,255,255,0.20)] backdrop-blur-[20px]">
                                     <div
-                                        className="relative h-full bg-[#15CF8F] backdrop-blur-[20px] rounded-[10px]"
+                                        className="absolute h-full bg-[#15CF8F] backdrop-blur-[20px] rounded-[10px]"
                                         style={{
                                             width: `${
                                                 ((part?.최대예측지방량 -
@@ -135,11 +137,11 @@ const GraphAi = ({ children, aiType, age, sex }: Props) => {
                                                 (part?.최소예측지방량 /
                                                     max?.최대예측지방량최대치) *
                                                 100
-                                            }`,
+                                            }%`,
                                         }}
                                     />
                                     <div
-                                        className="absolute top-[-4px] left-[42%] w-7 h-7 rounded-full border-[4px] border-solid border-white"
+                                        className="absolute top-[-4px] w-7 h-7 rounded-full border-[4px] border-solid border-white"
                                         style={{
                                             left: `${
                                                 (part?.평균예측지방량 /
