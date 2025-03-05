@@ -51,7 +51,7 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
                                     }}
                                 />
                                 <div
-                                    className="w-full h-[33px]"
+                                    className="w-[33px] h-[33px]"
                                     style={{
                                         background: `url(${imgThumbUrl}/${img?.filename.slice(
                                             4

@@ -29,6 +29,7 @@ interface DoctorItem {
 
 interface DataAllOpeItem {
     branch: string;
+    branchId: string;
     doctor: DoctorItem[];
 }
 
@@ -61,14 +62,14 @@ const ModalSelecOpe = ({
 
     useEffect(() => {
         const hospitalIndex = dataAllOpe?.findIndex(
-            (h) => h?.branch === doctor?.branchName
+            (h) => h?.branchId === doctor?.branch
         );
         const doctorIdx = dataAllOpe?.[hospitalIndex]?.doctor?.findIndex(
-            (d) => d.doctorId === doctor?.id
+            (d) => d?.doctorId === doctor?.id
         );
         setHospitalIndex(hospitalIndex);
         setDoctorIndex(doctorIdx);
-    }, [dataAllOpe]);
+    }, [doctor, dataAllOpe]);
 
     return (
         <>

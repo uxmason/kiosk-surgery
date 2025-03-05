@@ -39,7 +39,7 @@ export default function Home() {
         try {
             const response = await fetch(
                 `/api/kiosk-surgery/check-device?deviceId=${deviceId}`,
-                { method: "GET", cache: "force-cache" }
+                { method: "GET" }
             );
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -133,7 +133,6 @@ export default function Home() {
         try {
             const response = await fetch(`/api/kiosk-surgery/schedule/`, {
                 method: "GET",
-                cache: "force-cache",
             });
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
@@ -207,6 +206,7 @@ export default function Home() {
         if (isOpeOpen) {
             handleSelectAllOpe().then((res) => {
                 if (res.success) {
+                    console.log(res);
                     setAllOpe(res.list);
                     setOpeOpenNext(true);
                 } else {
