@@ -32,7 +32,6 @@ const GraphAi = ({ children, aiType }: Props) => {
                     : `/api/kiosk-surgery/fepa/average?psEntry=${psEntry}&age=${age}&sex=${sex}`;
             const response = await fetch(url, {
                 method: "GET",
-                cache: "force-cache",
             });
 
             if (!response.ok) {
