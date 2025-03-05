@@ -47,6 +47,7 @@ export async function GET() {
         const results: any[] = await queryDB(sql);
         const nested: {
             branch: string;
+            branchId: string;
             doctor: {
                 doctorId: string;
                 surgeries: any[];
@@ -54,10 +55,15 @@ export async function GET() {
         }[] = [];
         results.forEach((record) => {
             const branchName = record.지점명;
+            const branch = record.지점코드;
             const doctorId = record.담당의ID;
             let branchObj = nested.find((b) => b.branch === branchName);
             if (!branchObj) {
-                branchObj = { branch: branchName, doctor: [] };
+                branchObj = {
+                    branch: branchName,
+                    branchId: branch,
+                    doctor: [],
+                };
                 nested.push(branchObj);
             }
             let doctorObj = branchObj.doctor.find(
