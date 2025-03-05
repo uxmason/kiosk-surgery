@@ -38,7 +38,6 @@ export default function Info() {
                 `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
                 {
                     method: "GET",
-                    cache: "force-cache",
                 }
             );
 
@@ -109,7 +108,6 @@ export default function Info() {
                 `/api/kiosk-surgery/cannula/list?psEntry=${client?.psEntry}`,
                 {
                     method: "GET",
-                    cache: "force-cache",
                 }
             );
 
@@ -162,7 +160,6 @@ export default function Info() {
                 `/api/kiosk-surgery/incision/list?psEntry=${client?.psEntry}`,
                 {
                     method: "GET",
-                    cache: "force-cache",
                 }
             );
 

@@ -58,7 +58,6 @@ export default function Home() {
             if (targetPsEntry != null) url += `&psEntry=${targetPsEntry}`;
             const response = await fetch(url, {
                 method: "GET",
-                cache: "force-cache",
             });
             if (!response.ok) {
                 throw new Error("Network response was not ok");

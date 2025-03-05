@@ -43,7 +43,6 @@ export default function Info() {
                 `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
                 {
                     method: "GET",
-                    cache: "force-cache",
                 }
             );
 
@@ -74,7 +73,6 @@ export default function Info() {
                 `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
                 {
                     method: "GET",
-                    cache: "force-cache",
                 }
             );
 

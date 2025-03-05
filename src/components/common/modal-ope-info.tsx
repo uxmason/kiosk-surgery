@@ -32,7 +32,6 @@ const ModalOpeInfo = ({
                 `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
                 {
                     method: "GET",
-                    cache: "force-cache",
                 }
             );
 
