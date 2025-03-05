@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import queryDB from "../../../../../lib/db";
+import queryDB from "../../../../../../lib/db";
 
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
-        const { doctorId, psEntry, age, sex } = Object.fromEntries(
+        const { psEntry, age, sex } = Object.fromEntries(
             url.searchParams.entries()
         );
 
@@ -106,9 +106,6 @@ export async function GET(req: Request) {
         // 지방량 상세 리스트 조회
         const query3 = `
                         SELECT 
-                            지점명, 
-                            수술의ID, 
-                            수술의, 
                             OL.메인부위명, 
                             COUNT(*) AS 데이터갯수, 
                             ROUND(MIN(메인지방량), 0) AS 최소예측지방량, 
@@ -146,18 +143,14 @@ export async function GET(req: Request) {
                             지점명 IN (N'서울', N'인천', N'대전', N'대구', N'부산') 
                             AND 메인부위명 IN (N'팔', N'복부', N'허벅지') 
                             AND OL.수술일자 >= '${fromDate}' 
-                            AND 수술의ID = '${doctorId}' 
                             AND SEX = '${sex}' 
                             AND AGE BETWEEN ${age} - 5 AND ${age} + 5 
                             AND MU_WEIGHT BETWEEN ${weight} - 15 AND ${weight} + 15 
                             AND MU_HEIGHT BETWEEN ${height} - 5 AND ${height} + 5 
-                        GROUP BY 
-                            수술의ID, 
-                            수술의, 
-                            지점명, 
-                            OL.메인부위명
+                        GROUP BY OL.메인부위명
                         `;
         const result3 = await queryDB(query3);
+
         return NextResponse.json({
             success: true,
             weight,

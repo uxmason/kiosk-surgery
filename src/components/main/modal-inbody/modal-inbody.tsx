@@ -14,21 +14,19 @@ import {
     GraphProteinPercent,
     GraphBodyWaterPercent,
 } from ".";
-import { OpeClientType } from "@/type";
 
 interface Props {
     isInbodyOpen: boolean;
     setInbodyOpen: (v: boolean) => void;
-    isOpeInfo: OpeClientType[];
 }
-const ModalInbody = ({ isInbodyOpen, setInbodyOpen, isOpeInfo }: Props) => {
+const ModalInbody = ({ isInbodyOpen, setInbodyOpen }: Props) => {
     return (
         <CustomModal isOpen={isInbodyOpen} onClose={() => setInbodyOpen(false)}>
             <div className="flex flex-col w-full h-fit items-center pt-20">
                 <p className="text-white text-[54px] font-bold leading-[54px]">
                     고객 인바디 정보
                 </p>
-                <ClientInfoForModal isOpeInfo={isOpeInfo} />
+                <ClientInfoForModal />
                 <div className="grid grid-cols-3 row-end-3 w-full h-full pt-5 gap-5">
                     <GraphWeight />
                     <Weights />

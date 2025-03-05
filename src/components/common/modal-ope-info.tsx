@@ -32,6 +32,7 @@ const ModalOpeInfo = ({
                 `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
                 {
                     method: "GET",
+                    cache: "force-cache",
                 }
             );
 
@@ -49,7 +50,7 @@ const ModalOpeInfo = ({
     // 고객 인바디 정보 담기
     useEffect(() => {
         if (!client) return;
-        handleSelectInbodyLst(client?.psEntry).then((res) => {
+        handleSelectInbodyLst(client.psEntry).then((res) => {
             if (res.success) {
                 setIsWeights({
                     BD_WEIGHT: res?.inbody?.[0]?.["BD_WEIGHT"],
@@ -64,9 +65,9 @@ const ModalOpeInfo = ({
 
     // 나이
     useEffect(() => {
-        const age = handleBirthToAge(isOpeInfo?.[0]?.주민번호);
+        const age = handleBirthToAge(client?.licence);
         setIsAge(Math.floor(Number(age)));
-    }, [isOpeInfo]);
+    }, [client]);
 
     return (
         <CustomModal
@@ -77,20 +78,10 @@ const ModalOpeInfo = ({
                 <p className="text-white text-[54px] font-bold leading-[54px]">
                     수술 정보
                 </p>
-                <ClientInfoForModal isOpeInfo={isOpeInfo} />
+                <ClientInfoForModal />
                 <ReservationInfo isOpeInfo={isOpeInfo} />
                 {isAge !== 0 && (
-                    <GraphAi
-                        aiType="DOCTOR"
-                        age={isAge}
-                        sex={
-                            Number(isOpeInfo?.[0]?.주민번호.slice(6, 7)) ===
-                                1 ||
-                            Number(isOpeInfo?.[0]?.주민번호.slice(6, 7)) === 3
-                                ? "M"
-                                : "F"
-                        }
-                    >
+                    <GraphAi aiType="DOCTOR">
                         <>
                             <p className="text-white text-[24px] font-bold leading-6">
                                 예측 지방 추출량

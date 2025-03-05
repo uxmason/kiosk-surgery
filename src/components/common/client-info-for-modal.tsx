@@ -1,22 +1,16 @@
 import { handleBirthToAge } from "@/function";
 import { parseOpePart, parseSexType } from "@/parse";
-import { OpeClientType } from "@/type";
-interface Props {
-    isOpeInfo: OpeClientType[];
-}
-const ClientInfoForModal = ({ isOpeInfo }: Props) => {
-    const info = isOpeInfo?.[0];
-    const isPsEntry = info?.고객번호;
-    const isClientName = info?.고객명;
+import { useClientStore } from "@/store";
+const ClientInfoForModal = () => {
+    const { client } = useClientStore();
     const isSex =
-        info?.주민번호?.slice(8, 9) === "2" ||
-        info?.주민번호?.slice(8, 9) === "4"
+        client?.licence?.slice(6, 7) === "2" ||
+        client?.licence?.slice(6, 7) === "4"
             ? "F"
             : "M";
-    const isAge = handleBirthToAge(info?.주민번호);
-    const isOpeCode = info?.수술코드;
+    const isAge = handleBirthToAge(client?.licence);
 
-    const isPart = info?.["수술부위"];
+    const isPart = client?.part;
     const engPart =
         isPart === "허벅지"
             ? "THIGH"
@@ -41,7 +35,7 @@ const ClientInfoForModal = ({ isOpeInfo }: Props) => {
                     고객번호
                 </p>
                 <p className="text-white text-[24px] font-bold leading-6">
-                    {isPsEntry}
+                    {client?.psEntry}
                 </p>
             </div>
             <div className="flex flex-col gap-y-4">
@@ -49,7 +43,7 @@ const ClientInfoForModal = ({ isOpeInfo }: Props) => {
                     고객명
                 </p>
                 <p className="text-white text-[32px] font-light leading-6">
-                    {isClientName}
+                    {client?.name}
                 </p>
             </div>
             <div className="flex flex-col gap-y-4">
@@ -91,7 +85,7 @@ const ClientInfoForModal = ({ isOpeInfo }: Props) => {
                     수술코드
                 </p>
                 <p className="text-white text-[24px] font-bold leading-6">
-                    {isOpeCode}
+                    {client?.opeCode}
                 </p>
             </div>
         </div>

@@ -55,7 +55,7 @@
 }
 
 .styleSheet {
-    background-image: url('/images/styleSheet.png');
+    background-image: url("/images/styleSheet.png");
     background-size: 250px 2500px;
 }
 
@@ -78,7 +78,7 @@
     background: url("https://365mc.co.kr/uploads/doctor_intro/dr/20241118120006.png");
     background-size: cover;
 }
-.isPortrait.Idrh82 {
+.isPortrait.Ipyc21 {
     background: url("https://365mc.co.kr/uploads/doctor_intro/dr/20241118122153.png");
     background-size: cover;
 }

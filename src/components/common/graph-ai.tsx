@@ -1,17 +1,15 @@
 "use client";
+import { handleBirthToAge } from "@/function";
 import { useClientStore, useDoctorStore } from "@/store";
 import { FatListType, LimitFatPartsType } from "@/type";
 import { ReactNode, useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
 interface Props {
     children: ReactNode;
     aiType: "DOCTOR" | "AVERAGE";
-    age?: number;
-    sex?: string;
 }
 const order = ["팔", "복부", "허벅지"];
-const GraphAi = ({ children, aiType, age, sex }: Props) => {
+const GraphAi = ({ children, aiType }: Props) => {
     // 수술 고객 정보
     const { client } = useClientStore();
     const { doctor } = useDoctorStore();
@@ -22,14 +20,20 @@ const GraphAi = ({ children, aiType, age, sex }: Props) => {
     const sortedArray = isFatList.sort((a, b) => {
         return order.indexOf(a.메인부위명) - order.indexOf(b.메인부위명);
     });
-    const onHandleSelectFepa = async () => {
+    const onHandleSelectFepa = async (
+        psEntry: string,
+        age: number,
+        sex: string
+    ) => {
         try {
-            const response = await fetch(
-                `/api/kiosk-surgery/fepa?doctorId=${doctor?.id}&psEntry=${client?.psEntry}&age=${age}&sex=${sex}`,
-                {
-                    method: "GET",
-                }
-            );
+            const url =
+                aiType === "DOCTOR"
+                    ? `/api/kiosk-surgery/fepa?doctorId=${doctor?.id}&psEntry=${psEntry}&age=${age}&sex=${sex}`
+                    : `/api/kiosk-surgery/fepa/average?psEntry=${psEntry}&age=${age}&sex=${sex}`;
+            const response = await fetch(url, {
+                method: "GET",
+                cache: "force-cache",
+            });
 
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -43,17 +47,22 @@ const GraphAi = ({ children, aiType, age, sex }: Props) => {
     };
 
     useEffect(() => {
-        if (!age) return;
-        if (isNaN(age)) return;
-        onHandleSelectFepa().then((res) => {
+        if (!client.psEntry) return;
+        const age = Number(handleBirthToAge(client?.licence));
+        const sex =
+            client?.licence?.slice(6, 7) === "2" ||
+            client?.licence?.slice(6, 7) === "4"
+                ? "F"
+                : "M";
+        onHandleSelectFepa(client.psEntry, age, sex).then((res) => {
             if (res.success) {
                 setIsLimitFatParts(res.limitFatPart);
                 setIsFatList(res.fatList);
             } else {
-                toast.error(res.message);
+                console.log(res.message);
             }
         });
-    }, [age]);
+    }, [client, aiType]);
 
     return (
         <div className="flex flex-col w-full h-[400px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] py-[30px] px-[35px]">
@@ -125,7 +134,13 @@ const GraphAi = ({ children, aiType, age, sex }: Props) => {
                                 </p>
                                 <div className="relative w-[440px] h-5 rounded-[10px] bg-[rgba(255,255,255,0.20)] backdrop-blur-[20px]">
                                     <div
-                                        className="absolute h-full bg-[#15CF8F] backdrop-blur-[20px] rounded-[10px]"
+                                        className={`absolute h-full  backdrop-blur-[20px] rounded-[10px]
+                                            ${
+                                                aiType === "DOCTOR"
+                                                    ? "bg-[#15CF8F]"
+                                                    : "bg-[rgba(255,255,255,0.5)]"
+                                            }
+                                            `}
                                         style={{
                                             width: `${
                                                 ((part?.최대예측지방량 -
@@ -141,7 +156,12 @@ const GraphAi = ({ children, aiType, age, sex }: Props) => {
                                         }}
                                     />
                                     <div
-                                        className="absolute top-[-4px] w-7 h-7 rounded-full border-[4px] border-solid border-white"
+                                        className={`absolute top-[-4px] w-7 h-7 rounded-full border-[4px] border-solid border-white
+                                                ${
+                                                    aiType === "AVERAGE" &&
+                                                    "bg-[#3A3E59]"
+                                                }
+                                            `}
                                         style={{
                                             left: `${
                                                 (part?.평균예측지방량 /

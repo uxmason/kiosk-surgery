@@ -21,7 +21,7 @@ const ModalComplete = ({ isModalComplete, setIsModalComplete }: Props) => {
                     신중하게 결정해주세요.
                 </p>
                 <button
-                    className="w-[420px] h-[120px] rounded-[15px] bg-[#15CF8F]"
+                    className="w-[420px] h-[120px] rounded-[15px] bg-[#15CF8F] z-10"
                     onClick={(e) => {
                         e.stopPropagation();
                         setIsModalComplete(false);
