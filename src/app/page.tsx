@@ -204,7 +204,6 @@ export default function Home() {
         if (isOpeOpen) {
             handleSelectAllOpe().then((res) => {
                 if (res.success) {
-                    console.log(res);
                     setAllOpe(res.list);
                     setOpeOpenNext(true);
                 } else {
