@@ -43,21 +43,19 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
                 <>
                     <div className="relative w-full h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
                         {limitedImages.map((img, i) => (
-                            <div key={i}>
+                            <div key={i} className="relative">
                                 <div
                                     className="absolute w-[33px] h-[33px] bg-[#343a40]"
                                     style={{
-                                        opacity: `${randomOpacities?.[i]}%`,
+                                        opacity: randomOpacities?.[i] / 100,
                                     }}
                                 />
                                 <div
-                                    className="w-[33px] h-[33px]"
+                                    className="w-[33px] h-[33px] bg-cover bg-center"
                                     style={{
-                                        background: `url(${imgThumbUrl}/${img?.filename.slice(
+                                        backgroundImage: `url(${imgThumbUrl}/${img?.filename.slice(
                                             4
                                         )})`,
-                                        backgroundPosition: "center",
-                                        backgroundSize: "cover",
                                     }}
                                 />
                             </div>
