@@ -114,7 +114,7 @@ export default function Home() {
         try {
             const response = await fetch(
                 `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
-                { method: "GET", cache: "force-cache" }
+                { method: "GET" }
             );
 
             if (!response.ok) {
@@ -160,7 +160,6 @@ export default function Home() {
     useEffect(() => {
         if (deviceId && isBoostCheckStatus) {
             handleSelectDoctor().then((res) => {
-                // setImgs([]);
                 if (res.success) {
                     const doctorInfo = res.doctorInfo?.[0];
                     setDoctor({
@@ -205,7 +204,6 @@ export default function Home() {
         if (isOpeOpen) {
             handleSelectAllOpe().then((res) => {
                 if (res.success) {
-                    console.log(res);
                     setAllOpe(res.list);
                     setOpeOpenNext(true);
                 } else {
