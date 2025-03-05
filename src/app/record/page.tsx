@@ -25,18 +25,16 @@ export default function Info() {
     const [imgs, setImgs] = useState<PhotsArrType[]>([]);
     const [unpaired, setUnpaired] = useState(false);
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
-    const [seconds, setSeconds] = useState(0);
+    const [count, setCount] = useState(24 * 60 * 60);
+    const [isReversCount, setReversCount] = useState(false);
 
-    // 초를 HH:mm:ss 형식으로 변환하는 함수
-    const formatTime = (totalSeconds: number) => {
-        const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
-            2,
-            "0"
-        );
-        const secs = String(totalSeconds % 60).padStart(2, "0");
-        return `${hours}:${minutes}:${secs}`;
-    };
+    const hours = Math.floor((isReversCount ? -count : count) / 60 / 60);
+    const minutes = Math.floor(((isReversCount ? -count : count) / 60) % 60);
+    const seconds = (isReversCount ? -count : count) % 60;
+
+    const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+        minutes
+    ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
     // 수술 고객 정보
     const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
@@ -45,14 +43,24 @@ export default function Info() {
                 `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
                 {
                     method: "GET",
+                    cache: "force-cache",
                 }
             );
 
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-
+            const currentTime =
+                new Date().getHours() * 60 * 60 +
+                new Date().getMinutes() * 60 +
+                new Date().getSeconds();
             const result = await response.json();
+            setCount(
+                Number(result.list[0].시작시간.substring(0, 2)) * 60 * 60 +
+                    Number(result.list[0].시작시간.substring(2, 4)) * 60 -
+                    currentTime
+            );
+
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -66,6 +74,7 @@ export default function Info() {
                 `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
                 {
                     method: "GET",
+                    cache: "force-cache",
                 }
             );
 
@@ -117,22 +126,20 @@ export default function Info() {
         });
     }, [unpaired, client]);
 
-    // 카운트 업
     useEffect(() => {
-        const interval = setInterval(() => {
-            setSeconds((prev) => prev + 1);
+        if (count <= 0) setReversCount(true);
+
+        const timer = setInterval(() => {
+            setCount((prevCount) => prevCount - 1);
         }, 1000);
 
-        return () => clearInterval(interval);
-    }, []);
+        return () => clearInterval(timer);
+    }, [count]);
 
     return (
         <>
             <main className="relative w-full h-full min-h-[1920px]">
-                <ClientInfo
-                    setIsOpenOpeModal={setIsOpenOpeModal}
-                    isOpeInfo={isOpeInfo}
-                />
+                <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
                 <FirstImgs
                     isFirstOpen={isFirstOpen}
                     isSecondOpen={isSecondOpen}
@@ -157,7 +164,7 @@ export default function Info() {
                 <UpcomingTime
                     isOther
                     text="수술 경과 시간"
-                    time={formatTime(seconds)}
+                    time={formattedTime}
                     color="#ED6B5B"
                 />
                 <Process isProcess={2} isOther />

@@ -38,6 +38,7 @@ export default function Info() {
                 `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
                 {
                     method: "GET",
+                    cache: "force-cache",
                 }
             );
 
@@ -108,6 +109,7 @@ export default function Info() {
                 `/api/kiosk-surgery/cannula/list?psEntry=${client?.psEntry}`,
                 {
                     method: "GET",
+                    cache: "force-cache",
                 }
             );
 
@@ -160,6 +162,7 @@ export default function Info() {
                 `/api/kiosk-surgery/incision/list?psEntry=${client?.psEntry}`,
                 {
                     method: "GET",
+                    cache: "force-cache",
                 }
             );
 
@@ -193,14 +196,10 @@ export default function Info() {
             }
         });
     }, [unpaired]);
-
     return (
         <>
             <main className="relative w-full h-full min-h-[1920px]">
-                <ClientInfo
-                    setIsOpenOpeModal={setIsOpenOpeModal}
-                    isOpeInfo={isOpeInfo}
-                />
+                <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
                 <Cannulas
                     selectedCannulaIds={selectedCannulaIds}
                     setSelectedCannulaIds={setSelectedCannulaIds}
@@ -214,6 +213,7 @@ export default function Info() {
                         bg="#5B87ED"
                         isShow={true}
                         isShowBtnText="수행 단계로"
+                        isPaired={!unpaired}
                         setIsModalComplete={setIsModalComplete}
                     />
                 </div>

@@ -6,21 +6,14 @@ import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 import { Thumbs } from "swiper/modules";
 import "swiper/css";
 import { imgOriginalUrl, imgThumbUrl } from "@/variables";
-import { OpeClientType } from "@/type";
 
 interface Props {
     isModalImgsOpen: boolean;
     setModalImgsOpen: (v: boolean) => void;
     imgs: never[];
-    isOpeInfo: OpeClientType[];
 }
 
-const ModalImgs = ({
-    isModalImgsOpen,
-    setModalImgsOpen,
-    imgs,
-    isOpeInfo,
-}: Props) => {
+const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | null>(null);
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
@@ -48,7 +41,7 @@ const ModalImgs = ({
                 <p className="text-white text-[54px] font-bold leading-[54px]">
                     고객 사진 뷰어
                 </p>
-                <ClientInfoForModal isOpeInfo={isOpeInfo} />
+                <ClientInfoForModal />
                 <div className="flex flex-col w-[885px] gap-y-5 pt-5">
                     <Swiper
                         className="flex w-full overflow-hidden"

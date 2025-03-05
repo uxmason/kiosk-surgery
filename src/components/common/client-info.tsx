@@ -1,16 +1,15 @@
 import { handleBirthToAge } from "@/function";
 import { parseSexType } from "@/parse";
-import { OpeClientType } from "@/type";
+import { useClientStore } from "@/store";
 
 interface Props {
     setIsOpenOpeModal: (v: boolean) => void;
-    isOpeInfo: OpeClientType[];
 }
-const ClientInfo = ({ setIsOpenOpeModal, isOpeInfo }: Props) => {
-    const info = isOpeInfo?.[0];
+const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
+    const { client } = useClientStore();
     const sex =
-        info?.주민번호?.slice(6, 7) === "2" ||
-        info?.주민번호?.slice(6, 7) === "4"
+        client?.licence?.slice(6, 7) === "2" ||
+        client?.licence?.slice(6, 7) === "4"
             ? "F"
             : "M";
     return (
@@ -21,7 +20,7 @@ const ClientInfo = ({ setIsOpenOpeModal, isOpeInfo }: Props) => {
                         고객번호
                     </p>
                     <p className="text-white text-[24px] font-bold leading-6">
-                        {info?.고객번호}
+                        {client?.psEntry}
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[150px]">
@@ -29,7 +28,7 @@ const ClientInfo = ({ setIsOpenOpeModal, isOpeInfo }: Props) => {
                         고객명
                     </p>
                     <p className="text-white text-[32px] font-light leading-6">
-                        {info?.고객명}
+                        {client?.name}
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[100px]">
@@ -50,7 +49,7 @@ const ClientInfo = ({ setIsOpenOpeModal, isOpeInfo }: Props) => {
                         나이
                     </p>
                     <p className="text-white text-[24px] font-bold leading-6">
-                        {handleBirthToAge(info?.주민번호)}세
+                        {handleBirthToAge(client?.licence)}세
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[150px]">
@@ -58,7 +57,7 @@ const ClientInfo = ({ setIsOpenOpeModal, isOpeInfo }: Props) => {
                         부위
                     </p>
                     <p className="text-[#38ABBE] text-[32px] font-light leading-6">
-                        {info?.수술부위}
+                        {client?.part}
                     </p>
                 </div>
                 <div className="flex flex-col gap-y-4 w-[150px]">
@@ -66,7 +65,7 @@ const ClientInfo = ({ setIsOpenOpeModal, isOpeInfo }: Props) => {
                         수술코드
                     </p>
                     <p className="text-white text-[24px] font-bold leading-6">
-                        {info?.수술코드}
+                        {client?.opeCode}
                     </p>
                 </div>
             </div>

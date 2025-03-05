@@ -5,10 +5,10 @@ export const removeSpace = (str: string) => {
     return str.replace(/\s/g, "");
 };
 export const returnDoubleFormatNumber = (num: number) => {
-    if(num > 9) {
+    if (num > 9) {
         return num.toString();
     } else {
-        return '0'+num;
+        return "0" + num;
     }
 };
 export const formatTime = (time: string) => {
@@ -124,4 +124,10 @@ export const getKoreanAge = (rrn: string) => {
     const koreanAge = currentYear - birthYear + 1;
 
     return koreanAge;
+};
+export const formatDateToYYMMDD = (date: string) => {
+    const yy = date.slice(2, 4);
+    const mm = date.slice(5, 7);
+    const dd = date.slice(8, 10);
+    return `${yy}.${mm}.${dd}`;
 };
