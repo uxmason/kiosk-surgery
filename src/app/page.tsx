@@ -54,9 +54,8 @@ export default function Home() {
     // 가까운 미래의 수술 고객 정보
     const onHandleSelectOpe = async () => {
         try {
-            const url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
-            console.log(targetPsEntry);
-            // if (targetPsEntry !== "") url += `&psEntry=${targetPsEntry}`;
+            let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
+            if (targetPsEntry !== "") url += `&psEntry=${targetPsEntry}`;
             const response = await fetch(url, {
                 method: "GET",
             });
@@ -64,16 +63,21 @@ export default function Home() {
                 throw new Error("Network response was not ok");
             }
             const result = await response.json();
-            const currentTime =
-                new Date().getHours() * 60 * 60 +
-                new Date().getMinutes() * 60 +
-                new Date().getSeconds();
-            setCount(
-                Number(result?.list[0]?.시작시간?.substring(0, 2)) * 60 * 60 +
-                    Number(result?.list[0]?.시작시간?.substring(2, 4)) * 60 -
-                    currentTime
-            );
-            setTargetPsEntry("");
+            if (result?.success) {
+                const currentTime =
+                    new Date().getHours() * 60 * 60 +
+                    new Date().getMinutes() * 60 +
+                    new Date().getSeconds();
+                setCount(
+                    Number(result?.list[0]?.시작시간?.substring(0, 2)) *
+                        60 *
+                        60 +
+                        Number(result?.list[0]?.시작시간?.substring(2, 4)) *
+                            60 -
+                        currentTime
+                );
+                setTargetPsEntry("");
+            }
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
