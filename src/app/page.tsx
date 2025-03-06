@@ -32,7 +32,7 @@ export default function Home() {
     const [isBoostCheckStatus, setBoostCheckStatus] = useState(false);
     const [count, setCount] = useState(24 * 60 * 60);
     const [isReversCount, setReversCount] = useState(false);
-    const [targetPsEntry, setTargetPsEntry] = useState<string | null>(null);
+    const [targetPsEntry, setTargetPsEntry] = useState("");
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -55,7 +55,7 @@ export default function Home() {
     const onHandleSelectOpe = async () => {
         try {
             let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
-            if (targetPsEntry != null) url += `&psEntry=${targetPsEntry}`;
+            if (targetPsEntry !== "") url += `&psEntry=${targetPsEntry}`;
             const response = await fetch(url, {
                 method: "GET",
             });
@@ -72,11 +72,11 @@ export default function Home() {
                     Number(result?.list[0]?.시작시간?.substring(2, 4)) * 60 -
                     currentTime
             );
-            setTargetPsEntry(null);
+            setTargetPsEntry("");
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
-            setTargetPsEntry(null);
+            setTargetPsEntry("");
         }
     };
 
