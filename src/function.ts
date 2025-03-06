@@ -17,30 +17,50 @@ export const formatTime = (time: string) => {
 
     return `${hours}:${minutes}`;
 };
-
 export const formatDate = () => {
     const now = new Date();
-    const yy = String(now.getFullYear()).slice(2);
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-    const dd = String(now.getDate()).padStart(2, "0");
-    const hh = String(now.getHours()).padStart(2, "0");
-    const min = String(now.getMinutes()).padStart(2, "0");
+    const options: Intl.DateTimeFormatOptions = {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Asia/Seoul",
+        hour12: false,
+    };
 
-    return `${yy}.${mm}.${dd} ${hh}:${min}`;
+    const formattedDate = new Intl.DateTimeFormat("ko-KR", options)
+        .format(now)
+        .replace(/\./g, ".")
+        .replace(/\s/g, " ")
+        .replace(/,/g, "");
+
+    return formattedDate;
 };
 export const getFormattedDate = () => {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
+    const formatter = new Intl.DateTimeFormat("ko-KR", {
+        timeZone: "Asia/Seoul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
+
+    const [{ value: year }, , { value: month }, , { value: day }] =
+        formatter.formatToParts(now);
 
     return `${year}${month}${day}`;
 };
 export const getCurrentTimeHHMM = () => {
     const now = new Date();
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    return `${hours}${minutes}`;
+    const koreaTime = new Intl.DateTimeFormat("ko-KR", {
+        timeZone: "Asia/Seoul",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    }).format(now);
+
+    return koreaTime.replace(":", "");
 };
 // 키오스크에 등록된 의사 찾기
 export const handleSelectDoctor = async (deviceId: string) => {
@@ -119,6 +139,7 @@ export const getKoreanAge = (rrn: string) => {
     }
 
     const today = new Date();
+    today.setHours(today.getHours() + 9);
     const currentYear = today.getFullYear();
 
     const koreanAge = currentYear - birthYear + 1;

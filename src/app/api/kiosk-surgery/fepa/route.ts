@@ -10,10 +10,12 @@ export async function GET(req: Request) {
 
         // 날짜 계산
         const today = new Date();
+        today.setHours(today.getHours() + 9);
         today.setDate(today.getDate() - 1);
         const fromDate = `${today.getFullYear() - 2}${String(
             today.getMonth() + 1
         ).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
+
         // 사용자 체중 및 키 조회
         const userQuery = `
                             SELECT TOP 1 MU_HEIGHT, MU_WEIGHT 

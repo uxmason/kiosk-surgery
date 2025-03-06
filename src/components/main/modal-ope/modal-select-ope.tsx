@@ -70,7 +70,6 @@ const ModalSelecOpe = ({
         setHospitalIndex(hospitalIndex);
         setDoctorIndex(doctorIdx);
     }, [doctor, dataAllOpe]);
-
     return (
         <>
             <CustomModal
