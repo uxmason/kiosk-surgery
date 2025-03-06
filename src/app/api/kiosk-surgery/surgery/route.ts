@@ -61,7 +61,12 @@ export async function GET(req: Request) {
                     AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}') ${addWhere}
                 ORDER BY A.PROMDATE, A.PROMTIME`;
         const results: OpeClientType[] = await queryDB(sql);
-        return NextResponse.json({ success: true, list: results });
+        return NextResponse.json({
+            success: true,
+            list: results,
+            doctorId: doctorId,
+            psEntry: psEntry,
+        });
     } catch {
         return NextResponse.json(
             {
