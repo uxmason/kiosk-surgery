@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import queryDB from "../../../../../lib/db";
 import { getCurrentTimeHHMM, getFormattedDate } from "@/function";
+import { OpeClientType } from "@/type";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
@@ -59,7 +60,7 @@ export async function GET(req: Request) {
                     AND A.PROMSTATE = '001'
                     AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}') ${addWhere}
                 ORDER BY A.PROMDATE, A.PROMTIME`;
-        const results: any[] = await queryDB(sql);
+        const results: OpeClientType[] = await queryDB(sql);
         return NextResponse.json({ success: true, list: results });
     } catch {
         return NextResponse.json(

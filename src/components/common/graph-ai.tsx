@@ -17,8 +17,8 @@ const GraphAi = ({ children, aiType }: Props) => {
         []
     );
     const [isFatList, setIsFatList] = useState<FatListType[]>([]);
-    const sortedArray = isFatList.sort((a, b) => {
-        return order.indexOf(a.메인부위명) - order.indexOf(b.메인부위명);
+    const sortedArray = isFatList?.sort((a, b) => {
+        return order.indexOf(a?.메인부위명) - order.indexOf(b?.메인부위명);
     });
     const onHandleSelectFepa = async (
         psEntry: string,
@@ -46,19 +46,19 @@ const GraphAi = ({ children, aiType }: Props) => {
     };
 
     useEffect(() => {
-        if (!client.psEntry) return;
+        if (!client?.psEntry) return;
         const age = Number(handleBirthToAge(client?.licence));
         const sex =
             client?.licence?.slice(6, 7) === "2" ||
             client?.licence?.slice(6, 7) === "4"
                 ? "F"
                 : "M";
-        onHandleSelectFepa(client.psEntry, age, sex).then((res) => {
-            if (res.success) {
-                setIsLimitFatParts(res.limitFatPart);
-                setIsFatList(res.fatList);
+        onHandleSelectFepa(client?.psEntry, age, sex)?.then((res) => {
+            if (res?.success) {
+                setIsLimitFatParts(res?.limitFatPart);
+                setIsFatList(res?.fatList);
             } else {
-                console.log(res.message);
+                console.log(res?.message);
             }
         });
     }, [client, aiType]);
@@ -69,37 +69,37 @@ const GraphAi = ({ children, aiType }: Props) => {
             <div className="flex flex-col w-full h-full pt-[51px] gap-y-[46px]">
                 {sortedArray?.map((part, index) => {
                     const max = isLimitFatParts?.filter(
-                        (v) => v.메인부위명 === part?.메인부위명
+                        (v) => v?.메인부위명 === part?.메인부위명
                     )?.[0];
                     return (
                         <div key={index} className="flex w-full">
                             <div className="flex gap-x-[15px] w-[205px]">
                                 <div
                                     className={`flex items-center justify-center w-[50px] h-[50px] bg-white rounded-[15px] border-[5px] border-solid ${
-                                        part.메인부위명 === "팔"
+                                        part?.메인부위명 === "팔"
                                             ? "border-[#15CF8F]"
-                                            : part.메인부위명 === "복부"
+                                            : part?.메인부위명 === "복부"
                                             ? "border-[#ED6B5B]"
                                             : "border-[#38ABBE]"
                                     }`}
                                 >
                                     <img
                                         src={`/assets/${
-                                            part.메인부위명 === "복부"
+                                            part?.메인부위명 === "복부"
                                                 ? "abdomen"
                                                 : part?.메인부위명 === "팔"
                                                 ? "arm"
                                                 : "thigh"
                                         }.svg`}
                                         width={
-                                            part.메인부위명 === "복부"
+                                            part?.메인부위명 === "복부"
                                                 ? 35.5
                                                 : part?.메인부위명 === "팔"
                                                 ? 33
                                                 : 32.5
                                         }
                                         height={
-                                            part.메인부위명 === "복부"
+                                            part?.메인부위명 === "복부"
                                                 ? 29
                                                 : part?.메인부위명 === "팔"
                                                 ? 25
@@ -109,9 +109,9 @@ const GraphAi = ({ children, aiType }: Props) => {
                                 </div>
                                 <p
                                     className={`text-[44px] w-[140px] font-light leading-11 ${
-                                        part.메인부위명 === "팔"
+                                        part?.메인부위명 === "팔"
                                             ? "text-[#15CF8F]"
-                                            : part.메인부위명 === "복부"
+                                            : part?.메인부위명 === "복부"
                                             ? "text-[#ED6B5B]"
                                             : "text-[#38ABBE]"
                                     }`}
@@ -179,7 +179,7 @@ const GraphAi = ({ children, aiType }: Props) => {
                                             : "text-white"
                                     }`}
                                 >
-                                    {part?.평균예측지방량.toLocaleString()}
+                                    {part?.평균예측지방량?.toLocaleString()}
                                     <span className="text-[20px]">cc</span>
                                 </p>
                             </div>
