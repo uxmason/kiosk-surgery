@@ -67,6 +67,9 @@ export async function GET(req: Request) {
             list: results,
             doctorId: doctorId,
             psEntry: psEntry,
+            nowTime: nowTime,
+            today: today,
+            addWhere,
         });
     } catch {
         return NextResponse.json(
