@@ -7,9 +7,9 @@ export async function GET(req: Request) {
         const { psEntry, age, sex } = Object.fromEntries(
             url.searchParams.entries()
         );
-
         // 날짜 계산
         const today = new Date();
+        today.setHours(today.getHours() + 9);
         today.setDate(today.getDate() - 1);
         const fromDate = `${today.getFullYear() - 2}${String(
             today.getMonth() + 1

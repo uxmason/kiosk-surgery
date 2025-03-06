@@ -64,10 +64,14 @@ export default function Home() {
             }
             const result = await response.json();
             if (result?.success) {
+                const now = new Date();
+                now.setHours(now.getHours() + 9);
+
                 const currentTime =
-                    new Date().getHours() * 60 * 60 +
-                    new Date().getMinutes() * 60 +
-                    new Date().getSeconds();
+                    now.getHours() * 60 * 60 +
+                    now.getMinutes() * 60 +
+                    now.getSeconds();
+
                 setCount(
                     Number(result?.list[0]?.시작시간?.substring(0, 2)) *
                         60 *

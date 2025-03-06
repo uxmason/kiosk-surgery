@@ -55,10 +55,11 @@ const ModalSelecOpe = ({
     const [doctorIndex, setDoctorIndex] = useState(0);
     const [isErrorMessage, setIsErrorMessage] = useState(false);
 
+    const now = new Date();
+    now.setHours(now.getHours() + 9);
+
     const currentTimeHHMM =
-        new Date().getHours() +
-        "" +
-        returnDoubleFormatNumber(new Date().getMinutes());
+        now.getHours() + "" + returnDoubleFormatNumber(now.getMinutes());
 
     useEffect(() => {
         const hospitalIndex = dataAllOpe?.findIndex(
