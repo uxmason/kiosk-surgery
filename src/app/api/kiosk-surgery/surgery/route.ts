@@ -5,10 +5,13 @@ import { getCurrentTimeHHMM, getFormattedDate } from "@/function";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
-        const { doctorId, psEntry } = Object.fromEntries(url.searchParams.entries());
+        const { doctorId, psEntry } = Object.fromEntries(
+            url.searchParams.entries()
+        );
         const today = getFormattedDate();
         const nowTime = getCurrentTimeHHMM();
-        const addWhere = (psEntry != null) ? `AND A.PSENTRY='${psEntry}'` : ``;
+        const addWhere =
+            typeof psEntry === "string" ? `AND A.PSENTRY='${psEntry}'` : ``;
         const sql = `SELECT top 1
                     A.STARTBRAN AS 지점,
                     A.PROMTIME AS 시작시간, 
