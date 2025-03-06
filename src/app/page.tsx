@@ -54,8 +54,9 @@ export default function Home() {
     // 가까운 미래의 수술 고객 정보
     const onHandleSelectOpe = async () => {
         try {
-            let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
-            if (targetPsEntry !== "") url += `&psEntry=${targetPsEntry}`;
+            const url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
+            console.log(targetPsEntry);
+            // if (targetPsEntry !== "") url += `&psEntry=${targetPsEntry}`;
             const response = await fetch(url, {
                 method: "GET",
             });
