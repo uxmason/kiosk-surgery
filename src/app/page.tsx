@@ -68,8 +68,8 @@ export default function Home() {
                 new Date().getMinutes() * 60 +
                 new Date().getSeconds();
             setCount(
-                Number(result.list[0].시작시간.substring(0, 2)) * 60 * 60 +
-                    Number(result.list[0].시작시간.substring(2, 4)) * 60 -
+                Number(result?.list[0]?.시작시간?.substring(0, 2)) * 60 * 60 +
+                    Number(result?.list[0]?.시작시간?.substring(2, 4)) * 60 -
                     currentTime
             );
             setTargetPsEntry(null);
