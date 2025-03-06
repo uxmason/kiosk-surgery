@@ -61,16 +61,24 @@ export async function GET(req: Request) {
                     AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}') ${addWhere}
                 ORDER BY A.PROMDATE, A.PROMTIME`;
         const results: OpeClientType[] = await queryDB(sql);
-        console.dir({ doctorId, psEntry });
-        return NextResponse.json({
-            success: true,
-            list: results,
-            doctorId: doctorId,
-            psEntry: psEntry,
-            nowTime: nowTime,
-            today: today,
-            addWhere,
-        });
+        if (results?.length !== 0) {
+            return NextResponse.json({
+                success: true,
+                list: results,
+            });
+        } else {
+            if (addWhere) {
+                return NextResponse.json({
+                    success: false,
+                    message: "해당 고객의 수술 일정을 가져오지 못했습니다.",
+                });
+            } else {
+                return NextResponse.json({
+                    success: false,
+                    message: "의사 선생님의 수술 일정을 가져오지 못했습니다.",
+                });
+            }
+        }
     } catch {
         return NextResponse.json(
             {
