@@ -50,7 +50,6 @@ export default function Info() {
                 throw new Error("Network response was not ok");
             }
             const now = new Date();
-            now.setHours(now.getHours() + 9);
 
             const currentTime =
                 now.getHours() * 60 * 60 +
