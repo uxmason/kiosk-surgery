@@ -22,7 +22,10 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
     const regDates = imgs?.map((v: any) => v?.regdate);
 
     useEffect(() => {
-        if (imgs && imgs.length === 0) return;
+        if (imgs && imgs.length === 0) {
+            setCurrentImgs([]);
+            return;
+        }
         setCurrentDateIndex(imgs?.length - 1);
     }, [imgs]);
 

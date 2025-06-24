@@ -1,6 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+
+interface OpeInfoItem {
+    "담당의ID": string;
+    "담당의명": string;
+    "수술부위": string;
+    "시작시간": string;
+    "수술코드": string;
+    "고객번호": string;
+    "고객명": string;
+    "주민번호": string;
+}
+
 interface Props {
     text: string;
     bg: string;
@@ -9,6 +21,7 @@ interface Props {
     path?: string | undefined;
     setIsModalComplete?: (v: boolean) => void;
     isPaired?: boolean;
+    dataOpeInfo: OpeInfoItem[];
 }
 const CustomBtn = ({
     text,
@@ -18,6 +31,7 @@ const CustomBtn = ({
     path,
     setIsModalComplete,
     isPaired,
+    dataOpeInfo
 }: Props) => {
     const router = useRouter();
     const buttonStyle = {
@@ -25,7 +39,7 @@ const CustomBtn = ({
     };
 
     const handleClick = () => {
-        if (!isPaired) return;
+        if (!isPaired || dataOpeInfo?.length == 0) return;
         if (path) {
             router.push(path);
         } else {
