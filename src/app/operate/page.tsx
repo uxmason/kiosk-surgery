@@ -212,6 +212,7 @@ export default function Info() {
                         isShowBtnText="수행 단계로"
                         isPaired={!unpaired}
                         setIsModalComplete={setIsModalComplete}
+                        dataOpeInfo={[]}
                     />
                 </div>
                 <UpcomingTime
