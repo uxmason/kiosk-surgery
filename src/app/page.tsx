@@ -10,7 +10,7 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
-import { OpeClientType } from "@/type";
+import { ImgsType, OpeClientType } from "@/type";
 
 export default function Home() {
     const [isPaired, setPaired] = useState(false);
@@ -19,7 +19,7 @@ export default function Home() {
     const [isInbodyOpen, setInbodyOpen] = useState(false);
     const [isModalImgsOpen, setModalImgsOpen] = useState(false);
     const [isModalAIOpen, setModalAIOpen] = useState(false);
-    const [imgs, setImgs] = useState([]);
+    const [imgs, setImgs] = useState<ImgsType[]>([]);
     const [dataOpeInfo, setOpeInfo] = useState<OpeClientType[]>([]);
     const [dataInbody] = useState([]);
     const [dataFepa] = useState([]);
@@ -244,7 +244,7 @@ export default function Home() {
             if (res.success) {
                 if (res.list.length > 0) {
                     setImgs(res.list);
-                    setLastRegDate(res.list[0].regdate);
+                    setLastRegDate(res.list[res.list.length - 1].regdate);
                 }
             } else {
                 toast.error(res.message);

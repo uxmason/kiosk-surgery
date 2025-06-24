@@ -26,10 +26,10 @@ const ModalOpeInfo = ({
     const [isWeights, setIsWeights] = useState<WeightsType>();
 
     // 고객 인바디 정보 불러오기
-    const handleSelectInbodyLst = async (psEntry: string) => {
+    const handleSelectInbodyLst = async (psEntry: string, part: string) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
+                `/api/kiosk-surgery/inbody?psEntry=${psEntry}&part=${part}`,
                 {
                     method: "GET",
                 }
@@ -49,8 +49,9 @@ const ModalOpeInfo = ({
     // 고객 인바디 정보 담기
     useEffect(() => {
         if (!client) return;
-        handleSelectInbodyLst(client.psEntry).then((res) => {
+        handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
             if (res.success) {
+                console.log(res);
                 setIsWeights({
                     BD_WEIGHT: res?.inbody?.[0]?.["BD_WEIGHT"],
                     WC_WEIGHT: res?.inbody?.[0]?.["WC_WEIGHT"],

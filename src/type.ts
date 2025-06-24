@@ -141,3 +141,11 @@ export type WeightsType = {
     BD_WEIGHT: number;
     MUST_WEIGHTL: number;
 };
+export type ImgsType = {
+    regdate: string;
+    image: ImgType[];
+};
+export type ImgType = {
+    idx: number;
+    filename: string;
+};
