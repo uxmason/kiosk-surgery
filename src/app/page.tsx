@@ -10,7 +10,7 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
-import { OpeClientType } from "@/type";
+import { ImgsType, OpeClientType } from "@/type";
 
 export default function Home() {
     const [isPaired, setPaired] = useState(false);
@@ -19,7 +19,7 @@ export default function Home() {
     const [isInbodyOpen, setInbodyOpen] = useState(false);
     const [isModalImgsOpen, setModalImgsOpen] = useState(false);
     const [isModalAIOpen, setModalAIOpen] = useState(false);
-    const [imgs, setImgs] = useState([]);
+    const [imgs, setImgs] = useState<ImgsType[]>([]);
     const [dataOpeInfo, setOpeInfo] = useState<OpeClientType[]>([]);
     const [dataInbody] = useState([]);
     const [dataFepa] = useState([]);
@@ -228,12 +228,18 @@ export default function Home() {
     useEffect(() => {
         if (!dataOpeInfo) return;
         setClient({
-            psEntry: dataOpeInfo?.[0]?.["고객번호"],
-            branch: dataOpeInfo?.[0]?.["지점"],
-            name: dataOpeInfo?.[0]?.["고객명"],
-            licence: dataOpeInfo?.[0]?.["주민번호"],
-            part: dataOpeInfo?.[0]?.["수술부위"],
-            opeCode: dataOpeInfo?.[0]?.["수술코드"],
+            // psEntry: dataOpeInfo?.[0]?.["고객번호"],
+            // branch: dataOpeInfo?.[0]?.["지점"],
+            // name: dataOpeInfo?.[0]?.["고객명"],
+            // licence: dataOpeInfo?.[0]?.["주민번호"],
+            // part: dataOpeInfo?.[0]?.["수술부위"],
+            // opeCode: dataOpeInfo?.[0]?.["수술코드"],
+            psEntry: "210041652",
+            branch: "부산",
+            name: "허서회",
+            licence: "9808252120717",
+            part: "허벅지",
+            opeCode: "OPE0537",
         });
     }, [dataOpeInfo]);
 
@@ -244,7 +250,7 @@ export default function Home() {
             if (res.success) {
                 if (res.list.length > 0) {
                     setImgs(res.list);
-                    setLastRegDate(res.list[0].regdate);
+                    setLastRegDate(res.list[res.list.length - 1].regdate);
                 }
             } else {
                 toast.error(res.message);

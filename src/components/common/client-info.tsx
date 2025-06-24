@@ -7,11 +7,7 @@ interface Props {
 }
 const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
     const { client } = useClientStore();
-    const sex =
-        client?.licence?.slice(6, 7) === "2" ||
-        client?.licence?.slice(6, 7) === "4"
-            ? "F"
-            : "M";
+    const sex = Number(client?.licence?.slice(6, 7)) % 2 === 0 ? "F" : "M";
     return (
         <div className="flex w-full gap-x-5 px-5 pt-5">
             <div className="flex w-[885px] h-[135px] pt-[30px] pb-[41px] px-10 rounded-[15px] bg-[rgba(58,62,89,0.15)]">
