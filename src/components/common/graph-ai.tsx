@@ -64,7 +64,7 @@ const GraphAi = ({ children, aiType }: Props) => {
     }, [client, aiType]);
 
     return (
-        <div className="flex flex-col w-full h-[400px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] py-[30px] px-[35px]">
+        <div className="flex flex-col w-full h-[400px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] py-[30px] px-[35px] mb-5">
             {children}
             <div className="flex flex-col w-full h-full pt-[51px] gap-y-[46px]">
                 {sortedArray?.map((part, index) => {

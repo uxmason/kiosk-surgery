@@ -1,18 +1,11 @@
 "use client";
 import { formatDateToYYMMDD } from "@/function";
+import { ImgsType } from "@/type";
 import { imgThumbUrl } from "@/variables";
 import { useEffect, useState } from "react";
-interface ImageItem {
-    idx: number;
-    filename: string;
-}
-interface ImgItemPack {
-    regdate: string;
-    image: ImageItem[];
-}
 interface Props {
     setModalImgsOpen: (v: boolean) => void;
-    imgs: ImgItemPack[];
+    imgs: ImgsType[];
     isPaired: boolean;
     lastRegDate: string;
 }
@@ -43,24 +36,24 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
             {imgs && lastRegDate && isPaired ? (
                 <>
                     <div className="relative w-full h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
-                        {limitedImages.map((img, i) => (
-                            <div key={i} className="relative">
-                                <div
-                                    className="absolute w-[33px] h-[33px] bg-[#343a40]"
-                                    style={{
-                                        opacity: randomOpacities?.[i] / 100,
-                                    }}
-                                />
-                                <div
-                                    className="w-[33px] h-[33px] bg-cover bg-center"
-                                    style={{
-                                        backgroundImage: `url(${imgThumbUrl}/${img?.filename.slice(
-                                            4
-                                        )})`,
-                                    }}
-                                />
-                            </div>
-                        ))}
+                        {limitedImages?.map((img, i) => {
+                            return (
+                                <div key={i} className="relative">
+                                    <div
+                                        className="absolute w-[33px] h-[33px] bg-[#343a40]"
+                                        style={{
+                                            opacity: randomOpacities?.[i] / 100,
+                                        }}
+                                    />
+                                    <img
+                                        className="w-[33px] h-[33px] bg-cover bg-center"
+                                        src={`${imgThumbUrl}/${String(
+                                            img?.filename
+                                        )?.slice(4)}`}
+                                    />
+                                </div>
+                            );
+                        })}
                     </div>
                     <div className="flex w-full justify-between items-center pt-[26px]">
                         <div className="bg-white flex justify-center items-center rounded-full w-10 h-10">
