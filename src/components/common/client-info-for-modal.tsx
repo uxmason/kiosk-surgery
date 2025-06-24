@@ -3,11 +3,7 @@ import { parseOpePart, parseSexType } from "@/parse";
 import { useClientStore } from "@/store";
 const ClientInfoForModal = () => {
     const { client } = useClientStore();
-    const isSex =
-        client?.licence?.slice(6, 7) === "2" ||
-        client?.licence?.slice(6, 7) === "4"
-            ? "F"
-            : "M";
+    const isSex = Number(client?.licence?.slice(6, 7)) % 2 === 0 ? "F" : "M";
     const isAge = handleBirthToAge(client?.licence);
 
     const isPart = client?.part;

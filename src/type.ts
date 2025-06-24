@@ -149,3 +149,7 @@ export type ImgType = {
     idx: number;
     filename: string;
 };
+export type WeightChartType = {
+    date: string;
+    weight: number;
+};

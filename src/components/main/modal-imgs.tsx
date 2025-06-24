@@ -132,7 +132,7 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
                             )}
                         </Swiper>
                     </div>
-                    <div className="flex w-full h-[135px] px-[25px] bg-[rgba(58,62,89,0.15)] rounded-[15px]">
+                    <div className="flex w-full h-[135px] px-[25px] bg-[rgba(58,62,89,0.15)] backdrop-blur-[20px] rounded-[15px]">
                         <Swiper
                             onSwiper={setSwiperInstance}
                             spaceBetween={20}
