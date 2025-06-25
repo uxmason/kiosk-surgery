@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import { ImgsType, OpeClientType } from "@/type";
 
 export default function Home() {
+    const [isOnLoading, setOnLoading] = useState(false);
     const [isPaired, setPaired] = useState(false);
     const [isOpeOpen, setOpeOpen] = useState(false);
     const [isOpeOpenNext, setOpeOpenNext] = useState(false);
@@ -36,6 +37,7 @@ export default function Home() {
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
+        setOnLoading(true);
         try {
             const response = await fetch(
                 `/api/kiosk-surgery/check-device?deviceId=${deviceId}`,
@@ -45,14 +47,17 @@ export default function Home() {
                 throw new Error("Network response was not ok");
             }
             const result = await response.json();
+            setOnLoading(false);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
+            setOnLoading(false);
         }
     };
 
     // 가까운 미래의 수술 고객 정보
     const onHandleSelectOpe = async () => {
+        setOnLoading(true);
         try {
             let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
             if (targetPsEntry !== "") url += `&psEntry=${targetPsEntry}`;
@@ -81,10 +86,12 @@ export default function Home() {
                 );
                 setTargetPsEntry("");
             }
+            setOnLoading(false);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
             setTargetPsEntry("");
+            setOnLoading(false);
         }
     };
 
@@ -119,6 +126,7 @@ export default function Home() {
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
+        setOnLoading(true);
         try {
             const response = await fetch(
                 `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
@@ -130,22 +138,27 @@ export default function Home() {
             }
 
             const result = await response.json();
+            setOnLoading(false);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
+            setOnLoading(false);
         }
     };
 
     const handleSelectAllOpe = async () => {
+        setOnLoading(true);
         try {
             const response = await fetch(`/api/kiosk-surgery/schedule/`, {
                 method: "GET",
             });
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
+            setOnLoading(false);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
+            setOnLoading(false);
         }
     };
 
@@ -189,12 +202,14 @@ export default function Home() {
 
     useEffect(() => {
         if (!doctor.id) return;
+        setOnLoading(true);
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setOpeInfo(res.list);
             } else {
                 console.log("FAIL");
             }
+            setOnLoading(false);
         });
     }, [doctor]);
 
@@ -249,11 +264,10 @@ export default function Home() {
         handleSelectImgLst(client?.psEntry).then((res) => {
             setImgs([]);
             if (res.success) {
-                console.log('aa', res.list)
-                // if (res.list.length > 0) {
-                    setImgs(res.list);
+                setImgs(res.list);
+                if (res.list.length > 0) {
                     setLastRegDate(res.list[res.list.length - 1].regdate);
-                // }
+                }
             } else {
                 toast.error(res.message);
             }
@@ -392,6 +406,7 @@ export default function Home() {
                 isModalAIOpen={isModalAIOpen && isPaired}
                 setModalAIOpen={setModalAIOpen}
             />
+            {isOnLoading ? <div className="B-00"><div className="L-00"><p className="T-00">로딩중입니다.</p></div></div>:null}
         </>
     );
 }
