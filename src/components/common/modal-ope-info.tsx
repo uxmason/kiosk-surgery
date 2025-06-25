@@ -7,7 +7,7 @@ import {
 } from ".";
 import CustomModal from "./custom-modal";
 import { useEffect, useState } from "react";
-import { OpeClientType, WeightsType } from "@/type";
+import { OpeClientType, WeightChartType, WeightsType } from "@/type";
 import { handleBirthToAge } from "@/function";
 import { useClientStore } from "@/store";
 import toast from "react-hot-toast";
@@ -24,6 +24,7 @@ const ModalOpeInfo = ({
     const { client } = useClientStore();
     const [isAge, setIsAge] = useState(0);
     const [isWeights, setIsWeights] = useState<WeightsType>();
+    const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
 
     // 고객 인바디 정보 불러오기
     const handleSelectInbodyLst = async (psEntry: string, part: string) => {
@@ -51,12 +52,20 @@ const ModalOpeInfo = ({
         if (!client) return;
         handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
             if (res.success) {
-                console.log(res);
+                const inbody = res?.inbody;
                 setIsWeights({
-                    BD_WEIGHT: res?.inbody?.[0]?.["BD_WEIGHT"],
-                    WC_WEIGHT: res?.inbody?.[0]?.["WC_WEIGHT"],
-                    MUST_WEIGHTL: res?.inbody?.[0]?.["MUST_WEIGHTL"],
+                    BD_WEIGHT: inbody?.[0]?.["BD_WEIGHT"],
+                    WC_WEIGHT: inbody?.[0]?.["WC_WEIGHT"],
+                    MUST_WEIGHTL: inbody?.[0]?.["MUST_WEIGHTL"],
                 });
+                setWeightArr(
+                    inbody?.map((v: never) => {
+                        return {
+                            date: v?.["PRODATE"],
+                            weight: v?.["BD_WEIGHT"],
+                        };
+                    })
+                );
             } else {
                 toast.error(res.message);
             }
@@ -90,7 +99,10 @@ const ModalOpeInfo = ({
                     </GraphAi>
                 )}
                 <div className="w-full grid grid-cols-3 gap-x-5">
-                    <GraphWeight />
+                    <GraphWeight
+                        isOpenOpeModal={isOpenOpeModal}
+                        weightArr={weightArr}
+                    />
                     <Weights isWeights={isWeights} />
                 </div>
             </div>
