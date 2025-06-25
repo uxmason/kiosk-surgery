@@ -18,6 +18,7 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
     const [randomOpacities, setRandomOpacities] = useState<number[]>([]);
 
     useEffect(() => {
+        console.log('cc', limitedImages)
         setRandomOpacities([]);
         const newOpacities = limitedImages?.map(() =>
             Math?.floor(Math?.random() * 101)
@@ -35,10 +36,10 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
             </p>
             {imgs && lastRegDate && isPaired ? (
                 <>
-                    <div className="relative w-full h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
+                    <div className="relative w-[165px] h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
                         {limitedImages?.map((img, i) => {
                             return (
-                                <div key={i} className="relative">
+                                <div key={i} className="relative w-[33px] h-[33px]">
                                     {img?.filename == undefined ?
                                     <div
                                         className="absolute w-[33px] h-[33px] bg-[#343a40]"
@@ -50,9 +51,9 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
                                     <div
                                         className={`w-[33px] h-[33px]`}
                                         style={{
-                                            background:`url(${imgThumbUrl}/${String(
+                                            background:`url('${imgThumbUrl}/${String(
                                             img?.filename
-                                        )?.slice(4)})  center / cover no-repeat`
+                                        )?.slice(4)}')  center / cover no-repeat`
                                         }}
                                     /> : null}
                                 </div>

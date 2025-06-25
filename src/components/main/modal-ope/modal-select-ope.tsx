@@ -50,6 +50,7 @@ const ModalSelecOpe = ({
     dataAllOpe,
     fingerprint,
 }: Props) => {
+    const [isOnLoading, setOnLoading] = useState(false);
     const { doctor } = useDoctorStore();
     const [hospitalIndex, setHospitalIndex] = useState(0);
     const [doctorIndex, setDoctorIndex] = useState(0);
@@ -345,6 +346,7 @@ const ModalSelecOpe = ({
                                                             filter: "drop-shadow(0px 4px 40px rgba(21,207,143,.5))",
                                                         }}
                                                         onClick={async () => {
+                                                            setOnLoading(true);
                                                             const url = `/api/kiosk-surgery/schedule/add/`;
                                                             try {
                                                                 const response =
@@ -423,11 +425,13 @@ const ModalSelecOpe = ({
                                                                         response.status
                                                                     );
                                                                 }
+                                                                setOnLoading(false);
                                                             } catch (error) {
                                                                 console.error(
                                                                     "에러 발생",
                                                                     error
                                                                 );
+                                                                setOnLoading(false);
                                                             }
                                                         }}
                                                     >
@@ -536,6 +540,7 @@ const ModalSelecOpe = ({
                 isErrorOpen={isErrorMessage}
                 setIsErrorOpen={setIsErrorMessage}
             />
+            {isOnLoading ? <div className="B-00"><div className="L-00"><p className="T-00">로딩중입니다.</p></div></div>:null}
         </>
     );
 };

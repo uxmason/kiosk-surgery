@@ -59,6 +59,27 @@
     background-size: 250px 2500px;
 }
 
+.B-00 {
+    background-color: #1D1F2DAA;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+}
+.L-00 {
+    padding: 60px 80px;
+    width: fit-content;
+    margin: calc(50vh - 90px) auto;
+    backdrop-filter: blur(40px);
+    border-radius: 40px;
+}
+.T-00 {
+    text-align: center;
+    color: white;
+    font-size: 2.5em;
+    width: fit-content;
+}
+
 .isHidedScrollBar {
     min-width: 1080px;
     height: 1920px;
