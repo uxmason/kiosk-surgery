@@ -160,7 +160,7 @@ export default function Info() {
                         isPaired={!unpaired}
                         isShowBtnText="준비 단계로"
                         path="/operate"
-                        dataOpeInfo={[]}
+                        dataOpeInfo={isOpeInfo}
                     />
                 </div>
                 <UpcomingTime
