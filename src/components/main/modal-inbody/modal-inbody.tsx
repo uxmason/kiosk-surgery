@@ -28,7 +28,7 @@ const ModalInbody = ({ isInbodyOpen, setInbodyOpen }: Props) => {
                 </p>
                 <ClientInfoForModal />
                 <div className="grid grid-cols-3 row-end-3 w-full h-full pt-5 gap-5">
-                    <GraphWeight />
+                    <GraphWeight isOpenOpeModal={isInbodyOpen} weightArr={[]} />
                     <Weights />
                     <GraphFatPercent />
                     <GraphBmiPercent />
