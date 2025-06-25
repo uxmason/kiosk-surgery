@@ -99,7 +99,10 @@ const ModalOpeInfo = ({
                     </GraphAi>
                 )}
                 <div className="w-full grid grid-cols-3 gap-x-5">
-                    <GraphWeight weightArr={weightArr} />
+                    <GraphWeight
+                        isOpenOpeModal={isOpenOpeModal}
+                        weightArr={weightArr}
+                    />
                     <Weights isWeights={isWeights} />
                 </div>
             </div>

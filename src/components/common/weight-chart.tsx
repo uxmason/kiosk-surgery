@@ -2,14 +2,16 @@ import { WeightChartType } from "@/type";
 import React, { useRef, useEffect } from "react";
 
 interface Props {
+    isOpenOpeModal: boolean;
     weightArr: WeightChartType[];
 }
 
-const WeightChart: React.FC<Props> = ({ weightArr }) => {
+const WeightChart: React.FC<Props> = ({ isOpenOpeModal, weightArr }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const textCanvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
+        if (!isOpenOpeModal) return;
         const canvas = canvasRef.current;
         const parent = canvas?.parentElement;
         const textCanvas = textCanvasRef.current;
@@ -31,13 +33,14 @@ const WeightChart: React.FC<Props> = ({ weightArr }) => {
 
         const ctx = canvas.getContext("2d");
         const textCtx = textCanvas.getContext("2d");
-        if (!ctx || !textCtx) return;
 
-        ctx.scale(dpr, dpr);
-        textCtx.scale(dpr, dpr);
+        if (!ctx || !textCtx) return;
 
         ctx.clearRect(0, 0, width, height);
         textCtx.clearRect(0, 0, width, height);
+
+        ctx.scale(dpr, dpr);
+        textCtx.scale(dpr, dpr);
 
         const margin = { top: 32, right: 29, bottom: 74, left: 22 };
         const textMargin = { top: 20, right: 0, bottom: 9, left: 0 };
@@ -61,8 +64,8 @@ const WeightChart: React.FC<Props> = ({ weightArr }) => {
             return { x, y };
         });
 
-        ctx.strokeStyle = makeGradient(ctx, "249, 172, 104");
         ctx.lineWidth = 4;
+        ctx.strokeStyle = makeGradient(ctx, "249, 172, 104", points);
         drawSmooth(ctx, points);
         drawAllMarks(ctx, weights, points);
         drawAxesText(
@@ -74,10 +77,10 @@ const WeightChart: React.FC<Props> = ({ weightArr }) => {
             plotHeight,
             n
         );
-    }, [weightArr]);
+    }, [isOpenOpeModal, weightArr]);
 
     return (
-        <div className="relative w-full h-[237px] top-[16px]">
+        <div className="relative w-full h-[237px] top-4">
             <canvas ref={canvasRef} className="absolute w-full h-full" />
             <canvas ref={textCanvasRef} className="absolute w-full h-full" />
         </div>
@@ -216,10 +219,23 @@ const drawAllMarks = (
 
 const makeGradient = (
     ctx: CanvasRenderingContext2D,
-    rgb: string
+    rgb: string,
+    points: { x: number; y: number }[]
 ): CanvasGradient => {
-    const grad = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
-    grad.addColorStop(0, `rgba(${rgb}, 0.1)`);
+    const x0 =
+        points && Number.isFinite(points?.[0]?.x) ? points?.[0]?.x + 8 : 0;
+    const y0 = points && Number.isFinite(points?.[0]?.y) ? points?.[0]?.y : 0;
+    const x1 =
+        points && Number.isFinite(points?.[points?.length - 1]?.x)
+            ? points?.[points?.length - 1]?.x
+            : 0;
+    const y1 =
+        points && Number.isFinite(points?.[points?.length - 1]?.y)
+            ? points?.[points?.length - 1]?.y
+            : 0;
+    const grad = ctx?.createLinearGradient(x0, y0, x1, y1);
+
+    grad.addColorStop(0, `rgba(${rgb}, 0.01)`);
     grad.addColorStop(0.5, `rgba(${rgb}, 0.5)`);
     grad.addColorStop(1, `rgba(${rgb}, 1)`);
     return grad;
