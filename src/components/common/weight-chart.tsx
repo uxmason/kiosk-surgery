@@ -40,10 +40,11 @@ const WeightChart: React.FC<Props> = ({ weightArr }) => {
         textCtx.clearRect(0, 0, width, height);
 
         const margin = { top: 32, right: 29, bottom: 74, left: 22 };
-        const textMargin = { top: 17, right: 0, bottom: 9, left: 0 };
+        const textMargin = { top: 20, right: 0, bottom: 9, left: 0 };
         const plotWidth = width - margin.left - margin.right;
         const plotHeight = height - textMargin.top - margin.bottom;
         const n = weightArr.length;
+        const gap = plotWidth / n;
         const weights = weightArr?.map((v) => v.weight);
         const labels = weightArr?.map((a) => a.date);
 
@@ -51,7 +52,7 @@ const WeightChart: React.FC<Props> = ({ weightArr }) => {
         const min = Math.min(...weights);
 
         const points = weights.map((w, i) => {
-            const x = margin.left + (plotWidth * i) / (n - 1);
+            const x = margin.left + gap * (i + 0.5);
             const y = margin.top + ((max - w) / (max - min)) * plotHeight;
             return { x, y };
         });
@@ -72,7 +73,7 @@ const WeightChart: React.FC<Props> = ({ weightArr }) => {
     }, [weightArr]);
 
     return (
-        <div className="relative w-full h-[237px]">
+        <div className="relative w-full h-[237px] top-[16px]">
             <canvas ref={canvasRef} className="absolute w-full h-full" />
             <canvas ref={textCanvasRef} className="absolute w-full h-full" />
         </div>
@@ -105,7 +106,10 @@ const drawAxesText = (
     textCtx.setLineDash([]);
 
     labels.forEach((lbl, i) => {
-        const x = plotMargin.left + (plotWidth * i) / (n - 1);
+        const gap = plotWidth / n;
+        const x = margin.left + gap * (i + 0.62);
+
+        // const x = plotMargin.left + (plotWidth * i) / (n - 1);
 
         const [year, monthDay] = lbl.split("-")
             ? [lbl.split("-")[0], lbl.split("-").slice(1).join("-")]
@@ -188,7 +192,7 @@ const drawMark = (
 
     ctx.save();
     ctx.shadowColor = "#F9AC68";
-    ctx.shadowBlur = 44;
+    ctx.shadowBlur = 22;
     ctx.beginPath();
     ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
     ctx.lineWidth = 4;
