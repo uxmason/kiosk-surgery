@@ -247,16 +247,18 @@ export default function Home() {
     useEffect(() => {
         if (!client?.psEntry) return;
         handleSelectImgLst(client?.psEntry).then((res) => {
+            setImgs([]);
             if (res.success) {
-                if (res.list.length > 0) {
+                console.log('aa', res.list)
+                // if (res.list.length > 0) {
                     setImgs(res.list);
                     setLastRegDate(res.list[res.list.length - 1].regdate);
-                }
+                // }
             } else {
                 toast.error(res.message);
             }
         });
-    }, [client?.psEntry]);
+    }, [client]);
 
     // 고객 인바디 정보 담기
     useEffect(() => {
