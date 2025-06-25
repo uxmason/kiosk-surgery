@@ -228,18 +228,18 @@ export default function Home() {
     useEffect(() => {
         if (!dataOpeInfo) return;
         setClient({
-            // psEntry: dataOpeInfo?.[0]?.["고객번호"],
-            // branch: dataOpeInfo?.[0]?.["지점"],
-            // name: dataOpeInfo?.[0]?.["고객명"],
-            // licence: dataOpeInfo?.[0]?.["주민번호"],
-            // part: dataOpeInfo?.[0]?.["수술부위"],
-            // opeCode: dataOpeInfo?.[0]?.["수술코드"],
-            psEntry: "210041652",
-            branch: "부산",
-            name: "허서회",
-            licence: "9808252120717",
-            part: "허벅지",
-            opeCode: "OPE0537",
+            psEntry: dataOpeInfo?.[0]?.["고객번호"],
+            branch: dataOpeInfo?.[0]?.["지점"],
+            name: dataOpeInfo?.[0]?.["고객명"],
+            licence: dataOpeInfo?.[0]?.["주민번호"],
+            part: dataOpeInfo?.[0]?.["수술부위"],
+            opeCode: dataOpeInfo?.[0]?.["수술코드"],
+            // psEntry: "210041652",
+            // branch: "부산",
+            // name: "허서회",
+            // licence: "9808252120717",
+            // part: "허벅지",
+            // opeCode: "OPE0537",
         });
     }, [dataOpeInfo]);
 
