@@ -18,10 +18,11 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
     const [randomOpacities, setRandomOpacities] = useState<number[]>([]);
 
     useEffect(() => {
+        setRandomOpacities([]);
         const newOpacities = limitedImages?.map(() =>
             Math?.floor(Math?.random() * 101)
         );
-        setRandomOpacities(newOpacities);
+        setRandomOpacities(newOpacities || []);
     }, [imgs]);
 
     return (
@@ -32,7 +33,7 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
             <p className="text-white text-[24px] font-[250] leading-[24px]">
                 사진
             </p>
-            {imgs && imgs?.length > 0 && lastRegDate && isPaired ? (
+            {imgs && lastRegDate && isPaired ? (
                 <>
                     <div className="relative w-full h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
                         {limitedImages?.map((img, i) => {
