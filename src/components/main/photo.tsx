@@ -39,18 +39,22 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
                         {limitedImages?.map((img, i) => {
                             return (
                                 <div key={i} className="relative">
+                                    {img?.filename == undefined ?
                                     <div
                                         className="absolute w-[33px] h-[33px] bg-[#343a40]"
                                         style={{
                                             opacity: randomOpacities?.[i] / 100,
                                         }}
-                                    />
-                                    <img
-                                        className="w-[33px] h-[33px] bg-cover bg-center"
-                                        src={`${imgThumbUrl}/${String(
+                                    />:null}
+                                    {img?.filename != undefined ?
+                                    <div
+                                        className={`w-[33px] h-[33px]`}
+                                        style={{
+                                            background:`url(${imgThumbUrl}/${String(
                                             img?.filename
-                                        )?.slice(4)}`}
-                                    />
+                                        )?.slice(4)})  center / cover no-repeat`
+                                        }}
+                                    /> : null}
                                 </div>
                             );
                         })}
