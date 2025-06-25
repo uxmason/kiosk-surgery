@@ -36,14 +36,16 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
     useEffect(() => {
         setCurrentImgs(imgs?.filter((_, i) => i === currentDateIndex));
     }, [imgs, currentDateIndex]);
+
     useEffect(() => {
-        if (swiperInstance && currentDateIndex !== undefined) {
-            if (currentDateIndex === 1 || currentDateIndex === 2) {
-                swiperInstance.slideTo(0);
-            } else {
-                swiperInstance.slideTo(currentDateIndex);
-            }
-        }
+        if (!swiperInstance || currentDateIndex === undefined) return;
+
+        const targetIndex =
+            currentDateIndex < 3 ? currentDateIndex - 1 : currentDateIndex;
+
+        setTimeout(() => {
+            swiperInstance.slideTo(targetIndex, 0);
+        }, 0);
     }, [currentDateIndex, swiperInstance]);
 
     return (
@@ -139,7 +141,7 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
                         <Swiper
                             onSwiper={setSwiperInstance}
                             spaceBetween={20}
-                            centeredSlides={regDates?.length <= 3}
+                            centeredSlides={true}
                             slidesPerView="auto"
                             className="overflow-y-scroll h-full w-full flex items-center"
                             onSlideChange={() =>

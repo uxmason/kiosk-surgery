@@ -29,18 +29,20 @@ const FirstImgs = ({
     const selectedImgs = imgs?.[currentDateIndex]?.image;
 
     useEffect(() => {
-        if (swiperInstance && currentDateIndex !== undefined) {
-            if (currentDateIndex === 1 || currentDateIndex === 2) {
-                swiperInstance.slideTo(0);
-            } else {
-                swiperInstance.slideTo(currentDateIndex);
-            }
-        }
+        if (!swiperInstance || currentDateIndex === undefined) return;
+
+        const targetIndex =
+            currentDateIndex < 3 ? currentDateIndex - 1 : currentDateIndex;
+
+        setTimeout(() => {
+            swiperInstance.slideTo(targetIndex, 0);
+        }, 0);
     }, [currentDateIndex, swiperInstance]);
 
     useEffect(() => {
         setCurrentDateIndex(imgs?.length - 1);
     }, [imgs]);
+
     return (
         <>
             <div className="flex w-full h-fit gap-x-5 pt-5 px-5">
@@ -97,7 +99,7 @@ const FirstImgs = ({
                                 <Swiper
                                     onSwiper={setSwiperInstance}
                                     spaceBetween={20}
-                                    centeredSlides={dates?.length <= 3}
+                                    centeredSlides={true}
                                     slidesPerView="auto"
                                     className="flex w-full h-[135px] py-5 bg-[rgba(58,62,89,0.15)] rounded-[15px]"
                                     onSlideChange={() =>
