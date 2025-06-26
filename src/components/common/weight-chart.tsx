@@ -4,9 +4,10 @@ import React, { useRef, useEffect } from "react";
 interface Props {
     isOpenOpeModal: boolean;
     weightArr: WeightChartType[];
+    color: string;
 }
 
-const WeightChart: React.FC<Props> = ({ isOpenOpeModal, weightArr }) => {
+const WeightChart: React.FC<Props> = ({ isOpenOpeModal, weightArr, color }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const textCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -65,9 +66,9 @@ const WeightChart: React.FC<Props> = ({ isOpenOpeModal, weightArr }) => {
         });
 
         ctx.lineWidth = 4;
-        ctx.strokeStyle = makeGradient(ctx, "249, 172, 104", points);
+        ctx.strokeStyle = makeGradient(ctx, color, points);
         drawSmooth(ctx, points);
-        drawAllMarks(ctx, weights, points);
+        drawAllMarks(ctx, weights, points, color);
         drawAxesText(
             textCtx,
             labels,
@@ -115,8 +116,6 @@ const drawAxesText = (
     labels?.forEach((lbl, i) => {
         const gap = plotWidth / n;
         const x = margin.left + gap * (i + 0.5);
-
-        // const x = plotMargin.left + (plotWidth * i) / (n - 1);
 
         const year = lbl.slice(0, 4);
         const monthDay = `${lbl.slice(4, 6)}-${lbl.slice(6, 8)}`;
@@ -169,7 +168,8 @@ const drawSmooth = (
 const drawMark = (
     ctx: CanvasRenderingContext2D,
     weight: number,
-    point: { x: number; y: number } | undefined
+    point: { x: number; y: number } | undefined,
+    color: string
 ) => {
     if (!point) return;
 
@@ -195,11 +195,11 @@ const drawMark = (
 
     ctx.beginPath();
     ctx.arc(point.x, point.y, 10, 0, Math.PI * 2);
-    ctx.fillStyle = `#F9AC68`;
+    ctx.fillStyle = `rgba(${color}, 1)`;
     ctx.fill();
 
     ctx.save();
-    ctx.shadowColor = "#F9AC68";
+    ctx.shadowColor = `rgba(${color}, 1)`;
     ctx.shadowBlur = 22;
     ctx.beginPath();
     ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
@@ -212,9 +212,10 @@ const drawMark = (
 const drawAllMarks = (
     ctx: CanvasRenderingContext2D,
     weights: number[],
-    points: { x: number; y: number }[]
+    points: { x: number; y: number }[],
+    color: string
 ) => {
-    points?.map((v, i) => drawMark(ctx, weights?.[i], v));
+    points?.map((v, i) => drawMark(ctx, weights?.[i], v, color));
 };
 
 const makeGradient = (
