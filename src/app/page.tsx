@@ -10,7 +10,8 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
-import { ImgsType, OpeClientType } from "@/type";
+import { ImgsType, OpeClientType, WeightChartType, WeightsType } from "@/type";
+import { updateErrorMessage } from "@/function";
 
 export default function Home() {
     const [isOnLoading, setOnLoading] = useState(false);
@@ -34,6 +35,8 @@ export default function Home() {
     const [count, setCount] = useState(24 * 60 * 60);
     const [isReversCount, setReversCount] = useState(false);
     const [targetPsEntry, setTargetPsEntry] = useState("");
+    const [isWeights, setIsWeights] = useState<WeightsType>();
+    const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -104,25 +107,25 @@ export default function Home() {
     ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
     // 고객 인바디 정보 불러오기
-    // const handleSelectInbodyLst = async (psEntry: string) => {
-    // try {
-    //     const response = await fetch(
-    //         `/api/kiosk-surgery/inbody?psEntry=${psEntry}`,
-    //         {
-    //             method: "GET",
-    //         }
-    //     );
+    const handleSelectInbodyLst = async (psEntry: string, part: string) => {
+        try {
+            const response = await fetch(
+                `/api/kiosk-surgery/inbody?psEntry=${psEntry}&part=${part}`,
+                {
+                    method: "GET",
+                }
+            );
 
-    //     if (!response.ok) {
-    //         throw new Error("Network response was not ok");
-    //     }
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
 
-    //     const result = await response.json();
-    //     return result;
-    // } catch (error) {
-    //     console.error("Error fetching data:", error);
-    // }
-    // };
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
@@ -276,16 +279,32 @@ export default function Home() {
 
     // 고객 인바디 정보 담기
     useEffect(() => {
-        // if (!psEntry) return;
-        // handleSelectInbodyLst(psEntry).then(
-        //     (res: { success: boolean; doctorId: string }) => {
-        //         if (res.success) {
-        //             console.log("INBODY_SUCCESS");
-        //         } else {
-        //             console.log("INBODY_FAIL");
-        //         }
-        //     }
-        // );
+        if (client.psEntry === "" && client.part === "") return;
+        handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
+            if (res.success) {
+                const inbody = res?.inbody;
+                setIsWeights({
+                    BD_WEIGHT: inbody?.[0]?.["BD_WEIGHT"],
+                    WC_WEIGHT: inbody?.[0]?.["WC_WEIGHT"],
+                    MUST_WEIGHTL: inbody?.[0]?.["MUST_WEIGHTL"],
+                });
+                setWeightArr(
+                    inbody?.map((v: never) => {
+                        return {
+                            date: v?.["PRODATE"],
+                            weight: v?.["BD_WEIGHT"],
+                        };
+                    })
+                );
+            } else {
+                toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
+            }
+        });
     }, [client]);
 
     useEffect(() => {
@@ -396,6 +415,8 @@ export default function Home() {
             <ModalInbody
                 isInbodyOpen={isInbodyOpen && isPaired}
                 setInbodyOpen={setInbodyOpen}
+                weightArr={weightArr}
+                isWeights={isWeights}
             />
             <ModalImgs
                 imgs={imgs}
@@ -406,7 +427,13 @@ export default function Home() {
                 isModalAIOpen={isModalAIOpen && isPaired}
                 setModalAIOpen={setModalAIOpen}
             />
-            {isOnLoading ? <div className="B-00"><div className="L-00"><p className="T-00">로딩중입니다.</p></div></div>:null}
+            {isOnLoading ? (
+                <div className="B-00">
+                    <div className="L-00">
+                        <p className="T-00">로딩중입니다.</p>
+                    </div>
+                </div>
+            ) : null}
         </>
     );
 }
