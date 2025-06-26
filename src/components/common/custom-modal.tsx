@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 interface Props {
     isOpen: boolean;
@@ -7,6 +7,17 @@ interface Props {
 }
 
 const CustomModal = ({ isOpen, onClose, children }: Props) => {
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [isOpen]);
     return (
         <div
             data-current={isOpen}
@@ -14,7 +25,8 @@ const CustomModal = ({ isOpen, onClose, children }: Props) => {
                 isOpen
                     ? "opacity-100 pointer-events-auto z-10"
                     : "opacity-0 pointer-events-none hidden"
-            }`}>
+            }`}
+        >
             <div className={`absolute w-full h-full`} onClick={onClose}></div>
             <div className={`flex w-full mx-[90px]`}>{children}</div>
         </div>
