@@ -18,7 +18,6 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
     const [randomOpacities, setRandomOpacities] = useState<number[]>([]);
 
     useEffect(() => {
-        console.log('cc', limitedImages)
         setRandomOpacities([]);
         const newOpacities = limitedImages?.map(() =>
             Math?.floor(Math?.random() * 101)
