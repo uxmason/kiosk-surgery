@@ -38,23 +38,28 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
                     <div className="relative w-[165px] h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
                         {limitedImages?.map((img, i) => {
                             return (
-                                <div key={i} className="relative w-[33px] h-[33px]">
-                                    {img?.filename == undefined ?
+                                <div
+                                    key={i}
+                                    className="relative w-[33px] h-[33px]"
+                                >
                                     <div
                                         className="absolute w-[33px] h-[33px] bg-[#343a40]"
                                         style={{
                                             opacity: randomOpacities?.[i] / 100,
                                         }}
-                                    />:null}
-                                    {img?.filename != undefined ?
-                                    <div
-                                        className={`w-[33px] h-[33px]`}
-                                        style={{
-                                            background:`url('${imgThumbUrl}/${String(
-                                            img?.filename
-                                        )?.slice(4)}')  center / cover no-repeat`
-                                        }}
-                                    /> : null}
+                                    />
+                                    {img?.filename != undefined ? (
+                                        <div
+                                            className={`w-[33px] h-[33px]`}
+                                            style={{
+                                                background: `url('${imgThumbUrl}/${String(
+                                                    img?.filename
+                                                )?.slice(
+                                                    4
+                                                )}')  center / cover no-repeat`,
+                                            }}
+                                        />
+                                    ) : null}
                                 </div>
                             );
                         })}

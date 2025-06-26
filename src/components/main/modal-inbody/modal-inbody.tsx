@@ -28,6 +28,24 @@ const ModalInbody = ({
     weightArr,
     isWeights,
 }: Props) => {
+    const colorForWeight =
+        ((isWeights?.BD_WEIGHT ?? 0) - (isWeights?.WC_WEIGHT ?? 0)) * 100 - 100;
+    const color =
+        colorForWeight > 30
+            ? "240,85,121"
+            : colorForWeight > 15
+            ? "237,107,91"
+            : colorForWeight > 6
+            ? "249,172,10)"
+            : colorForWeight > 1
+            ? "21,207,143"
+            : colorForWeight < -15
+            ? "177,117,23)"
+            : colorForWeight < -6
+            ? "70,182,174"
+            : colorForWeight < -1
+            ? "21,207,143"
+            : "91,135,237";
     return (
         <CustomModal isOpen={isInbodyOpen} onClose={() => setInbodyOpen(false)}>
             <div className="flex flex-col w-full h-fit items-center pt-20">
@@ -39,8 +57,9 @@ const ModalInbody = ({
                     <GraphWeight
                         isOpenOpeModal={isInbodyOpen}
                         weightArr={weightArr}
+                        color={color}
                     />
-                    <Weights isWeights={isWeights} />
+                    <Weights isWeights={isWeights} color={color} />
                     <GraphFatPercent />
                     <GraphBmiPercent />
                     <GraphBasalMetabolicRatePercent />

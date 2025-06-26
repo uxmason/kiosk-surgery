@@ -28,6 +28,25 @@ const ModalOpeInfo = ({
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
 
+    const colorForWeight =
+        ((isWeights?.BD_WEIGHT ?? 0) - (isWeights?.WC_WEIGHT ?? 0)) * 100 - 100;
+    const color =
+        colorForWeight > 30
+            ? "240,85,121"
+            : colorForWeight > 15
+            ? "237,107,91"
+            : colorForWeight > 6
+            ? "249,172,10)"
+            : colorForWeight > 1
+            ? "21,207,143"
+            : colorForWeight < -15
+            ? "177,117,23)"
+            : colorForWeight < -6
+            ? "70,182,174"
+            : colorForWeight < -1
+            ? "21,207,143"
+            : "91,135,237";
+
     // 고객 인바디 정보 불러오기
     const handleSelectInbodyLst = async (psEntry: string, part: string) => {
         try {
@@ -54,10 +73,11 @@ const ModalOpeInfo = ({
         handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
             if (res.success) {
                 const inbody = res?.inbody;
+                const inbodyLength = inbody?.length;
                 setIsWeights({
-                    BD_WEIGHT: inbody?.[0]?.["BD_WEIGHT"],
-                    WC_WEIGHT: inbody?.[0]?.["WC_WEIGHT"],
-                    MUST_WEIGHTL: inbody?.[0]?.["MUST_WEIGHTL"],
+                    BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
+                    WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
+                    MUST_WEIGHTL: inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
                 });
                 setWeightArr(
                     inbody?.map((v: never) => {
@@ -106,10 +126,11 @@ const ModalOpeInfo = ({
                 )}
                 <div className="w-full grid grid-cols-3 gap-x-5">
                     <GraphWeight
+                        color={color}
                         isOpenOpeModal={isOpenOpeModal}
                         weightArr={weightArr}
                     />
-                    <Weights isWeights={isWeights} />
+                    <Weights color={color} isWeights={isWeights} />
                 </div>
             </div>
         </CustomModal>

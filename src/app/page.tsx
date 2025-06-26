@@ -238,9 +238,13 @@ export default function Home() {
                     });
                     setPaired(true);
                 } else {
-                    console.log("error", res.message);
                     toast.error(res.message);
                     setPaired(false);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
                 }
                 setBoostCheckStatus(false);
             });
@@ -254,7 +258,12 @@ export default function Home() {
             if (res.success) {
                 setOpeInfo(res.list);
             } else {
-                console.log("FAIL");
+                toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
             setOnLoading(false);
         });
@@ -277,8 +286,12 @@ export default function Home() {
                     setAllOpe(res.list);
                     setOpeOpenNext(true);
                 } else {
-                    console.log("error", res.message);
                     toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
                 }
             });
         } else {
@@ -311,6 +324,11 @@ export default function Home() {
                 }
             } else {
                 toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     }, [client]);
@@ -321,10 +339,11 @@ export default function Home() {
         handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
             if (res.success) {
                 const inbody = res?.inbody;
+                const inbodyLength = inbody?.length;
                 setIsWeights({
-                    BD_WEIGHT: inbody?.[0]?.["BD_WEIGHT"],
-                    WC_WEIGHT: inbody?.[0]?.["WC_WEIGHT"],
-                    MUST_WEIGHTL: inbody?.[0]?.["MUST_WEIGHTL"],
+                    BD_WEIGHT: inbody?.[inbodyLength]?.["BD_WEIGHT"],
+                    WC_WEIGHT: inbody?.[inbodyLength]?.["WC_WEIGHT"],
+                    MUST_WEIGHTL: inbody?.[inbodyLength]?.["MUST_WEIGHTL"],
                 });
                 setWeightArr(
                     inbody?.map((v: never) => {

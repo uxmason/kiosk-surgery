@@ -2,30 +2,14 @@ import { WeightsType } from "@/type";
 
 interface Props {
     isWeights?: WeightsType;
+    color: string;
 }
-const Weights = ({ isWeights }: Props) => {
+const Weights = ({ isWeights, color }: Props) => {
     const limitWeight = Math.max(
         isWeights?.BD_WEIGHT ?? 0,
         isWeights?.WC_WEIGHT ?? 0
     );
-    const colorForWeight =
-        ((isWeights?.BD_WEIGHT ?? 0) - (isWeights?.WC_WEIGHT ?? 0)) * 100 - 100;
-    const color =
-        colorForWeight > 30
-            ? "rgba(240,85,121)"
-            : colorForWeight > 15
-            ? "rgba(237,107,91)"
-            : colorForWeight > 6
-            ? "rgba(249,172,104)"
-            : colorForWeight > 1
-            ? "rgba(21,207,143)"
-            : colorForWeight < -15
-            ? "rgba(177,117,237)"
-            : colorForWeight < -6
-            ? "rgba(70,182,174)"
-            : colorForWeight < -1
-            ? "rgba(21,207,143)"
-            : "rgba(91,135,237)";
+
     return (
         <div className="flex flex-col w-full h-[300px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] py-[30px] px-[35px] gap-y-[25px]">
             <div className="flex flex-col">
@@ -42,7 +26,7 @@ const Weights = ({ isWeights }: Props) => {
                                     limitWeight) *
                                     100
                             }% - 70px)`,
-                            backgroundColor: color,
+                            backgroundColor: `rgba(${color})`,
                         }}
                     />
                     <p className="text-white text-[32px] font-[250] leading-8">
