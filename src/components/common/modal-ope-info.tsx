@@ -74,10 +74,11 @@ const ModalOpeInfo = ({
         handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
             if (res.success) {
                 const inbody = res?.inbody;
+                const inbodyLength = inbody?.length;
                 setIsWeights({
-                    BD_WEIGHT: inbody?.[0]?.["BD_WEIGHT"],
-                    WC_WEIGHT: inbody?.[0]?.["WC_WEIGHT"],
-                    MUST_WEIGHTL: inbody?.[0]?.["MUST_WEIGHTL"],
+                    BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
+                    WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
+                    MUST_WEIGHTL: inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
                 });
                 setWeightArr(
                     inbody?.map((v: never) => {
