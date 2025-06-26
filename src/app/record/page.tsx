@@ -90,17 +90,22 @@ export default function Info() {
         }
     };
 
-    // 키오스크에 등록된 의사 찾기
+    // 해당 기기의 고유번호의 유효성 체크
     useEffect(() => {
         if (!deviceId) return;
-        handleSelectDoctor(deviceId).then((res) => {
-            if (res.success) {
-                setUnpaired(false);
-            } else {
-                setUnpaired(true);
-                toast.error(res.message);
-            }
-        });
+
+        const interval = setInterval(() => {
+            handleSelectDoctor(deviceId).then((res) => {
+                if (res.success) {
+                    setUnpaired(false);
+                } else {
+                    setUnpaired(true);
+                    toast.error(res.message);
+                }
+            });
+        }, 3000);
+
+        return () => clearInterval(interval);
     }, [deviceId]);
 
     // 수술 고객 정보 담기
