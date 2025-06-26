@@ -1,3 +1,5 @@
+import { ErrorMessageDataType } from "./type";
+
 export const maskIdNumber = (idNumber: string) => {
     return idNumber?.slice(0, 6) + "-" + idNumber[6] + "******";
 };
@@ -62,7 +64,7 @@ export const getCurrentTimeHHMM = () => {
 
     return koreaTime.replace(":", "");
 };
-// 키오스크에 등록된 의사 찾기
+// 키오스크의 고유번호의 유효성&등록된 의사 정보
 export const handleSelectDoctor = async (deviceId: string) => {
     try {
         const response = await fetch(
@@ -80,6 +82,28 @@ export const handleSelectDoctor = async (deviceId: string) => {
         return result;
     } catch (error) {
         console.error("Error fetching data:", error);
+    }
+};
+// 에러 메세지 등록
+export const updateErrorMessage = async (data: ErrorMessageDataType) => {
+    const url = "/api/kiosk-surgery/log/error/";
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            console.error("API 호출 실패", response.status);
+        }
+    } catch (error) {
+        console.error("에러 발생", error);
     }
 };
 export const handleBirthToAge = (rrn: string | undefined) => {

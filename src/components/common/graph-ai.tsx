@@ -1,8 +1,9 @@
 "use client";
-import { handleBirthToAge } from "@/function";
-import { useClientStore, useDoctorStore } from "@/store";
+import { handleBirthToAge, updateErrorMessage } from "@/function";
+import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { FatListType, LimitFatPartsType } from "@/type";
 import { ReactNode, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
     children: ReactNode;
@@ -10,6 +11,7 @@ interface Props {
 }
 const order = ["팔", "복부", "허벅지"];
 const GraphAi = ({ children, aiType }: Props) => {
+    const { deviceId } = useStore();
     // 수술 고객 정보
     const { client } = useClientStore();
     const { doctor } = useDoctorStore();
@@ -58,7 +60,12 @@ const GraphAi = ({ children, aiType }: Props) => {
                 setIsLimitFatParts(res?.limitFatPart);
                 setIsFatList(res?.fatList);
             } else {
-                console.log(res?.message);
+                toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     }, [client, aiType]);

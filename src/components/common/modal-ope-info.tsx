@@ -8,8 +8,8 @@ import {
 import CustomModal from "./custom-modal";
 import { useEffect, useState } from "react";
 import { OpeClientType, WeightChartType, WeightsType } from "@/type";
-import { handleBirthToAge } from "@/function";
-import { useClientStore } from "@/store";
+import { handleBirthToAge, updateErrorMessage } from "@/function";
+import { useClientStore, useDoctorStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 interface Props {
     isOpeInfo: OpeClientType[];
@@ -21,7 +21,9 @@ const ModalOpeInfo = ({
     isOpenOpeModal,
     setIsOpenOpeModal,
 }: Props) => {
+    const { deviceId } = useStore();
     const { client } = useClientStore();
+    const { doctor } = useDoctorStore();
     const [isAge, setIsAge] = useState(0);
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
@@ -68,6 +70,11 @@ const ModalOpeInfo = ({
                 );
             } else {
                 toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     }, [client]);

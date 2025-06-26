@@ -9,7 +9,7 @@ import {
     UpcomingTime,
 } from "@/components/common";
 import { FirstImgs, SecondImgs } from "@/components/record";
-import { handleSelectDoctor } from "@/function";
+import { handleSelectDoctor, updateErrorMessage } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { OpeClientType, PhotsArrType } from "@/type";
 import { useEffect, useState } from "react";
@@ -101,6 +101,11 @@ export default function Info() {
                 } else {
                     setUnpaired(true);
                     toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
                 }
             });
         }, 3000);
@@ -116,6 +121,11 @@ export default function Info() {
                 setIsOpeInfo(res.list);
             } else {
                 toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     }, [unpaired, client, doctor]);
@@ -128,6 +138,11 @@ export default function Info() {
                 setImgs(res.list);
             } else {
                 toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     }, [unpaired, client]);
