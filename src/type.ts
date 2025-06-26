@@ -153,3 +153,8 @@ export type WeightChartType = {
     date: string;
     weight: number;
 };
+export type ErrorMessageDataType = {
+    deviceID: string;
+    userID: string;
+    message: string;
+};

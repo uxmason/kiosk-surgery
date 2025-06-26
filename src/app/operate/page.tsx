@@ -10,7 +10,7 @@ import {
 } from "@/components/common";
 import { Cannulas, ModalComplete, Parts } from "@/components/operate";
 import { MoodalAddNewCannula } from "@/components/operate/modal-add-new-cannula";
-import { handleSelectDoctor } from "@/function";
+import { handleSelectDoctor, updateErrorMessage } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { CannulaListType, IncisionListType, OpeClientType } from "@/type";
 import { useEffect, useState } from "react";
@@ -59,6 +59,11 @@ export default function Info() {
                 setIsOpeInfo(res.list);
             } else {
                 toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     }, [unpaired, client, doctor]);
@@ -88,17 +93,27 @@ export default function Info() {
         seconds
     ).padStart(2, "0")}`;
 
-    // 키오스크에 등록된 의사 찾기
+    // 해당 기기의 고유번호의 유효성 체크
     useEffect(() => {
         if (!deviceId) return;
-        handleSelectDoctor(deviceId).then((res) => {
-            if (res.success) {
-                setUnpaired(false);
-            } else {
-                setUnpaired(true);
-                toast.error(res.message);
-            }
-        });
+
+        const interval = setInterval(() => {
+            handleSelectDoctor(deviceId).then((res) => {
+                if (res.success) {
+                    setUnpaired(false);
+                } else {
+                    setUnpaired(true);
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }, 3000);
+
+        return () => clearInterval(interval);
     }, [deviceId]);
 
     // 캐뉼라 리스트 불러오기
@@ -129,6 +144,11 @@ export default function Info() {
                 setCannulaInSurgeryList(res.list);
             } else {
                 toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     };
@@ -149,6 +169,11 @@ export default function Info() {
                 }
             } else {
                 toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     }, [unpaired]);
@@ -190,9 +215,15 @@ export default function Info() {
                 );
             } else {
                 toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
             }
         });
     }, [unpaired]);
+
     return (
         <>
             <main className="relative w-full h-full min-h-[1920px]">
