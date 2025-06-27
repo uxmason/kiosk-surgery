@@ -131,7 +131,6 @@ export default function Home() {
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
-        setOnLoading(true);
         try {
             const response = await fetch(
                 `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
@@ -143,11 +142,9 @@ export default function Home() {
             }
 
             const result = await response.json();
-            setOnLoading(false);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
-            setOnLoading(false);
         }
     };
 
@@ -202,11 +199,9 @@ export default function Home() {
             const response = await fetch(`/api/kiosk-surgery/surgery/status/?surgeryId=${doctor.id}`, {method: "GET"});
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
-            console.log(result)
             if(result.success) {
-                if(result.status == 1) {
-                    router.push("/record");
-                }
+                if(result.status == 1) router.push("/record");
+                if(result.status == 2) router.push("/operate");
             } else {
 
             }

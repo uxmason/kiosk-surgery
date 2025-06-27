@@ -45,7 +45,9 @@ const CustomBtn = ({
     };
 
     const handleClick = async () => {
+        console.log(isPaired, dataOpeInfo.length);
         if (!isPaired || dataOpeInfo?.length == 0) return;
+        console.log('aa');
         if (path) {
             const url = `/api/kiosk-surgery/changeDevice/`;
             try {
@@ -60,11 +62,11 @@ const CustomBtn = ({
                         psEntry: client.psEntry,
                         part: client.part,
                         opCode: client.opeCode,
-                        status: status-1,
+                        status: status,
                         forced: false
                     }),
                 });
-
+        console.log('aa', response);
                 if (response.ok) {
                     const result = await response.json();
                     if(result.success) {
@@ -100,7 +102,7 @@ const CustomBtn = ({
                                     psEntry: client.psEntry,
                                     part: client.part,
                                     opCode: client.opeCode,
-                                    status: status,
+                                    status: status-2,
                                     forced: false
                                 }),
                             });
