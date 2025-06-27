@@ -98,6 +98,7 @@ export type PhotsArrType = {
 export type OpeClientType = {
     고객명: string;
     고객번호: string;
+    수술일: string;
     기수: string;
     담당의ID: string;
     담당의명: string;
@@ -157,4 +158,14 @@ export type ErrorMessageDataType = {
     deviceID: string;
     userID: string;
     message: string;
+};
+export type OpeInfoItem = {
+    담당의ID: string;
+    담당의명: string;
+    수술부위: string;
+    시작시간: string;
+    수술코드: string;
+    고객번호: string;
+    고객명: string;
+    주민번호: string;
 };

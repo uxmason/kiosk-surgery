@@ -12,6 +12,7 @@ export async function GET(req: Request) {
         const nowTime = getCurrentTimeHHMM();
         const sql = `SELECT top 1
                     A.STARTBRAN AS 지점,
+                    A.PROMDATE  AS 수술일,
                     A.PROMTIME AS 시작시간, 
                     A.OPETIME AS 종료시간,  
                     A.OPYTIME AS 예상시간,

@@ -13,10 +13,12 @@ import { MoodalAddNewCannula } from "@/components/operate/modal-add-new-cannula"
 import { handleSelectDoctor, updateErrorMessage } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { CannulaListType, IncisionListType, OpeClientType } from "@/type";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function Info() {
+    const router = useRouter();
     const { deviceId } = useStore();
     const { client } = useClientStore();
     const { doctor } = useDoctorStore();
@@ -30,6 +32,23 @@ export default function Info() {
     const [incisionList, setIncisionList] = useState<IncisionListType[]>([]);
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
     const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
+
+    // 수술의 상태 체크
+    const handleOpeStatus = async (doctorID: string) => {
+        try {
+            const { doctor } = useDoctorStore.getState();
+            if (doctor.id == null) return;
+            const response = await fetch(
+                `/api/kiosk-surgery/surgery/status?userID=${doctorID}`,
+                { method: "GET" }
+            );
+            if (!response.ok) throw new Error("Network response was not ok");
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
     // 수술 고객 정보
     const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
@@ -51,40 +70,9 @@ export default function Info() {
             console.error("Error fetching data:", error);
         }
     };
-    // 수술 고객 정보 담기
-    useEffect(() => {
-        if (unpaired || !client || !doctor) return;
-        onHandleSelectOpe(doctor?.id, client?.psEntry).then((res) => {
-            if (res.success) {
-                setIsOpeInfo(res.list);
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
-    }, [unpaired, client, doctor]);
 
     // 숫자 카운트
     const [count, setCount] = useState(180);
-    useEffect(() => {
-        if (count <= 0) return;
-
-        const timer = setInterval(() => {
-            setCount((prevCount) => {
-                if (prevCount <= 0) {
-                    clearInterval(timer);
-                    return 0;
-                }
-                return prevCount - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
 
     const minutes = Math.floor(count / 60);
     const seconds = count % 60;
@@ -92,29 +80,6 @@ export default function Info() {
     const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
         seconds
     ).padStart(2, "0")}`;
-
-    // 해당 기기의 고유번호의 유효성 체크
-    useEffect(() => {
-        if (!deviceId) return;
-
-        const interval = setInterval(() => {
-            handleSelectDoctor(deviceId).then((res) => {
-                if (res.success) {
-                    setUnpaired(false);
-                } else {
-                    setUnpaired(true);
-                    toast.error(res.message);
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor.id,
-                        message: res.message,
-                    });
-                }
-            });
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, [deviceId]);
 
     // 캐뉼라 리스트 불러오기
     const handleSelectCannulaList = async () => {
@@ -153,31 +118,6 @@ export default function Info() {
         });
     };
 
-    // 캐뉼라 리스트 담기
-    useEffect(() => {
-        if (unpaired) return;
-        handleSelectCannulaList().then((res) => {
-            if (res.success) {
-                const list: CannulaListType[] = res.list;
-                setCannulaInSurgeryList(list);
-                if (list?.map((v) => v.SELECTED === 1)) {
-                    setSelectedCannulaIds(
-                        list
-                            ?.filter((v) => v.SELECTED === 1)
-                            ?.map((s) => s.CANNULA_ID)
-                    );
-                }
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
-    }, [unpaired]);
-
     // 인시젼 리스트 불러오기
     const handleSelectIncisionList = async () => {
         try {
@@ -198,6 +138,62 @@ export default function Info() {
             console.error("Error fetching data:", error);
         }
     };
+
+    useEffect(() => {
+        if (count <= 0) return;
+
+        const timer = setInterval(() => {
+            setCount((prevCount) => {
+                if (prevCount <= 0) {
+                    clearInterval(timer);
+                    return 0;
+                }
+                return prevCount - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    // 해당 기기의 고유번호의 유효성 체크
+    useEffect(() => {
+        if (!deviceId) return;
+
+        const interval = setInterval(() => {
+            handleSelectDoctor(deviceId).then((res) => {
+                if (res.success) {
+                    setUnpaired(false);
+                } else {
+                    setUnpaired(true);
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [deviceId]);
+
+    // 수술 고객 정보 담기
+    useEffect(() => {
+        if (unpaired || !client || !doctor) return;
+        onHandleSelectOpe(doctor?.id, client?.psEntry).then((res) => {
+            if (res.success) {
+                setIsOpeInfo(res.list);
+            } else {
+                toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
+            }
+        });
+    }, [unpaired, client, doctor]);
 
     // 인시젼 리스트 담기
     useEffect(() => {
@@ -223,6 +219,54 @@ export default function Info() {
             }
         });
     }, [unpaired]);
+
+    // 캐뉼라 리스트 담기
+    useEffect(() => {
+        if (unpaired) return;
+        handleSelectCannulaList().then((res) => {
+            if (res.success) {
+                const list: CannulaListType[] = res.list;
+                setCannulaInSurgeryList(list);
+                if (list?.map((v) => v.SELECTED === 1)) {
+                    setSelectedCannulaIds(
+                        list
+                            ?.filter((v) => v.SELECTED === 1)
+                            ?.map((s) => s.CANNULA_ID)
+                    );
+                }
+            } else {
+                toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
+            }
+        });
+    }, [unpaired]);
+
+    // 해당 수술의 상태 체크
+    useEffect(() => {
+        if (!deviceId && doctor.id === "") return;
+
+        const interval = setInterval(() => {
+            handleOpeStatus(doctor.id).then((res) => {
+                if (res.success) {
+                    if (res.status == 0) router.replace("/");
+                    if (res.status == 1) router.push("/record");
+                    if (res.status == 2) router.push("/operate");
+                } else {
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor?.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [deviceId, doctor]);
 
     return (
         <>
@@ -270,6 +314,8 @@ export default function Info() {
                 setIsOpenAddCannualModal={setIsOpenAddCannualModal}
             />
             <ModalComplete
+                isPaired={!unpaired}
+                dataOpeInfo={isOpeInfo}
                 isModalComplete={isModalComplete}
                 setIsModalComplete={setIsModalComplete}
             />

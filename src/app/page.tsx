@@ -5,7 +5,7 @@ import { Ai, Client, Inbody, Info, ModalImgs, Photo } from "@/components/main";
 import { ModalAI } from "@/components/main/modal-ai";
 import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
@@ -42,7 +42,6 @@ export default function Home() {
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
-        setOnLoading(true);
         try {
             const response = await fetch(
                 `/api/kiosk-surgery/check-device?deviceId=${deviceId}`,
@@ -66,31 +65,41 @@ export default function Home() {
         try {
             let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
             if (targetPsEntry !== "") url += `&psEntry=${targetPsEntry}`;
-            const response = await fetch(url, {
-                method: "GET",
-            });
+
+            const response = await fetch(url, { method: "GET" });
+
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
+
             const result = await response.json();
+
             if (result?.success) {
-                const now = new Date();
+                const opeDate = result?.list?.[0]?.["수술일"];
+                const startTime = result?.list?.[0]?.["시작시간"];
 
-                const currentTime =
-                    now.getHours() * 60 * 60 +
-                    now.getMinutes() * 60 +
-                    now.getSeconds();
+                if (opeDate && startTime) {
+                    const surgeryDate = new Date(
+                        `${opeDate.slice(0, 4)}-${opeDate.slice(
+                            4,
+                            6
+                        )}-${opeDate.slice(6, 8)}T${startTime.slice(
+                            0,
+                            2
+                        )}:${startTime.slice(2, 4)}:00`
+                    );
 
-                setCount(
-                    Number(result?.list[0]?.시작시간?.substring(0, 2)) *
-                        60 *
-                        60 +
-                        Number(result?.list[0]?.시작시간?.substring(2, 4)) *
-                            60 -
-                        currentTime
-                );
+                    const now = new Date();
+                    const diffSeconds = Math.floor(
+                        (surgeryDate.getTime() - now.getTime()) / 1000
+                    );
+
+                    setCount(diffSeconds);
+                }
+
                 setTargetPsEntry("");
             }
+
             setOnLoading(false);
             return result;
         } catch (error) {
@@ -100,9 +109,11 @@ export default function Home() {
         }
     };
 
-    const hours = Math.floor((isReversCount ? -count : count) / 60 / 60);
-    const minutes = Math.floor(((isReversCount ? -count : count) / 60) % 60);
-    const seconds = (isReversCount ? -count : count) % 60;
+    const time = isReversCount ? -count : count;
+
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = time % 60;
 
     const formattedTime = `${String(hours).padStart(2, "0")}:${String(
         minutes
@@ -151,12 +162,11 @@ export default function Home() {
     const handleSelectAllOpe = async () => {
         setOnLoading(true);
         try {
-            const response = await fetch(`/api/kiosk-surgery/schedule/`, {
+            const response = await fetch(`/api/kiosk-surgery/schedule`, {
                 method: "GET",
             });
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
-            setOnLoading(false);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -164,6 +174,24 @@ export default function Home() {
         }
     };
 
+    // 수술의 상태 체크
+    const handleOpeStatus = async (doctorID: string) => {
+        try {
+            const { doctor } = useDoctorStore.getState();
+            if (doctor.id == null) return;
+            const response = await fetch(
+                `/api/kiosk-surgery/surgery/status?userID=${doctorID}`,
+                { method: "GET" }
+            );
+            if (!response.ok) throw new Error("Network response was not ok");
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // 기기의 고유 번호
     useEffect(() => {
         if (Cookies.get("FINGERPRINT_HASH_KIOSK")) {
             const cookieVal = Cookies.get("FINGERPRINT_HASH_KIOSK");
@@ -177,51 +205,34 @@ export default function Home() {
             };
             getFingerprint();
         }
-
-        startInterval();
-
-        window.addEventListener("blur", stopInterval);
-        window.addEventListener("focus", startInterval);
-
-        return () => {
-            stopInterval();
-            window.removeEventListener("blur", stopInterval);
-            window.removeEventListener("focus", startInterval);
-        };
     }, []);
 
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    // 해당 수술의 상태 체크
+    useEffect(() => {
+        if (!deviceId && doctor.id === "") return;
 
-    const tick = async () => {
-        try {
-            const { doctor } = useDoctorStore.getState();
-            if(doctor.id == null) return;
-            const response = await fetch(`/api/kiosk-surgery/surgery/status/?surgeryId=${doctor.id}`, {method: "GET"});
-            if (!response.ok) throw new Error("Network response was not ok");
-            const result = await response.json();
-            if(result.success) {
-                if(result.status == 1) router.push("/record");
-                if(result.status == 2) router.push("/operate");
-            } else {
+        const interval = setInterval(() => {
+            handleOpeStatus(doctor.id).then((res) => {
+                if (res.success) {
+                    if (res.status == 1) router.push("/record");
+                    if (res.status == 2) router.push("/operate");
+                } else {
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor?.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }, 1000);
 
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
+        return () => clearInterval(interval);
+    }, [deviceId, doctor]);
 
-    const startInterval = () => {
-        if (intervalRef.current) return;
-        intervalRef.current = setInterval(tick, 1000);
-    };
-    const stopInterval = () => {
-        if (!intervalRef.current) return;
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-    };
-
+    // 의사 정보
     useEffect(() => {
         if (deviceId && isBoostCheckStatus) {
+            setOnLoading(true);
             handleSelectDoctor().then((res) => {
                 if (res.success) {
                     const doctorInfo = res.doctorInfo?.[0];
@@ -232,6 +243,7 @@ export default function Home() {
                         branchName: doctorInfo?.["HOS_NAME"],
                     });
                     setPaired(true);
+                    setOnLoading(false);
                 } else {
                     toast.error(res.message);
                     setPaired(false);
@@ -246,6 +258,29 @@ export default function Home() {
         }
     }, [deviceId, isBoostCheckStatus]);
 
+    // 해당 기기의 고유번호의 유효성 체크
+    useEffect(() => {
+        if (!deviceId) return;
+
+        const interval = setInterval(() => {
+            handleSelectDoctor().then((res) => {
+                if (res.success) {
+                } else {
+                    setOnLoading(true);
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [deviceId]);
+
+    // 수술 정보
     useEffect(() => {
         if (!doctor.id) return;
         setOnLoading(true);
@@ -264,15 +299,18 @@ export default function Home() {
         });
     }, [doctor]);
 
+    // 타이머
     useEffect(() => {
-        if (count <= 0) setReversCount(true);
-
         const timer = setInterval(() => {
-            setCount((prevCount) => prevCount - 1);
+            setCount((prevCount) => {
+                const newCount = prevCount - 1;
+                if (newCount <= 0) setReversCount(true);
+                return newCount;
+            });
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [count]);
+    }, []);
 
     useEffect(() => {
         if (isOpeOpen) {
@@ -295,6 +333,8 @@ export default function Home() {
         }
     }, [isOpeOpen]);
 
+    // 고객
+    // 정보
     useEffect(() => {
         if (!dataOpeInfo) return;
         setClient({
@@ -307,7 +347,7 @@ export default function Home() {
         });
     }, [dataOpeInfo]);
 
-    // 고객 이미지 담기
+    // 고객의 이미지
     useEffect(() => {
         if (!client?.psEntry) return;
         handleSelectImgLst(client?.psEntry).then((res) => {
@@ -328,7 +368,7 @@ export default function Home() {
         });
     }, [client]);
 
-    // 고객 인바디 정보 담기
+    // 고객의 인바디
     useEffect(() => {
         if (client.psEntry === "" && client.part === "") return;
         handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
@@ -359,6 +399,7 @@ export default function Home() {
         });
     }, [client]);
 
+    // 기기 고유 번호
     useEffect(() => {
         setDeviceId(fingerprint);
     }, [fingerprint]);
@@ -366,7 +407,7 @@ export default function Home() {
     return (
         <>
             <main
-                className="w-[724px] h=[1980px] absolute"
+                className="w-[724px] h-[1980px] absolute"
                 style={{ left: "calc(50% - 362px)" }}
             >
                 <div className="absolute w-full gap-y-[15px]">
@@ -440,7 +481,7 @@ export default function Home() {
                         path="/record"
                         isPaired={isPaired}
                         dataOpeInfo={dataOpeInfo}
-                        status = {1}
+                        status={1}
                     />
                 </div>
                 {isPaired && (
