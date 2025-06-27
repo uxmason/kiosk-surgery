@@ -14,8 +14,10 @@ import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { OpeClientType, PhotsArrType } from "@/type";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
+import { useRouter } from "next/navigation";
+// TODO 타이머 수정
 export default function Info() {
+    const router = useRouter();
     const { deviceId } = useStore();
     const { client } = useClientStore();
     const { doctor } = useDoctorStore();
@@ -90,6 +92,23 @@ export default function Info() {
         }
     };
 
+    // 수술의 상태 체크
+    const handleOpeStatus = async (doctorID: string) => {
+        try {
+            const { doctor } = useDoctorStore.getState();
+            if (doctor.id == null) return;
+            const response = await fetch(
+                `/api/kiosk-surgery/surgery/status?userID=${doctorID}`,
+                { method: "GET" }
+            );
+            if (!response.ok) throw new Error("Network response was not ok");
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
     // 해당 기기의 고유번호의 유효성 체크
     useEffect(() => {
         if (!deviceId) return;
@@ -112,6 +131,29 @@ export default function Info() {
 
         return () => clearInterval(interval);
     }, [deviceId]);
+
+    // 해당 수술의 상태 체크
+    useEffect(() => {
+        if (!deviceId && doctor.id === "") return;
+
+        const interval = setInterval(() => {
+            handleOpeStatus(doctor.id).then((res) => {
+                if (res.success) {
+                    if (res.status == 0) router.replace("/");
+                    if (res.status == 1) router.push("/record");
+                    if (res.status == 2) router.push("/operate");
+                } else {
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor?.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [deviceId, doctor]);
 
     // 수술 고객 정보 담기
     useEffect(() => {

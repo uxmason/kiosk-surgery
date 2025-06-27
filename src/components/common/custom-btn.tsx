@@ -1,18 +1,9 @@
 "use client";
 
+import { updateErrorMessage } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
+import { OpeInfoItem } from "@/type";
 import { useRouter } from "next/navigation";
-
-interface OpeInfoItem {
-    담당의ID: string;
-    담당의명: string;
-    수술부위: string;
-    시작시간: string;
-    수술코드: string;
-    고객번호: string;
-    고객명: string;
-    주민번호: string;
-}
 
 interface Props {
     text: string;
@@ -45,9 +36,10 @@ const CustomBtn = ({
     };
 
     const handleClick = async (btnStatus: number, next: boolean) => {
-        console.log("btnStatus", btnStatus);
         if (!isPaired || dataOpeInfo?.length == 0) return;
-        console.log('aa');
+        if (btnStatus === 3) {
+            return setIsModalComplete?.(true);
+        }
         if (path) {
             const url = `/api/kiosk-surgery/changeDevice/`;
             try {
@@ -66,7 +58,6 @@ const CustomBtn = ({
                         forced: false,
                     }),
                 });
-        console.log('aa', response);
                 if (response.ok) {
                     const result = await response.json();
                     if (result.success) {
@@ -79,6 +70,12 @@ const CustomBtn = ({
                             }
                             router.back();
                         }
+                    } else {
+                        updateErrorMessage({
+                            deviceID: deviceId,
+                            userID: doctor.id,
+                            message: result.message,
+                        });
                     }
                 } else {
                     console.error("API 호출 실패", response.status);
@@ -86,8 +83,6 @@ const CustomBtn = ({
             } catch (error) {
                 console.error("에러 발생", error);
             }
-        } else {
-            setIsModalComplete?.(true);
         }
     };
 

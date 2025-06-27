@@ -1,14 +1,65 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { CustomModal } from "../common";
+import { OpeInfoItem } from "@/type";
+import { useClientStore, useDoctorStore, useStore } from "@/store";
+import { updateErrorMessage } from "@/function";
 
 interface Props {
     isModalComplete: boolean;
     setIsModalComplete: (v: boolean) => void;
+    isPaired?: boolean;
+    dataOpeInfo: OpeInfoItem[];
 }
 
-const ModalComplete = ({ isModalComplete, setIsModalComplete }: Props) => {
+const ModalComplete = ({
+    isModalComplete,
+    setIsModalComplete,
+    isPaired,
+    dataOpeInfo,
+}: Props) => {
     const router = useRouter();
+    const { deviceId } = useStore();
+    const { client } = useClientStore();
+    const { doctor } = useDoctorStore();
+    const handleClick = async () => {
+        if (!isPaired || dataOpeInfo?.length == 0) return;
+        const url = `/api/kiosk-surgery/changeDevice/`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    psEntry: client.psEntry,
+                    part: client.part,
+                    opCode: client.opeCode,
+                    status: 3,
+                    forced: false,
+                }),
+            });
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    setIsModalComplete(false);
+                    router.replace("/");
+                } else {
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: result.message,
+                    });
+                }
+            } else {
+                console.error("API 호출 실패", response.status);
+            }
+        } catch (error) {
+            console.error("에러 발생", error);
+        }
+    };
     return (
         <CustomModal
             isOpen={isModalComplete}
@@ -24,8 +75,7 @@ const ModalComplete = ({ isModalComplete, setIsModalComplete }: Props) => {
                     className="w-[420px] h-[120px] rounded-[15px] bg-[#15CF8F] z-10"
                     onClick={(e) => {
                         e.stopPropagation();
-                        setIsModalComplete(false);
-                        router.replace("/");
+                        handleClick();
                     }}
                 >
                     <p className="text-white text-[32px] font-bold leading-8">
