@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
             SELECT * 
             FROM tsfmc_data.dbo.ADM700T 
             WHERE PSENTRY = '${psEntry}'
-            ORDER BY PRODATE DESC
+            ORDER BY PRODATE;
         `;
         const inbodyResults = await queryDB(queryInbody);
 
