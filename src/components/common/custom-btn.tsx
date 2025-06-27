@@ -47,6 +47,7 @@ const CustomBtn = ({
     const handleClick = async (btnStatus: number, next: boolean) => {
         console.log("btnStatus", btnStatus);
         if (!isPaired || dataOpeInfo?.length == 0) return;
+        console.log('aa');
         if (path) {
             const url = `/api/kiosk-surgery/changeDevice/`;
             try {
@@ -65,7 +66,7 @@ const CustomBtn = ({
                         forced: false,
                     }),
                 });
-
+        console.log('aa', response);
                 if (response.ok) {
                     const result = await response.json();
                     if (result.success) {
