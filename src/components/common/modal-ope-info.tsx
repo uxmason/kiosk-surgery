@@ -50,19 +50,18 @@ const ModalOpeInfo = ({
     // 고객 인바디 정보 불러오기
     const handleSelectInbodyLst = async (psEntry: string, part: string) => {
         try {
-            const response = await fetch(
-                `/api/kiosk-surgery/inbody?psEntry=${psEntry}&part=${part}`,
-                {
-                    method: "GET",
+            if(psEntry && part) {
+                const response = await fetch(
+                    `/api/kiosk-surgery/inbody?psEntry=${psEntry}&part=${part}`,{method: "GET",}
+                );
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
                 }
-            );
 
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
+                const result = await response.json();
+                return result;
             }
-
-            const result = await response.json();
-            return result;
         } catch (error) {
             console.error("Error fetching data:", error);
         }

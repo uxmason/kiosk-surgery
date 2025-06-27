@@ -5,15 +5,17 @@ import { Ai, Client, Inbody, Info, ModalImgs, Photo } from "@/components/main";
 import { ModalAI } from "@/components/main/modal-ai";
 import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { ImgsType, OpeClientType, WeightChartType, WeightsType } from "@/type";
 import { updateErrorMessage } from "@/function";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+    const router = useRouter();
     const [isOnLoading, setOnLoading] = useState(false);
     const [isPaired, setPaired] = useState(false);
     const [isOpeOpen, setOpeOpen] = useState(false);
@@ -165,7 +167,6 @@ export default function Home() {
         }
     };
 
-    // 키오스크 고유 번호
     useEffect(() => {
         if (Cookies.get("FINGERPRINT_HASH_KIOSK")) {
             const cookieVal = Cookies.get("FINGERPRINT_HASH_KIOSK");
@@ -179,7 +180,50 @@ export default function Home() {
             };
             getFingerprint();
         }
+
+        startInterval();
+
+        window.addEventListener("blur", stopInterval);
+        window.addEventListener("focus", startInterval);
+
+        return () => {
+            stopInterval();
+            window.removeEventListener("blur", stopInterval);
+            window.removeEventListener("focus", startInterval);
+        };
     }, []);
+
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const tick = async () => {
+        try {
+            const { doctor } = useDoctorStore.getState();
+            if(doctor.id == null) return;
+            const response = await fetch(`/api/kiosk-surgery/surgery/status/?surgeryId=${doctor.id}`, {method: "GET"});
+            if (!response.ok) throw new Error("Network response was not ok");
+            const result = await response.json();
+            console.log(result)
+            if(result.success) {
+                if(result.status == 1) {
+                    router.push("/record");
+                }
+            } else {
+
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    const startInterval = () => {
+        if (intervalRef.current) return;
+        intervalRef.current = setInterval(tick, 1000);
+    };
+    const stopInterval = () => {
+        if (!intervalRef.current) return;
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+    };
 
     useEffect(() => {
         if (deviceId && isBoostCheckStatus) {
@@ -259,18 +303,12 @@ export default function Home() {
     useEffect(() => {
         if (!dataOpeInfo) return;
         setClient({
-            psEntry: dataOpeInfo?.[0]?.["고객번호"],
-            branch: dataOpeInfo?.[0]?.["지점"],
-            name: dataOpeInfo?.[0]?.["고객명"],
-            licence: dataOpeInfo?.[0]?.["주민번호"],
-            part: dataOpeInfo?.[0]?.["수술부위"],
-            opeCode: dataOpeInfo?.[0]?.["수술코드"],
-            // psEntry: "210041652",
-            // branch: "부산",
-            // name: "허서회",
-            // licence: "9808252120717",
-            // part: "허벅지",
-            // opeCode: "OPE0537",
+            psEntry: dataOpeInfo?.[0]?.고객번호,
+            branch: dataOpeInfo?.[0]?.지점,
+            name: dataOpeInfo?.[0]?.고객명,
+            licence: dataOpeInfo?.[0]?.주민번호,
+            part: dataOpeInfo?.[0]?.수술부위,
+            opeCode: dataOpeInfo?.[0]?.수술코드,
         });
     }, [dataOpeInfo]);
 
@@ -407,6 +445,7 @@ export default function Home() {
                         path="/record"
                         isPaired={isPaired}
                         dataOpeInfo={dataOpeInfo}
+                        status = {1}
                     />
                 </div>
                 {isPaired && (

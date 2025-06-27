@@ -181,6 +181,7 @@ export default function Info() {
                         isShowBtnText="준비 단계로"
                         path="/operate"
                         dataOpeInfo={isOpeInfo}
+                        status={2}
                     />
                 </div>
                 <UpcomingTime
