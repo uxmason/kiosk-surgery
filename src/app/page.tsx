@@ -405,16 +405,23 @@ export default function Home() {
 
     // CPUID
     useEffect(() => {
-        if (
-            typeof window !== "undefined" &&
-            (window as any).electronAPI?.getCPUID
-        ) {
-            (window as any).electronAPI.getCPUID().then((id: string) => {
-                setIsCpuId(id);
-            });
-        } else {
-            console.log("CPU ID 에러");
-        }
+        const handleMessage = (event: MessageEvent) => {
+            if (
+                event.origin !== "https://kiosk-surgery.vercel.app" &&
+                event.origin !== "null"
+            ) {
+                // 보안상 출처 확인 (Electron에서 file:// 또는 null 로 올 수도 있음)
+                return;
+            }
+
+            if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
+                const receivedCpuId = event.data?.data?.cpuId;
+                setIsCpuId(receivedCpuId);
+            }
+        };
+
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
     }, []);
 
     return (
