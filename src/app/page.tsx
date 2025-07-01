@@ -6,10 +6,8 @@ import { ModalAI } from "@/components/main/modal-ai";
 import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
-import Cookies from "js-cookie";
 import { ImgsType, OpeClientType, WeightChartType, WeightsType } from "@/type";
 import { updateErrorMessage } from "@/function";
 import { useRouter } from "next/navigation";
@@ -31,7 +29,7 @@ export default function Home() {
     const { deviceId, setDeviceId } = useStore();
     const { client, setClient } = useClientStore();
     const { doctor, setDoctor } = useDoctorStore();
-    const [fingerprint, setFingerprint] = useState("");
+    // const [fingerprint, setFingerprint] = useState("");
     const [lastRegDate, setLastRegDate] = useState("");
     const [isBoostCheckStatus, setBoostCheckStatus] = useState(false);
     const [count, setCount] = useState(24 * 60 * 60);
@@ -39,8 +37,7 @@ export default function Home() {
     const [targetPsEntry, setTargetPsEntry] = useState("");
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
-    const [isCpuId, setIsCpuId] = useState<string | null>(null);
-    console.log("!#!@#@!# CPU ID ##!@#!@@", isCpuId);
+
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
         try {
@@ -193,20 +190,20 @@ export default function Home() {
     };
 
     // 기기의 고유 번호
-    useEffect(() => {
-        if (Cookies.get("FINGERPRINT_HASH_KIOSK")) {
-            const cookieVal = Cookies.get("FINGERPRINT_HASH_KIOSK");
-            setFingerprint(cookieVal ?? "");
-        } else {
-            const getFingerprint = async () => {
-                const fp = await FingerprintJS.load();
-                const result = await fp.get();
-                setFingerprint(result.visitorId);
-                document.cookie = `FINGERPRINT_HASH_KIOSK=${result.visitorId}; path=/`;
-            };
-            getFingerprint();
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (Cookies.get("FINGERPRINT_HASH_KIOSK")) {
+    //         const cookieVal = Cookies.get("FINGERPRINT_HASH_KIOSK");
+    //         setFingerprint(cookieVal ?? "");
+    //     } else {
+    //         const getFingerprint = async () => {
+    //             const fp = await FingerprintJS.load();
+    //             const result = await fp.get();
+    //             setFingerprint(result.visitorId);
+    //             document.cookie = `FINGERPRINT_HASH_KIOSK=${result.visitorId}; path=/`;
+    //         };
+    //         getFingerprint();
+    //     }
+    // }, []);
 
     // 해당 수술의 상태 체크
     useEffect(() => {
@@ -399,9 +396,9 @@ export default function Home() {
     }, [client]);
 
     // 기기 고유 번호
-    useEffect(() => {
-        setDeviceId(fingerprint);
-    }, [fingerprint]);
+    // useEffect(() => {
+    //     setDeviceId(fingerprint);
+    // }, [fingerprint]);
 
     // CPUID
     useEffect(() => {
@@ -417,8 +414,7 @@ export default function Home() {
             }
 
             if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
-                console.log("✅ 메시지 수신:", event.data);
-                setIsCpuId(event.data?.data?.cpuId);
+                setDeviceId(event.data?.data?.cpuId);
             }
         };
 
@@ -526,7 +522,7 @@ export default function Home() {
                 setOpeOpen={setOpeOpen}
                 setTargetPsEntry={setTargetPsEntry}
                 dataAllOpe={dataAllOpe}
-                fingerprint={fingerprint}
+                deviceId={deviceId}
             />
             <ModalInbody
                 isInbodyOpen={isInbodyOpen && isPaired}
