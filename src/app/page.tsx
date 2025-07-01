@@ -39,8 +39,7 @@ export default function Home() {
     const [targetPsEntry, setTargetPsEntry] = useState("");
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
-    const [isCpuId, setIsCpuId] = useState<string | null>(null);
-    console.log("!#!@#@!# CPU ID ##!@#!@@", isCpuId);
+
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
         try {
@@ -417,8 +416,7 @@ export default function Home() {
             }
 
             if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
-                console.log("✅ 메시지 수신:", event.data);
-                setIsCpuId(event.data?.data?.cpuId);
+                setDeviceId(event.data?.data?.cpuId);
             }
         };
 
