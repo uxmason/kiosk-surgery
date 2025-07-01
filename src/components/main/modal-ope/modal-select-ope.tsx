@@ -39,7 +39,7 @@ interface Props {
     setTargetPsEntry: (v: string) => void;
     setOpeOpen: (v: boolean) => void;
     dataAllOpe: DataAllOpeItem[];
-    fingerprint: string;
+    deviceId: string;
 }
 
 const ModalSelecOpe = ({
@@ -48,7 +48,7 @@ const ModalSelecOpe = ({
     setOpeOpen,
     setTargetPsEntry,
     dataAllOpe,
-    fingerprint,
+    deviceId,
 }: Props) => {
     const [isOnLoading, setOnLoading] = useState(false);
     const { doctor } = useDoctorStore();
@@ -362,7 +362,7 @@ const ModalSelecOpe = ({
                                                                             body: JSON.stringify(
                                                                                 {
                                                                                     deviceID:
-                                                                                        fingerprint,
+                                                                                        deviceId,
                                                                                     userID: dataAllOpe?.[
                                                                                         hospitalIndex
                                                                                     ]
@@ -425,13 +425,17 @@ const ModalSelecOpe = ({
                                                                         response.status
                                                                     );
                                                                 }
-                                                                setOnLoading(false);
+                                                                setOnLoading(
+                                                                    false
+                                                                );
                                                             } catch (error) {
                                                                 console.error(
                                                                     "에러 발생",
                                                                     error
                                                                 );
-                                                                setOnLoading(false);
+                                                                setOnLoading(
+                                                                    false
+                                                                );
                                                             }
                                                         }}
                                                     >
@@ -540,7 +544,13 @@ const ModalSelecOpe = ({
                 isErrorOpen={isErrorMessage}
                 setIsErrorOpen={setIsErrorMessage}
             />
-            {isOnLoading ? <div className="B-00"><div className="L-00"><p className="T-00">로딩중입니다.</p></div></div>:null}
+            {isOnLoading ? (
+                <div className="B-00">
+                    <div className="L-00">
+                        <p className="T-00">로딩중입니다.</p>
+                    </div>
+                </div>
+            ) : null}
         </>
     );
 };
