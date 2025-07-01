@@ -406,17 +406,19 @@ export default function Home() {
     // CPUID
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
+            // 개발 중엔 'null' 허용
             if (
-                event.origin !== "https://kiosk-surgery.vercel.app" &&
-                event.origin !== "null"
+                event.origin !== "null" &&
+                event.origin !== "file://" &&
+                event.origin !== "https://kiosk-surgery.vercel.app"
             ) {
-                // 보안상 출처 확인 (Electron에서 file:// 또는 null 로 올 수도 있음)
+                console.warn("허용되지 않은 origin:", event.origin);
                 return;
             }
 
             if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
-                const receivedCpuId = event.data?.data?.cpuId;
-                setIsCpuId(receivedCpuId);
+                console.log("✅ 메시지 수신:", event.data);
+                setIsCpuId(event.data?.data?.cpuId);
             }
         };
 
