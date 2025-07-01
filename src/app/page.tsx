@@ -39,7 +39,8 @@ export default function Home() {
     const [targetPsEntry, setTargetPsEntry] = useState("");
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
-
+    const [isCpuId, setIsCpuId] = useState<string | null>(null);
+    console.log("!#!@#@!# CPU ID ##!@#!@@", isCpuId);
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
         try {
@@ -209,8 +210,7 @@ export default function Home() {
 
     // 해당 수술의 상태 체크
     useEffect(() => {
-        if (!deviceId && doctor.id === "") return;
-
+        if (!deviceId || doctor.id === "") return;
         const interval = setInterval(() => {
             handleOpeStatus(doctor.id).then((res) => {
                 if (res.success) {
@@ -333,8 +333,7 @@ export default function Home() {
         }
     }, [isOpeOpen]);
 
-    // 고객
-    // 정보
+    // 고객 정보
     useEffect(() => {
         if (!dataOpeInfo) return;
         setClient({
@@ -403,6 +402,20 @@ export default function Home() {
     useEffect(() => {
         setDeviceId(fingerprint);
     }, [fingerprint]);
+
+    // CPUID
+    useEffect(() => {
+        if (
+            typeof window !== "undefined" &&
+            (window as any).electronAPI?.getCPUID
+        ) {
+            (window as any).electronAPI.getCPUID().then((id: string) => {
+                setIsCpuId(id);
+            });
+        } else {
+            console.log("CPU ID 에러");
+        }
+    }, []);
 
     return (
         <>
