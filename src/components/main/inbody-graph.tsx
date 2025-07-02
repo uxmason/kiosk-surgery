@@ -72,7 +72,7 @@ const InbodyGraph = ({ weightArr, isWeights }: Props) => {
         const margin = { top: 34, right: 24, bottom: 31, left: 24 };
         const plotWidth = width - margin.left - margin.right;
         const plotHeight = height - margin.top - margin.bottom;
-        const weights = weightArr?.map((v) => v.weight);
+        const weights = weightArr?.slice(0, 2)?.map((v) => v.weight);
 
         const max = weightArr ? Math.max(...weights) : 0;
         const min = weightArr ? Math.min(...weights) : 0;
@@ -147,37 +147,33 @@ const drawMark = (
     const canvasWidth = ctx.canvas.width;
     const fontSize = Math.min(12, 10 + (point.x / canvasWidth) * 6);
 
-    // 1. 지름과 선 두께 계산
     let totalRadius = 0;
     let lineWidth = 0;
 
     if (total === 1 || index === total - 1) {
-        totalRadius = 10; // 마지막 또는 단일
+        totalRadius = 10;
         lineWidth = 4;
     } else if (index === 0) {
-        totalRadius = 6; // 첫 번째
+        totalRadius = 6;
         lineWidth = 2;
     } else {
         const ratio = index / (total - 1);
-        totalRadius = 6 + (10 - 6) * ratio; // 6 ~ 10
-        lineWidth = 2 + (4 - 2) * ratio; // 2 ~ 4
+        totalRadius = 6 + (10 - 6) * ratio;
+        lineWidth = 2 + (4 - 2) * ratio;
     }
 
-    // 2. 반지름 계산
-    const strokeRadius = totalRadius - lineWidth / 2; // 선의 중심
-    const fillRadius = strokeRadius - lineWidth / 2; // 내부 채우기와 접하도록
+    const strokeRadius = totalRadius - lineWidth / 2;
+    const fillRadius = strokeRadius - lineWidth / 2;
 
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
 
-    // 숫자 텍스트
     ctx.save();
     ctx.font = `bold ${fontSize}px Noto Sans KR`;
     ctx.fillStyle = "white";
     ctx.fillText(num, point.x - 4, y);
     ctx.restore();
 
-    // 단위 텍스트
     ctx.save();
     ctx.font = "bold 10px Noto Sans KR";
     ctx.fillStyle = "white";
@@ -185,27 +181,32 @@ const drawMark = (
     ctx.fillText(unit, point.x + numWidth / 2 + 6, y);
     ctx.restore();
 
-    // 마지막 마크 또는 단일일 경우 그림자
     if (total === 1 || index === total - 1) {
         ctx.save();
-        ctx.shadowColor = color;
+        ctx.shadowColor = "rgba(91, 135, 237)";
         ctx.shadowBlur = 22;
     }
 
-    // 내부 채우기
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(point.x, point.y, fillRadius, 0, Math.PI * 2);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = `rgb(${color}, 100%)`;
-    ctx.fill();
-    ctx.restore();
     // 외곽 선 (테두리)
     ctx.beginPath();
     ctx.arc(point.x, point.y, strokeRadius, 0, Math.PI * 2);
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = "white";
     ctx.stroke();
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, fillRadius, 0, Math.PI * 2);
+    if (index === 0) {
+        if (total === 1) {
+            ctx.fillStyle = "#5B87ED";
+        } else {
+            ctx.fillStyle = "#F9AC68";
+        }
+    } else {
+        ctx.fillStyle = "#5B87ED";
+    }
+    ctx.fill();
     ctx.restore();
 };
 
