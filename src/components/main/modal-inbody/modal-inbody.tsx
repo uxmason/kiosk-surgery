@@ -36,11 +36,11 @@ const ModalInbody = ({
             : colorForWeight > 15
             ? "237,107,91"
             : colorForWeight > 6
-            ? "249,172,10)"
+            ? "249,172,10"
             : colorForWeight > 1
             ? "21,207,143"
             : colorForWeight < -15
-            ? "177,117,23)"
+            ? "177,117,23"
             : colorForWeight < -6
             ? "70,182,174"
             : colorForWeight < -1

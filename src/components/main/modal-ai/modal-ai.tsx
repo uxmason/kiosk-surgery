@@ -1,3 +1,4 @@
+import { AnesthesiaSafety } from ".";
 import { ClientInfoForModal, CustomModal, GraphAi } from "../../common";
 import "swiper/css";
 
@@ -17,7 +18,7 @@ const ModalAI = ({ isModalAIOpen, setModalAIOpen }: Props) => {
                     예측 지방 추출량
                 </p>
                 <ClientInfoForModal />
-                <div className="h-5" />
+                <AnesthesiaSafety />
                 <GraphAi aiType="DOCTOR">
                     <>
                         <p className="text-white text-[24px] font-bold leading-6">
