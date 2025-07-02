@@ -6,8 +6,15 @@ interface Props {
     isPaired: boolean;
     weightArr: WeightChartType[];
     isWeights?: WeightsType;
+    height: number | null;
 }
-const Inbody = ({ weightArr, setInbodyOpen, isPaired, isWeights }: Props) => {
+const Inbody = ({
+    weightArr,
+    setInbodyOpen,
+    isPaired,
+    isWeights,
+    height,
+}: Props) => {
     return (
         <button
             className="flex flex-col text-start bg-[rgba(91,135,237,0.60)] pt-[25px] pb-5 px-5 rounded-[15px] w-[228px] h-[285px]"
@@ -29,7 +36,7 @@ const Inbody = ({ weightArr, setInbodyOpen, isPaired, isWeights }: Props) => {
                             <p className="text-white font-bold leading-[16px] text-[10px]">
                                 키:{" "}
                                 <span className="text-[16px] pl-[1px]">
-                                    178
+                                    {height}
                                 </span>{" "}
                                 cm
                             </p>

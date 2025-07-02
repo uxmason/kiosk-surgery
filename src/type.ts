@@ -116,6 +116,7 @@ export type OpeClientType = {
     참관구분: "Y" | "N" | null;
     추가시간: number;
     통역여부: "Y" | "N" | null;
+    HEIGHT: number | null;
 };
 
 export type LimitFatPartsType = {

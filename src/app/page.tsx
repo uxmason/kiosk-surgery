@@ -372,9 +372,9 @@ export default function Home() {
                 const inbody = res?.inbody;
                 const inbodyLength = inbody?.length;
                 setIsWeights({
-                    BD_WEIGHT: inbody?.[inbodyLength]?.["BD_WEIGHT"],
-                    WC_WEIGHT: inbody?.[inbodyLength]?.["WC_WEIGHT"],
-                    MUST_WEIGHTL: inbody?.[inbodyLength]?.["MUST_WEIGHTL"],
+                    BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
+                    WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
+                    MUST_WEIGHTL: inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
                 });
                 setWeightArr(
                     inbody?.map((v: never) => {
@@ -486,6 +486,7 @@ export default function Home() {
                             setInbodyOpen={setInbodyOpen}
                             weightArr={weightArr}
                             isWeights={isWeights}
+                            height={dataOpeInfo?.[0]?.HEIGHT}
                         />
                     </div>
                     <CustomBtn

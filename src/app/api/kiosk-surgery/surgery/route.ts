@@ -47,7 +47,8 @@ export async function GET(req: Request) {
                     WHERE BAS_CODE='282' 
                     AND BAS_SETCODE = A.GUBUNCODE) AS 참관구분,
                     A.FATTRAN AS 이식용지방,
-                    A.FASTREMAND AS 우선순위여부
+                    A.FASTREMAND AS 우선순위여부,
+                    P.HEIGHT AS HEIGHT
                 FROM tsfmc_data.dbo.ADM090T A 
                 LEFT OUTER JOIN tsfmc_data.dbo.PEO010T P 
                     ON P.PSENTRY = A.PSENTRY 
