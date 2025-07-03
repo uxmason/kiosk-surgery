@@ -176,3 +176,8 @@ export const formatDateToYYMMDD = (date: string) => {
     const dd = date.slice(8, 10);
     return `${yy}.${mm}.${dd}`;
 };
+export const returnNaNCheck = (n: number) => {
+    if (isNaN(n)) {
+        return;
+    } else return n;
+};

@@ -8,7 +8,14 @@ import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
-import { ImgsType, OpeClientType, WeightChartType, WeightsType } from "@/type";
+import {
+    CaloriesType,
+    ImgsType,
+    ObBmiFatType,
+    OpeClientType,
+    WeightChartType,
+    WeightsType,
+} from "@/type";
 import { updateErrorMessage } from "@/function";
 import { useRouter } from "next/navigation";
 
@@ -36,6 +43,8 @@ export default function Home() {
     const [targetPsEntry, setTargetPsEntry] = useState("");
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
+    const [isCalories, setIsCalories] = useState<CaloriesType[]>([]);
+    const [isBmiFat, setIsBmiFat] = useState<ObBmiFatType[]>([]);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -371,6 +380,7 @@ export default function Home() {
             if (res.success) {
                 const inbody = res?.inbody;
                 const inbodyLength = inbody?.length;
+                console.log(res);
                 setIsWeights({
                     BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
                     WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
@@ -381,6 +391,25 @@ export default function Home() {
                         return {
                             date: v?.["PRODATE"],
                             weight: v?.["BD_WEIGHT"],
+                        };
+                    })
+                );
+                setIsCalories(
+                    inbody?.map((c: never) => {
+                        return {
+                            date: c?.["PRODATE"],
+                            blBaseCalory: c?.["BL_BASECALORY"],
+                            wcBasic: c?.["WC_BASIC"],
+                        };
+                    })
+                );
+                setIsBmiFat(
+                    inbody?.map((b: never) => {
+                        return {
+                            date: b?.["PRODATE"],
+                            obstFatH: b?.["OBST_FATH"],
+                            obstFatL: b?.["OBST_FATL"],
+                            obFat: b?.["OB_FAT"],
                         };
                     })
                 );
@@ -534,6 +563,8 @@ export default function Home() {
                 setInbodyOpen={setInbodyOpen}
                 weightArr={weightArr}
                 isWeights={isWeights}
+                isCalories={isCalories}
+                isBmiFat={isBmiFat}
             />
             <ModalImgs
                 imgs={imgs}

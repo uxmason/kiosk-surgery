@@ -170,3 +170,14 @@ export type OpeInfoItem = {
     고객명: string;
     주민번호: string;
 };
+export type CaloriesType = {
+    date: string;
+    blBaseCalory: number | null | undefined;
+    wcBasic: number | null | undefined;
+};
+export type ObBmiFatType = {
+    date: string;
+    obstFatH: number | null | undefined;
+    obstFatL: number | null | undefined;
+    obFat: number | null | undefined;
+};
