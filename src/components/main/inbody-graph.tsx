@@ -72,7 +72,7 @@ const InbodyGraph = ({ weightArr, isWeights }: Props) => {
         const margin = { top: 34, right: 24, bottom: 31, left: 24 };
         const plotWidth = width - margin.left - margin.right;
         const plotHeight = height - margin.top - margin.bottom;
-        const weights = weightArr?.slice(0, 2)?.map((v) => v.weight);
+        const weights = weightArr?.slice(-2)?.map((v) => v.weight);
 
         const max = weightArr ? Math.max(...weights) : 0;
         const min = weightArr ? Math.min(...weights) : 0;

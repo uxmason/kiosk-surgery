@@ -16,9 +16,13 @@ import {
 } from ".";
 import {
     CaloriesType,
-    ObBmiFatType,
+    BmiFatType,
+    BmiType,
     WeightChartType,
     WeightsType,
+    MineralType,
+    ProteinType,
+    WaterType,
 } from "@/type";
 
 interface Props {
@@ -27,7 +31,11 @@ interface Props {
     weightArr: WeightChartType[];
     isWeights?: WeightsType;
     isCalories: CaloriesType[];
-    isBmiFat: ObBmiFatType[];
+    isBmiFat: BmiFatType[];
+    isBmi: BmiType[];
+    isMineral: MineralType[];
+    isProtein: ProteinType[];
+    isWater: WaterType[];
 }
 const ModalInbody = ({
     isInbodyOpen,
@@ -36,6 +44,10 @@ const ModalInbody = ({
     isWeights,
     isCalories,
     isBmiFat,
+    isBmi,
+    isMineral,
+    isProtein,
+    isWater,
 }: Props) => {
     const colorForWeight =
         ((isWeights?.BD_WEIGHT ?? 0) - (isWeights?.WC_WEIGHT ?? 0)) * 100 - 100;
@@ -70,15 +82,15 @@ const ModalInbody = ({
                     />
                     <Weights isWeights={isWeights} color={color} />
                     <GraphFatPercent isBmiFat={isBmiFat} />
-                    <GraphBmiPercent />
+                    <GraphBmiPercent isBmi={isBmi} />
                     <GraphBasalMetabolicRatePercent
                         isInbodyOpen={isInbodyOpen}
                         isCalories={isCalories}
                         wcWeight={isWeights?.WC_WEIGHT}
                     />
-                    <GraphMineralPercent />
-                    <GraphProteinPercent />
-                    <GraphBodyWaterPercent />
+                    <GraphMineralPercent isMineral={isMineral} />
+                    <GraphProteinPercent isProtein={isProtein} />
+                    <GraphBodyWaterPercent isWater={isWater} />
                 </div>
             </div>
         </CustomModal>

@@ -11,10 +11,14 @@ import toast from "react-hot-toast";
 import {
     CaloriesType,
     ImgsType,
-    ObBmiFatType,
+    BmiFatType,
+    BmiType,
     OpeClientType,
     WeightChartType,
     WeightsType,
+    MineralType,
+    ProteinType,
+    WaterType,
 } from "@/type";
 import { updateErrorMessage } from "@/function";
 import { useRouter } from "next/navigation";
@@ -44,7 +48,11 @@ export default function Home() {
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
     const [isCalories, setIsCalories] = useState<CaloriesType[]>([]);
-    const [isBmiFat, setIsBmiFat] = useState<ObBmiFatType[]>([]);
+    const [isBmiFat, setIsBmiFat] = useState<BmiFatType[]>([]);
+    const [isBmi, setIsBmi] = useState<BmiType[]>([]);
+    const [isMineral, setIsMineral] = useState<MineralType[]>([]);
+    const [isProtein, setIsProtein] = useState<ProteinType[]>([]);
+    const [isWater, setIsWater] = useState<WaterType[]>([]);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -379,15 +387,15 @@ export default function Home() {
         handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
             if (res.success) {
                 const inbody = res?.inbody;
+                const cutInbody = inbody?.slice(-4);
                 const inbodyLength = inbody?.length;
-                console.log(res);
                 setIsWeights({
                     BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
                     WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
                     MUST_WEIGHTL: inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
                 });
                 setWeightArr(
-                    inbody?.map((v: never) => {
+                    cutInbody?.map((v: never) => {
                         return {
                             date: v?.["PRODATE"],
                             weight: v?.["BD_WEIGHT"],
@@ -395,7 +403,7 @@ export default function Home() {
                     })
                 );
                 setIsCalories(
-                    inbody?.map((c: never) => {
+                    cutInbody?.map((c: never) => {
                         return {
                             date: c?.["PRODATE"],
                             blBaseCalory: c?.["BL_BASECALORY"],
@@ -404,12 +412,52 @@ export default function Home() {
                     })
                 );
                 setIsBmiFat(
-                    inbody?.map((b: never) => {
+                    cutInbody?.map((b: never) => {
                         return {
                             date: b?.["PRODATE"],
                             obstFatH: b?.["OBST_FATH"],
                             obstFatL: b?.["OBST_FATL"],
                             obFat: b?.["OB_FAT"],
+                        };
+                    })
+                );
+                setIsBmi(
+                    cutInbody?.map((m: never) => {
+                        return {
+                            date: m?.["PRODATE"],
+                            obstBmiH: m?.["OBST_BMIH"],
+                            obstBmiL: m?.["OBST_BMIL"],
+                            obBmi: m?.["OB_BMI"],
+                        };
+                    })
+                );
+                setIsMineral(
+                    cutInbody?.map((r: never) => {
+                        return {
+                            date: r?.["PRODATE"],
+                            bdstMineralH: r?.["BDST_MINERALH"],
+                            bdstMineralL: r?.["BDST_MINERALL"],
+                            bdMineral: r?.["BD_MINERAL"],
+                        };
+                    })
+                );
+                setIsProtein(
+                    cutInbody?.map((p: never) => {
+                        return {
+                            date: p?.["PRODATE"],
+                            bdstProteinH: p?.["BDST_PROTEINH"],
+                            bdstProteinL: p?.["BDST_PROTEINL"],
+                            bdProtein: p?.["BD_PROTEIN"],
+                        };
+                    })
+                );
+                setIsWater(
+                    cutInbody?.map((w: never) => {
+                        return {
+                            date: w?.["PRODATE"],
+                            bdstWaterH: w?.["BDST_WATERH"],
+                            bdstWaterL: w?.["BDST_WATERL"],
+                            bdWater: w?.["BD_WATER"],
                         };
                     })
                 );
@@ -565,6 +613,10 @@ export default function Home() {
                 isWeights={isWeights}
                 isCalories={isCalories}
                 isBmiFat={isBmiFat}
+                isBmi={isBmi}
+                isMineral={isMineral}
+                isProtein={isProtein}
+                isWater={isWater}
             />
             <ModalImgs
                 imgs={imgs}

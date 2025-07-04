@@ -13,7 +13,7 @@ const GraphBasalMetabolicRatePercent = ({
 }: Props) => {
     const canvasRef1 = useRef<HTMLCanvasElement>(null);
     const canvasRef2 = useRef<HTMLCanvasElement>(null);
-    const textCanvasRef = useRef<HTMLCanvasElement>(null);
+    // const textCanvasRef = useRef<HTMLCanvasElement>(null);
 
     const isCaloriesLength = isCalories?.length;
     const blBaseCalory = isCalories?.[isCaloriesLength - 1]?.blBaseCalory;
@@ -30,10 +30,10 @@ const GraphBasalMetabolicRatePercent = ({
 
         const canvas1 = canvasRef1.current;
         const canvas2 = canvasRef2.current;
-        const textCanvas = textCanvasRef.current;
+        // const textCanvas = textCanvasRef.current;
         const parent = canvas1?.parentElement;
 
-        if (!canvas1 || !canvas2 || !textCanvas || !parent) return;
+        if (!canvas1 || !canvas2 || !parent) return;
 
         const dpr = 2;
         const width = parent.offsetWidth;
@@ -43,32 +43,26 @@ const GraphBasalMetabolicRatePercent = ({
         canvas1.height = height * dpr;
         canvas2.width = width * dpr;
         canvas2.height = height * dpr;
-        textCanvas.width = width * dpr;
-        textCanvas.height = height * dpr;
+        // textCanvas.width = width * dpr;
+        // textCanvas.height = height * dpr;
 
         canvas1.style.width = `${width}px`;
         canvas1.style.height = `${height}px`;
         canvas2.style.width = `${width}px`;
         canvas2.style.height = `${height}px`;
-        textCanvas.style.width = `${width}px`;
-        textCanvas.style.height = `${height}px`;
 
         const ctx = canvas1.getContext("2d");
         const ctx1 = canvas2.getContext("2d");
-        const textCtx = textCanvas.getContext("2d");
 
-        if (!ctx || !ctx1 || !textCtx) return;
+        if (!ctx || !ctx1) return;
 
         ctx.clearRect(0, 0, width, height);
         ctx1.clearRect(0, 0, width, height);
-        textCtx.clearRect(0, 0, width, height);
 
         ctx.scale(dpr, dpr);
         ctx1.scale(dpr, dpr);
-        textCtx.scale(dpr, dpr);
 
         const margin = { top: 36, right: 29, bottom: 165, left: 22 };
-        const textMargin = { top: 16, right: 0, bottom: 0, left: 0 };
 
         const plotWidth = width - margin.left - margin.right;
         const n = isCalories?.length ?? 0;
@@ -77,7 +71,6 @@ const GraphBasalMetabolicRatePercent = ({
         const blBaseCalories =
             isCalories?.map((v) => Number(v?.blBaseCalory)) ?? [];
         const wcBasics = isCalories?.map((v) => Number(v?.wcBasic)) ?? [];
-        const labels = isCalories?.map((a) => a.date) ?? [];
 
         const blMax = Math.max(...blBaseCalories);
         const blMin = Math.min(...blBaseCalories);
@@ -111,18 +104,6 @@ const GraphBasalMetabolicRatePercent = ({
         ctx1.strokeStyle = makeGradient(ctx1, "237, 107, 91", wcPoints);
         drawSmooth(ctx1, wcPoints);
         drawAllMarks(ctx1, wcPoints, "#ED6B5B");
-
-        // 월별 텍스트
-        const plotTextHeight = 150;
-        drawAxesText(
-            textCtx,
-            labels,
-            textMargin,
-            { left: margin.left },
-            plotWidth,
-            plotTextHeight,
-            n
-        );
     }, [isInbodyOpen, isCalories]);
 
     return (
@@ -179,69 +160,37 @@ const GraphBasalMetabolicRatePercent = ({
                     </div>
                 </div>
             </div>
-            <div className="relative w-full">
+            <div className="relative w-full h-full">
                 <canvas ref={canvasRef1} className="absolute w-full h-full" />
                 <canvas ref={canvasRef2} className="absolute w-full h-full" />
-                <canvas
-                    ref={textCanvasRef}
-                    className="absolute w-full h-full"
-                />
+                <div className="absolute flex w-full bottom-[50px] border-t-[1px] border-[rgba(255,255,255,0.25)] border-dashed"></div>
+                <div className="absolute bottom-[10px] left-[22px] right-[29px] flex justify-around">
+                    {isCalories?.map((d) => {
+                        const year = d?.date?.slice(0, 4);
+                        const monthDate = `${d?.date?.slice(
+                            4,
+                            6
+                        )}-${d?.date?.slice(6, 8)}`;
+                        return (
+                            <div
+                                key={d?.date}
+                                className="flex flex-col items-center w-[50px]"
+                            >
+                                <p className="text-[rgba(255,255,255,0.50)] text-[11px] font-bold leading-[18px]">
+                                    {year}
+                                </p>
+                                <p className="text-white text-[13px] font-bold leading-[18px]">
+                                    {monthDate}
+                                </p>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
 };
 export default GraphBasalMetabolicRatePercent;
-
-const drawAxesText = (
-    textCtx: CanvasRenderingContext2D,
-    labels: string[],
-    textMargin: { top: number; right: number; bottom: number; left: number },
-    margin: { left: number },
-    plotWidth: number,
-    plotHeight: number,
-    n: number
-) => {
-    textCtx.textAlign = "center";
-    textCtx.textBaseline = "top";
-
-    const lineY = plotHeight + (textMargin.top + textMargin.bottom) * 2 - 5;
-
-    // 점선
-    textCtx.beginPath();
-    textCtx.setLineDash([2, 2]);
-    textCtx.strokeStyle = "rgba(255, 255, 255, 0.25)";
-    textCtx.moveTo(textMargin.left, lineY);
-    textCtx.lineTo(plotWidth + 52, lineY);
-    textCtx.stroke();
-    textCtx.setLineDash([]);
-
-    labels?.forEach((lbl, i) => {
-        const gap = plotWidth / n;
-        const x = margin.left + gap * (i + 0.5);
-
-        const year = lbl.slice(0, 4);
-        const monthDay = `${lbl.slice(4, 6)}-${lbl.slice(6, 8)}`;
-
-        textCtx.font = "bold 11px Noto Sans KR";
-        textCtx.fillStyle = "rgba(255, 255, 255, 0.50)";
-        textCtx.fillText(
-            year,
-            x,
-            plotHeight + (textMargin.top + textMargin.bottom) * 2 + 3
-        );
-
-        textCtx.font = "bold 13px Noto Sans KR";
-        textCtx.fillStyle = "white";
-        textCtx.fillText(
-            monthDay,
-            x,
-            plotHeight +
-                (textMargin.top + textMargin.bottom) * 2 +
-                textMargin.top +
-                3
-        );
-    });
-};
 
 const drawSmooth = (
     ctx: CanvasRenderingContext2D,

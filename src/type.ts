@@ -175,9 +175,33 @@ export type CaloriesType = {
     blBaseCalory: number | null | undefined;
     wcBasic: number | null | undefined;
 };
-export type ObBmiFatType = {
+export type BmiFatType = {
     date: string;
     obstFatH: number | null | undefined;
     obstFatL: number | null | undefined;
     obFat: number | null | undefined;
+};
+export type BmiType = {
+    date: string;
+    obstBmiH: number | null | undefined;
+    obstBmiL: number | null | undefined;
+    obBmi: number | null | undefined;
+};
+export type MineralType = {
+    date: string;
+    bdstMineralH: number | null | undefined;
+    bdstMineralL: number | null | undefined;
+    bdMineral: number | null | undefined;
+};
+export type ProteinType = {
+    date: string;
+    bdstProteinH: number | null | undefined;
+    bdstProteinL: number | null | undefined;
+    bdProtein: number | null | undefined;
+};
+export type WaterType = {
+    date: string;
+    bdstWaterH: number | null | undefined;
+    bdstWaterL: number | null | undefined;
+    bdWater: number | null | undefined;
 };

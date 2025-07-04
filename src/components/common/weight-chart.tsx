@@ -20,7 +20,7 @@ const WeightChart: React.FC<Props> = ({ isOpenOpeModal, weightArr, color }) => {
         const dpr = 2;
 
         const width = parent?.offsetWidth ?? 0;
-        const height = 237;
+        const height = 220;
 
         canvas.width = width * dpr;
         canvas.height = height * dpr;
@@ -43,7 +43,7 @@ const WeightChart: React.FC<Props> = ({ isOpenOpeModal, weightArr, color }) => {
         ctx.scale(dpr, dpr);
         textCtx.scale(dpr, dpr);
 
-        const margin = { top: 32, right: 29, bottom: 74, left: 22 };
+        const margin = { top: 32, right: 29, bottom: 78, left: 22 };
         const textMargin = { top: 20, right: 0, bottom: 9, left: 0 };
         const plotWidth = width - margin.left - margin.right;
         const plotHeight = height - textMargin.top - margin.bottom;
@@ -81,7 +81,7 @@ const WeightChart: React.FC<Props> = ({ isOpenOpeModal, weightArr, color }) => {
     }, [isOpenOpeModal, weightArr]);
 
     return (
-        <div className="relative w-full h-[237px] top-4">
+        <div className="relative w-full h-[220px] top-10">
             <canvas ref={canvasRef} className="absolute w-full h-full" />
             <canvas ref={textCanvasRef} className="absolute w-full h-full" />
         </div>
