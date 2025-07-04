@@ -27,7 +27,7 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
 
     return (
         <button
-            className="flex flex-col  text-start bg-[#169B7C] pt-[30px] pb-[24.3px] px-[30px] rounded-[15px] w-[228px] h-[285px]"
+            className="flex flex-col text-start bg-[#38ABBE] pt-[25px] pb-5 px-[30px] rounded-[15px] w-[228px] h-[285px]"
             onClick={() => setModalImgsOpen(true)}
         >
             <p className="text-white text-[24px] font-[250] leading-[24px]">
@@ -35,7 +35,7 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
             </p>
             {imgs && lastRegDate && isPaired ? (
                 <>
-                    <div className="relative w-[165px] h-[99px] max-h-[99px] grid grid-cols-5 mt-9">
+                    <div className="relative w-[165px] h-[99px] max-h-[99px] grid grid-cols-5 mt-[41px]">
                         {limitedImages?.map((img, i) => {
                             return (
                                 <div
@@ -64,9 +64,9 @@ const Photo = ({ setModalImgsOpen, imgs, isPaired, lastRegDate }: Props) => {
                             );
                         })}
                     </div>
-                    <div className="flex w-full justify-between items-center pt-[26px]">
+                    <div className="flex w-full justify-between items-center pt-[36px]">
                         <div className="bg-white flex justify-center items-center rounded-full w-10 h-10">
-                            <svg className="w-5 h-5 text-[#169B7C]">
+                            <svg className="w-5 h-5 text-[#38ABBE]">
                                 <use href="/assets/sprite.svg#icon-search"></use>
                             </svg>
                         </div>

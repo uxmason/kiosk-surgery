@@ -5,7 +5,7 @@ export async function POST(req: Request) {
     try {
         const { deviceID, userID, message } = await req.json();
         const insertSql = `INSERT INTO LOG_KIOSK_ERROR (DEVICE_HASH, USER_ID, MESSAGE, createdAt) 
-                            VALUES (${deviceID}, '${userID}', '${message}', SYSDATETIME())
+                            VALUES ('${deviceID}', '${userID}', '${message}', SYSDATETIME())
                             SELECT SCOPE_IDENTITY() AS _id;`;
         const result = await queryDB(insertSql);
 

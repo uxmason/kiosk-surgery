@@ -8,7 +8,18 @@ import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
 import { useEffect, useState } from "react";
 import { useDoctorStore, useClientStore, useStore } from "@/store";
 import toast from "react-hot-toast";
-import { ImgsType, OpeClientType, WeightChartType, WeightsType } from "@/type";
+import {
+    CaloriesType,
+    ImgsType,
+    BmiFatType,
+    BmiType,
+    OpeClientType,
+    WeightChartType,
+    WeightsType,
+    MineralType,
+    ProteinType,
+    WaterType,
+} from "@/type";
 import { updateErrorMessage } from "@/function";
 import { useRouter } from "next/navigation";
 
@@ -23,7 +34,6 @@ export default function Home() {
     const [isModalAIOpen, setModalAIOpen] = useState(false);
     const [imgs, setImgs] = useState<ImgsType[]>([]);
     const [dataOpeInfo, setOpeInfo] = useState<OpeClientType[]>([]);
-    const [dataInbody] = useState([]);
     const [dataFepa] = useState([]);
     const [dataAllOpe, setAllOpe] = useState([]);
     const { deviceId, setDeviceId } = useStore();
@@ -37,6 +47,12 @@ export default function Home() {
     const [targetPsEntry, setTargetPsEntry] = useState("");
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
+    const [isCalories, setIsCalories] = useState<CaloriesType[]>([]);
+    const [isBmiFat, setIsBmiFat] = useState<BmiFatType[]>([]);
+    const [isBmi, setIsBmi] = useState<BmiType[]>([]);
+    const [isMineral, setIsMineral] = useState<MineralType[]>([]);
+    const [isProtein, setIsProtein] = useState<ProteinType[]>([]);
+    const [isWater, setIsWater] = useState<WaterType[]>([]);
 
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
@@ -165,6 +181,7 @@ export default function Home() {
             });
             if (!response.ok) throw new Error("Network response was not ok");
             const result = await response.json();
+            setOnLoading(false);
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -214,11 +231,11 @@ export default function Home() {
                     if (res.status == 1) router.push("/record");
                     if (res.status == 2) router.push("/operate");
                 } else {
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor?.id,
-                        message: res.message,
-                    });
+                    // updateErrorMessage({
+                    //     deviceID: deviceId,
+                    //     userID: doctor?.id,
+                    //     message: res.message,
+                    // });
                 }
             });
         }, 1000);
@@ -265,11 +282,11 @@ export default function Home() {
                 } else {
                     setOnLoading(true);
                     toast.error(res.message);
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor.id,
-                        message: res.message,
-                    });
+                    // updateErrorMessage({
+                    //     deviceID: deviceId,
+                    //     userID: doctor.id,
+                    //     message: res.message,
+                    // });
                 }
             });
         }, 3000);
@@ -366,21 +383,81 @@ export default function Home() {
 
     // 고객의 인바디
     useEffect(() => {
-        if (client.psEntry === "" && client.part === "") return;
+        if (!client.psEntry) return;
         handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
             if (res.success) {
                 const inbody = res?.inbody;
+                const cutInbody = inbody?.slice(-4);
                 const inbodyLength = inbody?.length;
                 setIsWeights({
-                    BD_WEIGHT: inbody?.[inbodyLength]?.["BD_WEIGHT"],
-                    WC_WEIGHT: inbody?.[inbodyLength]?.["WC_WEIGHT"],
-                    MUST_WEIGHTL: inbody?.[inbodyLength]?.["MUST_WEIGHTL"],
+                    BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
+                    WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
+                    MUST_WEIGHTL: inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
                 });
                 setWeightArr(
-                    inbody?.map((v: never) => {
+                    cutInbody?.map((v: never) => {
                         return {
                             date: v?.["PRODATE"],
                             weight: v?.["BD_WEIGHT"],
+                        };
+                    })
+                );
+                setIsCalories(
+                    cutInbody?.map((c: never) => {
+                        return {
+                            date: c?.["PRODATE"],
+                            blBaseCalory: c?.["BL_BASECALORY"],
+                            wcBasic: c?.["WC_BASIC"],
+                        };
+                    })
+                );
+                setIsBmiFat(
+                    cutInbody?.map((b: never) => {
+                        return {
+                            date: b?.["PRODATE"],
+                            obstFatH: b?.["OBST_FATH"],
+                            obstFatL: b?.["OBST_FATL"],
+                            obFat: b?.["OB_FAT"],
+                        };
+                    })
+                );
+                setIsBmi(
+                    cutInbody?.map((m: never) => {
+                        return {
+                            date: m?.["PRODATE"],
+                            obstBmiH: m?.["OBST_BMIH"],
+                            obstBmiL: m?.["OBST_BMIL"],
+                            obBmi: m?.["OB_BMI"],
+                        };
+                    })
+                );
+                setIsMineral(
+                    cutInbody?.map((r: never) => {
+                        return {
+                            date: r?.["PRODATE"],
+                            bdstMineralH: r?.["BDST_MINERALH"],
+                            bdstMineralL: r?.["BDST_MINERALL"],
+                            bdMineral: r?.["BD_MINERAL"],
+                        };
+                    })
+                );
+                setIsProtein(
+                    cutInbody?.map((p: never) => {
+                        return {
+                            date: p?.["PRODATE"],
+                            bdstProteinH: p?.["BDST_PROTEINH"],
+                            bdstProteinL: p?.["BDST_PROTEINL"],
+                            bdProtein: p?.["BD_PROTEIN"],
+                        };
+                    })
+                );
+                setIsWater(
+                    cutInbody?.map((w: never) => {
+                        return {
+                            date: w?.["PRODATE"],
+                            bdstWaterH: w?.["BDST_WATERH"],
+                            bdstWaterL: w?.["BDST_WATERL"],
+                            bdWater: w?.["BD_WATER"],
                         };
                     })
                 );
@@ -409,10 +486,9 @@ export default function Home() {
                 event.origin !== "file://" &&
                 event.origin !== "https://kiosk-surgery.vercel.app"
             ) {
-                console.warn("허용되지 않은 origin:", event.origin);
+                console.log("허용되지 않은 origin:", event.origin);
                 return;
             }
-
             if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
                 setDeviceId(event.data?.data?.cpuId);
             }
@@ -420,6 +496,10 @@ export default function Home() {
 
         window.addEventListener("message", handleMessage);
         return () => window.removeEventListener("message", handleMessage);
+    }, []);
+
+    useEffect(() => {
+        setDeviceId("Apple M1 Pro");
     }, []);
 
     return (
@@ -467,11 +547,6 @@ export default function Home() {
                         />
                     </div>
                     <div className="flex w-full gap-x-5 py-5">
-                        <Inbody
-                            isPaired={isPaired}
-                            setInbodyOpen={setInbodyOpen}
-                            dataInbody={dataInbody}
-                        />
                         <Photo
                             isPaired={isPaired}
                             setModalImgsOpen={setModalImgsOpen}
@@ -482,6 +557,13 @@ export default function Home() {
                             isPaired={isPaired}
                             setModalAIOpen={setModalAIOpen}
                             dataFepa={dataFepa}
+                        />
+                        <Inbody
+                            isPaired={isPaired}
+                            setInbodyOpen={setInbodyOpen}
+                            weightArr={weightArr}
+                            isWeights={isWeights}
+                            height={dataOpeInfo?.[0]?.HEIGHT}
                         />
                     </div>
                     <CustomBtn
@@ -517,7 +599,7 @@ export default function Home() {
             </main>
             <Footer />
             <ModalSelectOpe
-                isOpen={isOpeOpen && isPaired}
+                isOpen={isOpeOpen}
                 isOpeOpenNext={isOpeOpenNext}
                 setOpeOpen={setOpeOpen}
                 setTargetPsEntry={setTargetPsEntry}
@@ -525,10 +607,16 @@ export default function Home() {
                 deviceId={deviceId}
             />
             <ModalInbody
-                isInbodyOpen={isInbodyOpen && isPaired}
+                isInbodyOpen={isInbodyOpen}
                 setInbodyOpen={setInbodyOpen}
                 weightArr={weightArr}
                 isWeights={isWeights}
+                isCalories={isCalories}
+                isBmiFat={isBmiFat}
+                isBmi={isBmi}
+                isMineral={isMineral}
+                isProtein={isProtein}
+                isWater={isWater}
             />
             <ModalImgs
                 imgs={imgs}

@@ -36,11 +36,11 @@ const ModalOpeInfo = ({
             : colorForWeight > 15
             ? "237,107,91"
             : colorForWeight > 6
-            ? "249,172,10)"
+            ? "249,172,10"
             : colorForWeight > 1
             ? "21,207,143"
             : colorForWeight < -15
-            ? "177,117,23)"
+            ? "177,117,23"
             : colorForWeight < -6
             ? "70,182,174"
             : colorForWeight < -1
@@ -50,9 +50,10 @@ const ModalOpeInfo = ({
     // 고객 인바디 정보 불러오기
     const handleSelectInbodyLst = async (psEntry: string, part: string) => {
         try {
-            if(psEntry && part) {
+            if (psEntry && part) {
                 const response = await fetch(
-                    `/api/kiosk-surgery/inbody?psEntry=${psEntry}&part=${part}`,{method: "GET",}
+                    `/api/kiosk-surgery/inbody?psEntry=${psEntry}&part=${part}`,
+                    { method: "GET" }
                 );
 
                 if (!response.ok) {

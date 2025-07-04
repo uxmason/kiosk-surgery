@@ -116,6 +116,7 @@ export type OpeClientType = {
     참관구분: "Y" | "N" | null;
     추가시간: number;
     통역여부: "Y" | "N" | null;
+    HEIGHT: number | null;
 };
 
 export type LimitFatPartsType = {
@@ -168,4 +169,39 @@ export type OpeInfoItem = {
     고객번호: string;
     고객명: string;
     주민번호: string;
+};
+export type CaloriesType = {
+    date: string;
+    blBaseCalory: number | null | undefined;
+    wcBasic: number | null | undefined;
+};
+export type BmiFatType = {
+    date: string;
+    obstFatH: number | null | undefined;
+    obstFatL: number | null | undefined;
+    obFat: number | null | undefined;
+};
+export type BmiType = {
+    date: string;
+    obstBmiH: number | null | undefined;
+    obstBmiL: number | null | undefined;
+    obBmi: number | null | undefined;
+};
+export type MineralType = {
+    date: string;
+    bdstMineralH: number | null | undefined;
+    bdstMineralL: number | null | undefined;
+    bdMineral: number | null | undefined;
+};
+export type ProteinType = {
+    date: string;
+    bdstProteinH: number | null | undefined;
+    bdstProteinL: number | null | undefined;
+    bdProtein: number | null | undefined;
+};
+export type WaterType = {
+    date: string;
+    bdstWaterH: number | null | undefined;
+    bdstWaterL: number | null | undefined;
+    bdWater: number | null | undefined;
 };

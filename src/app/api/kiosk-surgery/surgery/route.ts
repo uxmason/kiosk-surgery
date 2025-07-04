@@ -47,7 +47,8 @@ export async function GET(req: Request) {
                     WHERE BAS_CODE='282' 
                     AND BAS_SETCODE = A.GUBUNCODE) AS 참관구분,
                     A.FATTRAN AS 이식용지방,
-                    A.FASTREMAND AS 우선순위여부
+                    A.FASTREMAND AS 우선순위여부,
+                    P.HEIGHT AS HEIGHT
                 FROM tsfmc_data.dbo.ADM090T A 
                 LEFT OUTER JOIN tsfmc_data.dbo.PEO010T P 
                     ON P.PSENTRY = A.PSENTRY 
@@ -59,7 +60,7 @@ export async function GET(req: Request) {
                     AND K.OPDATE  = A.PROMDATE 
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}') ${addWhere}
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE >= '${today}') ${addWhere}
                 ORDER BY A.PROMDATE, A.PROMTIME`;
         const results: OpeClientType[] = await queryDB(sql);
         if (results?.length !== 0) {
