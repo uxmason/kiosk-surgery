@@ -478,33 +478,26 @@ export default function Home() {
     // }, [fingerprint]);
 
     // CPUID
-    // useEffect(() => {
-    //     const handleMessage = (event: MessageEvent) => {
-    //         // 개발 중엔 'null' 허용
-    //         if (
-    //             event.origin !== "null" &&
-    //             event.origin !== "file://" &&
-    //             event.origin !== "https://kiosk-surgery.vercel.app"
-    //         ) {
-    //             console.log("허용되지 않은 origin:", event.origin);
-    //             return;
-    //         }
-    //         if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
-    //             setDeviceId(event.data?.data?.cpuId);
-    //         }
-    //     };
-
-    //     window.addEventListener("message", handleMessage);
-    //     return () => window.removeEventListener("message", handleMessage);
-    // }, []);
     useEffect(() => {
-        const fetchCPU = async () => {
-            const cpuId = await window.electronAPI?.getCPUID?.();
-            setDeviceId(cpuId);
+        const handleMessage = (event: MessageEvent) => {
+            // 개발 중엔 'null' 허용
+            if (
+                event.origin !== "null" &&
+                event.origin !== "file://" &&
+                event.origin !== "https://kiosk-surgery.vercel.app"
+            ) {
+                console.log("허용되지 않은 origin:", event.origin);
+                return;
+            }
+            if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
+                setDeviceId(event.data?.data?.cpuId);
+            }
         };
-        fetchCPU();
+
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
     }, []);
-    console.log("device", deviceId);
+
     // 개발 시 사용
     // useEffect(() => {
     //     setDeviceId("Apple M1 Pro");
