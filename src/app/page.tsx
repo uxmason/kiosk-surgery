@@ -498,9 +498,10 @@ export default function Home() {
         return () => window.removeEventListener("message", handleMessage);
     }, []);
 
-    useEffect(() => {
-        setDeviceId("Apple M1 Pro");
-    }, []);
+    // 개발 시 사용
+    // useEffect(() => {
+    //     setDeviceId("Apple M1 Pro");
+    // }, []);
 
     return (
         <>
