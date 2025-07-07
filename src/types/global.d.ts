@@ -3,12 +3,10 @@ export {};                      // 모듈 스코프로 만들어 “중복 변�
 
 declare global {
   interface Window {
-    /** Electron preload 가 주입하는 API */
     electronAPI?: {
-      /** 구 버전 호환용 별칭 – 기기 ID */
-      getCPUID?: () => Promise<string>;
-      /** 새 이름 – 기기 ID */
-      getMachineId?: () => Promise<string>;
+      /* 존재하면 반드시 함수 */
+      getCPUID: () => Promise<string>;
+      getMachineId: () => Promise<string>;
     };
   }
 }

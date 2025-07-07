@@ -58,11 +58,13 @@ export default function Home() {
     useEffect(() => {
         let resolved = false;              // 이미 세팅했는지를 표시
 
+        const api = window.electronAPI;
+
         /* 1) Electron 프리로드가 있으면 즉시 호출 */
-        if ((window as any).electronAPI?.getCPUID) {
+        if (api?.getCPUID) {
         (async () => {
             try {
-            const id = await window.electronAPI.getCPUID();
+            const id = await api.getCPUID!();
             if (id && !resolved) {
                 setDeviceId(id);
                 resolved = true;
