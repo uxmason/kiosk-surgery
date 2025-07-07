@@ -497,13 +497,13 @@ export default function Home() {
     //     window.addEventListener("message", handleMessage);
     //     return () => window.removeEventListener("message", handleMessage);
     // }, []);
-    useEffect(() => {
-        const fetchCPU = async () => {
-            const cpuId = await window.electronAPI?.getCPUID?.();
-            setDeviceId(cpuId);
-        };
-        fetchCPU();
-    }, []);
+    // useEffect(() => {
+    //     const fetchCPU = async () => {
+    //         const cpuId = await window.electronAPI?.getCPUID?.();
+    //         setDeviceId(cpuId);
+    //     };
+    //     fetchCPU();
+    // }, []);
     console.log("device", deviceId);
     // 개발 시 사용
     // useEffect(() => {
