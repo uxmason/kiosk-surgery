@@ -1,3 +1,5 @@
+//types.ts
+
 export type TipType = {
     type: "사선형" | "블런트형" | "샤프형";
 };
