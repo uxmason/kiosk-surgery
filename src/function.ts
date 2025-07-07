@@ -13,9 +13,13 @@ export const returnDoubleFormatNumber = (num: number) => {
         return "0" + num;
     }
 };
-export const formatTime = (time: string) => {
-    const hours = time?.substring(0, 2);
-    const minutes = time?.substring(2, 4);
+export const formatTime = (time: unknown) => {
+    if (typeof time !== "string") {
+        // 문자열이 아니면 빈 문자열 또는 기본값 반환
+        return "";
+    }
+    const hours = time.substring(0, 2);
+    const minutes = time.substring(2, 4);
 
     return `${hours}:${minutes}`;
 };

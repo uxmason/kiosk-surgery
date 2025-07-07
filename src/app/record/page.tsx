@@ -50,13 +50,13 @@ export default function Info() {
 
                 if (opeDate && startTime) {
                     const surgeryDate = new Date(
-                        `${opeDate.slice(0, 4)}-${opeDate.slice(
+                        `${opeDate?.slice(0, 4)}-${opeDate?.slice(
                             4,
                             6
-                        )}-${opeDate.slice(6, 8)}T${startTime.slice(
+                        )}-${opeDate?.slice(6, 8)}T${startTime?.slice(
                             0,
                             2
-                        )}:${startTime.slice(2, 4)}:00`
+                        )}:${startTime?.slice(2, 4)}:00`
                     );
                     const now = new Date();
                     const diff = surgeryDate.getTime() - now.getTime();
