@@ -11,6 +11,7 @@ const ModalAI = ({ isModalAIOpen, setModalAIOpen }: Props) => {
     return (
         <CustomModal
             isOpen={isModalAIOpen}
+            top={1430}
             onClose={() => setModalAIOpen(false)}
         >
             <div className="flex flex-col w-full h-full items-center pt-20">

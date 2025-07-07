@@ -143,6 +143,8 @@ const MoodalAddNewCannula = ({
     return (
         <FormProvider {...method}>
             <CustomModal
+                top={1300}
+                isComplete={isComplete}
                 isOpen={isOpenAddCannualModal}
                 onClose={() => setIsOpenAddCannualModal(false)}
             >

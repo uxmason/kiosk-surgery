@@ -51,6 +51,7 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
     return (
         <CustomModal
             isOpen={isModalImgsOpen}
+            top={1300}
             onClose={() => setModalImgsOpen(false)}
         >
             <div className="flex flex-col w-full h-full items-center pt-20">

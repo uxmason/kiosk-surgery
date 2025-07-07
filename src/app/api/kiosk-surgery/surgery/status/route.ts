@@ -6,7 +6,7 @@ export async function GET(req: Request) {
         const url = new URL(req.url);
         const { userID } = Object.fromEntries(url.searchParams.entries());
         const sql = `SELECT top 1 * FROM tsfmc_mailsystem.dbo.KIOSK_SURGERY S, tsfmc_mailsystem.dbo.KIOSK_DEVICES D
-        WHERE S.DEVICE_ID = D._id AND USER_ID = '${userID}'`;
+        WHERE S.DEVICE_ID = D._id AND USER_ID = '${userID}' ORDER BY S.createdAt DESC;`;
         const results = await queryDB(sql);
         if (results.length > 0) {
             return NextResponse.json({

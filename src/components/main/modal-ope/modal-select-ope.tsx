@@ -75,6 +75,7 @@ const ModalSelecOpe = ({
         <>
             <CustomModal
                 isOpen={isOpen}
+                top={1500}
                 onClose={() => {
                     setOpeOpen(false);
                 }}

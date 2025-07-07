@@ -12,80 +12,64 @@ import { FirstImgs, SecondImgs } from "@/components/record";
 import { handleSelectDoctor, updateErrorMessage } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { OpeClientType, PhotsArrType } from "@/type";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-// TODO 타이머 수정
+
 export default function Info() {
     const router = useRouter();
     const { deviceId } = useStore();
     const { client } = useClientStore();
     const { doctor } = useDoctorStore();
+
     const [isFirstOpen, setIsFirstOpen] = useState(true);
     const [isSecondOpen, setIsSecondOpen] = useState(false);
     const [isOpenOpeModal, setIsOpenOpeModal] = useState(false);
     const [imgs, setImgs] = useState<PhotsArrType[]>([]);
     const [unpaired, setUnpaired] = useState(false);
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
-    const [count, setCount] = useState(24 * 60 * 60);
-    const [isReversCount, setReversCount] = useState(false);
+    const [elapsedTimeMs, setElapsedTimeMs] = useState(0);
+    const [isReverseCount, setReverseCount] = useState(false);
 
-    const hours = Math.floor((isReversCount ? -count : count) / 60 / 60);
-    const minutes = Math.floor(((isReversCount ? -count : count) / 60) % 60);
-    const seconds = (isReversCount ? -count : count) % 60;
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const formattedTime = `${String(hours).padStart(2, "0")}:${String(
-        minutes
-    ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-    // 수술 고객 정보
+    // 수술 고객 정보 불러오기
     const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
         try {
             const response = await fetch(
                 `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
-                {
-                    method: "GET",
-                }
+                { method: "GET" }
             );
 
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            const now = new Date();
-
-            const currentTime =
-                now.getHours() * 60 * 60 +
-                now.getMinutes() * 60 +
-                now.getSeconds();
+            if (!response.ok) throw new Error("Network response was not ok");
 
             const result = await response.json();
-            setCount(
-                Number(result.list[0].시작시간.substring(0, 2)) * 60 * 60 +
-                    Number(result.list[0].시작시간.substring(2, 4)) * 60 -
-                    currentTime
-            );
+            if (result?.success) {
+                const opeDate = result?.list?.[0]?.["수술일"];
+                const startTime = result?.list?.[0]?.["시작시간"];
 
-            return result;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
+                if (opeDate && startTime) {
+                    const surgeryDate = new Date(
+                        `${opeDate.slice(0, 4)}-${opeDate.slice(
+                            4,
+                            6
+                        )}-${opeDate.slice(6, 8)}T${startTime.slice(
+                            0,
+                            2
+                        )}:${startTime.slice(2, 4)}:00`
+                    );
+                    const now = new Date();
+                    const diff = surgeryDate.getTime() - now.getTime();
 
-    // 고객 사진 정보 불러오기
-    const handleSelectImgLst = async (psEntry: string) => {
-        try {
-            const response = await fetch(
-                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
-                {
-                    method: "GET",
+                    if (diff > 0) {
+                        setReverseCount(false);
+                        setElapsedTimeMs(diff);
+                    } else {
+                        setReverseCount(true);
+                        setElapsedTimeMs(-diff);
+                    }
                 }
-            );
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
             }
-
-            const result = await response.json();
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -109,7 +93,32 @@ export default function Info() {
         }
     };
 
-    // 해당 기기의 고유번호의 유효성 체크
+    // 타이머 설정
+    useEffect(() => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+
+        intervalRef.current = setInterval(() => {
+            setElapsedTimeMs((prev) => prev + 10);
+        }, 10);
+
+        return () => clearInterval(intervalRef.current!);
+    }, [isReverseCount]);
+
+    // 시간 포맷 처리
+    const absMs = Math.max(elapsedTimeMs, 0);
+    const totalMs = absMs % 1000;
+    const totalSeconds = Math.floor(absMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+        minutes
+    ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${String(
+        Math.floor(totalMs / 10)
+    ).padStart(2, "0")}`;
+
+    // 기기 유효성 체크
     useEffect(() => {
         if (!deviceId) return;
 
@@ -120,11 +129,6 @@ export default function Info() {
                 } else {
                     setUnpaired(true);
                     toast.error(res.message);
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor.id,
-                        message: res.message,
-                    });
                 }
             });
         }, 3000);
@@ -132,9 +136,9 @@ export default function Info() {
         return () => clearInterval(interval);
     }, [deviceId]);
 
-    // 해당 수술의 상태 체크
+    // 수술 상태 체크
     useEffect(() => {
-        if (!deviceId && doctor.id === "") return;
+        if (!deviceId || doctor.id === "") return;
 
         const interval = setInterval(() => {
             handleOpeStatus(doctor.id).then((res) => {
@@ -142,12 +146,6 @@ export default function Info() {
                     if (res.status == 0) router.replace("/");
                     if (res.status == 1) router.push("/record");
                     if (res.status == 2) router.push("/operate");
-                } else {
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor?.id,
-                        message: res.message,
-                    });
                 }
             });
         }, 1000);
@@ -155,11 +153,31 @@ export default function Info() {
         return () => clearInterval(interval);
     }, [deviceId, doctor]);
 
+    // 고객 사진 정보 불러오기
+    const handleSelectImgLst = async (psEntry: string) => {
+        try {
+            const response = await fetch(
+                `/api/kiosk-surgery/photos?psEntry=${psEntry}`,
+                { method: "GET" }
+            );
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
     // 수술 고객 정보 담기
     useEffect(() => {
         if (unpaired || !client || !doctor) return;
+
         onHandleSelectOpe(doctor?.id, client?.psEntry).then((res) => {
-            if (res.success) {
+            if (res?.success) {
                 setIsOpeInfo(res.list);
             } else {
                 toast.error(res.message);
@@ -172,11 +190,12 @@ export default function Info() {
         });
     }, [unpaired, client, doctor]);
 
-    // 고객 이미지 담기
+    // 고객 사진 정보 불러오기
     useEffect(() => {
         if (unpaired || !client) return;
+
         handleSelectImgLst(client?.psEntry).then((res) => {
-            if (res.success) {
+            if (res?.success) {
                 setImgs(res.list);
             } else {
                 toast.error(res.message);
@@ -188,16 +207,6 @@ export default function Info() {
             }
         });
     }, [unpaired, client]);
-
-    useEffect(() => {
-        if (count <= 0) setReversCount(true);
-
-        const timer = setInterval(() => {
-            setCount((prevCount) => prevCount - 1);
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [count]);
 
     return (
         <>
@@ -228,7 +237,11 @@ export default function Info() {
                 </div>
                 <UpcomingTime
                     isOther
-                    text="수술 경과 시간"
+                    text={
+                        isReverseCount
+                            ? "수술 경과 시간"
+                            : "수술 예정까지 남은 시간"
+                    }
                     time={formattedTime}
                     color="#ED6B5B"
                 />
