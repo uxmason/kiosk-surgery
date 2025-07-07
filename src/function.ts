@@ -86,7 +86,7 @@ export const handleSelectDoctor = async (deviceId: string) => {
 };
 // 에러 메세지 등록
 export const updateErrorMessage = async (data: ErrorMessageDataType) => {
-    const url = "/api/kiosk-surgery/log/error/";
+    const url = "/api/kiosk-surgery/log/error";
     try {
         const response = await fetch(url, {
             method: "POST",
