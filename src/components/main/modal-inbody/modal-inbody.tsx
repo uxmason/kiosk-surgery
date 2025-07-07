@@ -68,7 +68,11 @@ const ModalInbody = ({
             ? "21,207,143"
             : "91,135,237";
     return (
-        <CustomModal isOpen={isInbodyOpen} onClose={() => setInbodyOpen(false)}>
+        <CustomModal
+            isOpen={isInbodyOpen}
+            top={1600}
+            onClose={() => setInbodyOpen(false)}
+        >
             <div className="flex flex-col w-full h-fit items-center pt-20">
                 <p className="text-white text-[54px] font-bold leading-[54px]">
                     고객 인바디 정보

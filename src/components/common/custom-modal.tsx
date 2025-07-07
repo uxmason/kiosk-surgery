@@ -4,9 +4,11 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     children: ReactNode;
+    top?: number;
+    isComplete?: boolean;
 }
 
-const CustomModal = ({ isOpen, onClose, children }: Props) => {
+const CustomModal = ({ isOpen, onClose, children, top, isComplete }: Props) => {
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = "hidden";
@@ -29,6 +31,21 @@ const CustomModal = ({ isOpen, onClose, children }: Props) => {
         >
             <div className={`absolute w-full h-full`} onClick={onClose}></div>
             <div className={`flex w-full mx-[90px]`}>{children}</div>
+            {!isComplete && top && (
+                <div
+                    className="absolute flex w-full justify-center"
+                    style={{
+                        top: `${top}px`,
+                    }}
+                >
+                    <button
+                        onClick={onClose}
+                        className="w-120 h-30 bg-[#15CF8F] rounded-[15px] text-white text-[32px] font-bold leading-8"
+                    >
+                        닫기
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

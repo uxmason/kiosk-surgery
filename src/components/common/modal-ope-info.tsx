@@ -108,6 +108,7 @@ const ModalOpeInfo = ({
     return (
         <CustomModal
             isOpen={isOpenOpeModal}
+            top={1500}
             onClose={() => setIsOpenOpeModal(false)}
         >
             <div className="flex flex-col w-full h-full items-center pt-20">
