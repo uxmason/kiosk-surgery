@@ -54,6 +54,56 @@ export default function Home() {
     const [isProtein, setIsProtein] = useState<ProteinType[]>([]);
     const [isWater, setIsWater] = useState<WaterType[]>([]);
 
+    /* ── 기기 ID를 단 한 번만 설정 ─────────────────────── */
+    useEffect(() => {
+        let resolved = false;              // 이미 세팅했는지를 표시
+
+        /* 1) Electron 프리로드가 있으면 즉시 호출 */
+        if ((window as any).electronAPI?.getCPUID) {
+        (async () => {
+            try {
+            const id = await window.electronAPI.getCPUID();
+            if (id && !resolved) {
+                setDeviceId(id);
+                resolved = true;
+            }
+            } catch (e) {
+            console.error("getCPUID 실패:", e);
+            }
+        })();
+        }
+
+        /* 2) postMessage(iframe ↔ Electron) 폴백 */
+        const msgHandler = (e: MessageEvent) => {
+        // 개발용 file:// 과 배포용 origin 두 가지만 허용
+        if (
+            e.origin !== "https://kiosk-surgery.vercel.app" &&
+            e.origin !== "null" &&
+            e.origin !== "file://"
+        )
+            return;
+
+        if (e.data?.type === "ELECTRON_SYSTEM_INIT" && !resolved) {
+            const id = e.data?.data?.deviceId ?? e.data?.data?.cpuId;
+            if (id) {
+            setDeviceId(id);
+            resolved = true;
+            }
+        }
+        };
+        window.addEventListener("message", msgHandler);
+
+        /* 3) 3초 안에 못 얻으면 경고 로그만 남기고 종료 */
+        const timer = setTimeout(() => {
+        if (!resolved) console.warn("deviceId를 아직 받지 못했습니다.");
+        }, 3000);
+
+        return () => {
+        window.removeEventListener("message", msgHandler);
+        clearTimeout(timer);
+        };
+    }, [setDeviceId]);
+
     // 키오스크에 등록된 의사 찾기
     const handleSelectDoctor = async () => {
         try {
@@ -471,33 +521,8 @@ export default function Home() {
             }
         });
     }, [client]);
-
-    // 기기 고유 번호
-    // useEffect(() => {
-    //     setDeviceId(fingerprint);
-    // }, [fingerprint]);
-
-    // CPUID
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            // 개발 중엔 'null' 허용
-            if (
-                event.origin !== "null" &&
-                event.origin !== "file://" &&
-                event.origin !== "https://kiosk-surgery.vercel.app"
-            ) {
-                console.log("허용되지 않은 origin:", event.origin);
-                return;
-            }
-            if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
-                setDeviceId(event.data?.data?.cpuId);
-            }
-        };
-
-        window.addEventListener("message", handleMessage);
-        return () => window.removeEventListener("message", handleMessage);
-    }, []);
-
+  
+    console.log("device", deviceId);
     // 개발 시 사용
     // useEffect(() => {
     //     setDeviceId("Apple M1 Pro");
