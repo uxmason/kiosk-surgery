@@ -24,12 +24,28 @@ const SecondImgs = ({ isSecondOpen, setIsSecondOpen, imgs }: Props) => {
     useEffect(() => {
         if (!swiperInstance || currentDateIndex === undefined) return;
 
-        const targetIndex =
-            currentDateIndex < 3 ? currentDateIndex - 1 : currentDateIndex;
+        const totalSlides = swiperInstance.slides.length;
+        const slidesPerView = swiperInstance.params.slidesPerView as number;
 
-        setTimeout(() => {
-            swiperInstance.slideTo(targetIndex, 0);
-        }, 0);
+        let targetIndex = currentDateIndex;
+
+        // 조건 1: 3개 이하일 때는 1번 인덱스를 가운데로
+        if (totalSlides <= 3) {
+            targetIndex = 1;
+        }
+        // 조건 2: 맨 처음 인덱스
+        else if (swiperInstance.isBeginning) {
+            targetIndex = 0;
+        }
+        // 조건 3: 맨 마지막 인덱스
+        else if (swiperInstance.isEnd) {
+            targetIndex = totalSlides - slidesPerView;
+        }
+
+        // 범위 밖 보호
+        if (targetIndex < 0) targetIndex = 0;
+
+        swiperInstance.slideTo(targetIndex, 300); // 300ms 애니메이션
     }, [currentDateIndex, swiperInstance]);
 
     useEffect(() => {
@@ -88,7 +104,6 @@ const SecondImgs = ({ isSecondOpen, setIsSecondOpen, imgs }: Props) => {
                                         />
                                     </button>
                                 )}
-
                                 <Swiper
                                     onSwiper={setSwiperInstance}
                                     spaceBetween={20}
