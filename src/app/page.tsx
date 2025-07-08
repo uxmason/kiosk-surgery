@@ -68,19 +68,21 @@ export default function Home() {
     useEffect(() => {
         let resolved = false; // 이미 세팅했는지를 표시
 
+        const api = window.electronAPI;
+
         /* 1) Electron 프리로드가 있으면 즉시 호출 */
-        if ((window as any).electronAPI?.getCPUID) {
-            (async () => {
-                try {
-                    const id = await window.electronAPI.getCPUID();
-                    if (id && !resolved) {
-                        setDeviceId(id);
-                        resolved = true;
-                    }
-                } catch (e) {
-                    console.error("getCPUID 실패:", e);
-                }
-            })();
+        if (api?.getCPUID) {
+        (async () => {
+            try {
+            const id = await api.getCPUID!();
+            if (id && !resolved) {
+                setDeviceId(id);
+                resolved = true;
+            }
+            } catch (e) {
+            console.error("getCPUID 실패:", e);
+            }
+        })();
         }
 
         /* 2) postMessage(iframe ↔ Electron) 폴백 */
@@ -568,11 +570,44 @@ export default function Home() {
             });
         }
     }, [client]);
+  
+//     기기 고유 번호
+//     useEffect(() => {
+//         setDeviceId(fingerprint);
+//     }, [fingerprint]);
 
-    // 개발 시 사용
+    CPUID
     useEffect(() => {
-        setDeviceId("Apple M1 Pro2");
+        const handleMessage = (event: MessageEvent) => {
+            // 개발 중엔 'null' 허용
+            if (
+                event.origin !== "null" &&
+                event.origin !== "file://" &&
+                event.origin !== "https://kiosk-surgery.vercel.app"
+            ) {
+                console.log("허용되지 않은 origin:", event.origin);
+                return;
+            }
+            if (event.data?.type === "ELECTRON_SYSTEM_INIT") {
+                setDeviceId(event.data?.data?.cpuId);
+            }
+        };
+
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
     }, []);
+    useEffect(() => {
+        const fetchCPU = async () => {
+            const cpuId = await window.electronAPI?.getCPUID?.();
+            setDeviceId(cpuId);
+        };
+        fetchCPU();
+    }, []);
+    console.log("device", deviceId);
+    // 개발 시 사용
+//     useEffect(() => {
+//         setDeviceId("Apple M1 Pro2");
+//     }, []);
 
     return (
         <>
