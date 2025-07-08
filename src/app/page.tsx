@@ -56,53 +56,53 @@ export default function Home() {
 
     /* ── 기기 ID를 단 한 번만 설정 ─────────────────────── */
     useEffect(() => {
-        let resolved = false;              // 이미 세팅했는지를 표시
+        let resolved = false; // 이미 세팅했는지를 표시
 
         const api = window.electronAPI;
 
         /* 1) Electron 프리로드가 있으면 즉시 호출 */
         if (api?.getCPUID) {
-        (async () => {
-            try {
-            const id = await api.getCPUID!();
-            if (id && !resolved) {
-                setDeviceId(id);
-                resolved = true;
-            }
-            } catch (e) {
-            console.error("getCPUID 실패:", e);
-            }
-        })();
+            (async () => {
+                try {
+                    const id = await api.getCPUID!();
+                    if (id && !resolved) {
+                        setDeviceId(id);
+                        resolved = true;
+                    }
+                } catch (e) {
+                    console.error("getCPUID 실패:", e);
+                }
+            })();
         }
 
         /* 2) postMessage(iframe ↔ Electron) 폴백 */
         const msgHandler = (e: MessageEvent) => {
-        // 개발용 file:// 과 배포용 origin 두 가지만 허용
-        if (
-            e.origin !== "https://kiosk-surgery.vercel.app" &&
-            e.origin !== "null" &&
-            e.origin !== "file://"
-        )
-            return;
+            // 개발용 file:// 과 배포용 origin 두 가지만 허용
+            if (
+                e.origin !== "https://kiosk-surgery.vercel.app" &&
+                e.origin !== "null" &&
+                e.origin !== "file://"
+            )
+                return;
 
-        if (e.data?.type === "ELECTRON_SYSTEM_INIT" && !resolved) {
-            const id = e.data?.data?.deviceId ?? e.data?.data?.cpuId;
-            if (id) {
-            setDeviceId(id);
-            resolved = true;
+            if (e.data?.type === "ELECTRON_SYSTEM_INIT" && !resolved) {
+                const id = e.data?.data?.deviceId ?? e.data?.data?.cpuId;
+                if (id) {
+                    setDeviceId(id);
+                    resolved = true;
+                }
             }
-        }
         };
         window.addEventListener("message", msgHandler);
 
         /* 3) 3초 안에 못 얻으면 경고 로그만 남기고 종료 */
         const timer = setTimeout(() => {
-        if (!resolved) console.warn("deviceId를 아직 받지 못했습니다.");
+            if (!resolved) console.warn("deviceId를 아직 받지 못했습니다.");
         }, 3000);
 
         return () => {
-        window.removeEventListener("message", msgHandler);
-        clearTimeout(timer);
+            window.removeEventListener("message", msgHandler);
+            clearTimeout(timer);
         };
     }, [setDeviceId]);
 
@@ -524,10 +524,10 @@ export default function Home() {
         });
     }, [client]);
 
-    // 기기 고유 번호
-    // useEffect(() => {
-    //     setDeviceId(fingerprint);
-    // }, [fingerprint]);
+    //     기기 고유 번호
+    //     useEffect(() => {
+    //         setDeviceId(fingerprint);
+    //     }, [fingerprint]);
 
     // CPUID
     // useEffect(() => {
@@ -549,6 +549,7 @@ export default function Home() {
     //     window.addEventListener("message", handleMessage);
     //     return () => window.removeEventListener("message", handleMessage);
     // }, []);
+
     // useEffect(() => {
     //     const fetchCPU = async () => {
     //         const cpuId = await window.electronAPI?.getCPUID?.();
@@ -556,11 +557,11 @@ export default function Home() {
     //     };
     //     fetchCPU();
     // }, []);
-    console.log("device", deviceId);
+    // console.log("device", deviceId);
     // 개발 시 사용
-    // useEffect(() => {
-    //     setDeviceId("Apple M1 Pro");
-    // }, []);
+    //     useEffect(() => {
+    //         setDeviceId("Apple M1 Pro2");
+    //     }, []);
 
     return (
         <>
