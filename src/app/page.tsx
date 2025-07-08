@@ -576,7 +576,7 @@ export default function Home() {
 //         setDeviceId(fingerprint);
 //     }, [fingerprint]);
 
-    CPUID
+    // CPUID
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
             // 개발 중엔 'null' 허용
