@@ -35,12 +35,16 @@ export default function Info() {
     const [count, setCount] = useState(0); // 경과 시간 초 (0부터 시작)
 
     // 수술의 상태 체크
-    const handleOpeStatus = async (doctorID: string) => {
+    const handleOpeStatus = async (
+        doctorID: string,
+        psEntry: string,
+        opCode: string
+    ) => {
         try {
             const { doctor } = useDoctorStore.getState();
             if (doctor.id == null) return;
             const response = await fetch(
-                `/api/kiosk-surgery/surgery/status?userID=${doctorID}`,
+                `/api/kiosk-surgery/surgery/status?userID=${doctorID}&deviceID=${deviceId}&psEntry=${psEntry}&opCode=${opCode}`,
                 { method: "GET" }
             );
             if (!response.ok) throw new Error("Network response was not ok");
@@ -254,26 +258,34 @@ export default function Info() {
 
     // 해당 수술의 상태 체크
     useEffect(() => {
-        if (!deviceId && doctor.id === "") return;
+        if (
+            !deviceId ||
+            doctor.id === "" ||
+            client?.psEntry === "" ||
+            client?.opeCode === ""
+        )
+            return;
 
         const interval = setInterval(() => {
-            handleOpeStatus(doctor.id).then((res) => {
-                if (res.success) {
-                    if (res.status == 0) router.replace("/");
-                    if (res.status == 1) router.push("/record");
-                    if (res.status == 2) router.push("/operate");
-                } else {
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor?.id,
-                        message: res.message,
-                    });
+            handleOpeStatus(doctor?.id, client?.psEntry, client?.opeCode).then(
+                (res) => {
+                    if (res.success) {
+                        if (res.status == 0) router.replace("/");
+                        if (res.status == 1) router.push("/record");
+                        if (res.status == 2) router.push("/operate");
+                    } else {
+                        updateErrorMessage({
+                            deviceID: deviceId,
+                            userID: doctor?.id,
+                            message: res.message,
+                        });
+                    }
                 }
-            });
+            );
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [deviceId, doctor]);
+    }, [deviceId, doctor, client]);
 
     return (
         <>

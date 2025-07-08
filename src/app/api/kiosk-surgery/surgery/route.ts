@@ -6,11 +6,15 @@ import { OpeClientType } from "@/type";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
-        const { doctorId, psEntry } = Object.fromEntries(
+        const { doctorId, psEntry, deviceId } = Object.fromEntries(
             url.searchParams.entries()
         );
         const today = getFormattedDate();
         const nowTime = getCurrentTimeHHMM();
+        const addDeviceIdWhere =
+            typeof deviceId === "string"
+                ? `AND (D.DEVICE_HASH IS NULL OR D.DEVICE_HASH = '${deviceId}')`
+                : "";
         const addWhere =
             typeof psEntry === "string" ? `AND A.PSENTRY='${psEntry}'` : ``;
         const sql = `SELECT top 1
@@ -57,11 +61,16 @@ export async function GET(req: Request) {
                     ON B.PSENTRY = A.PSENTRY
                 LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_SURGERY K
                     ON K.PSENTRY  = A.PSENTRY 
-                    AND K.OPDATE  = A.PROMDATE 
+                    AND K.OPDATE  = A.PROMDATE
+                    AND A.PACKAGE = K.OPCODE 
+                LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_DEVICES D
+                    ON K.DEVICE_ID = D.[_id]
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}') ${addWhere}
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}')
+                    ${addWhere} ${addDeviceIdWhere}
                 ORDER BY A.PROMDATE, A.PROMTIME`;
+        console.error(sql);
         const results: OpeClientType[] = await queryDB(sql);
         if (results?.length !== 0) {
             return NextResponse.json({
