@@ -348,7 +348,7 @@ const ModalSelecOpe = ({
                                                         }}
                                                         onClick={async () => {
                                                             setOnLoading(true);
-                                                            const url = `/api/kiosk-surgery/schedule/add/`;
+                                                            const url = `/api/kiosk-surgery/schedule/add`;
                                                             try {
                                                                 const response =
                                                                     await fetch(

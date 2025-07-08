@@ -108,7 +108,7 @@ const Parts = ({ incisionList }: Props) => {
 
     // 인시젼 정보 등록
     const handleAddIncision = async (data: AddDataType) => {
-        const url = `/api/kiosk-surgery/incision/add/`;
+        const url = `/api/kiosk-surgery/incision/add`;
         try {
             const response = await fetch(url, {
                 method: "POST",

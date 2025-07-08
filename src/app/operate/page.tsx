@@ -32,14 +32,19 @@ export default function Info() {
     const [incisionList, setIncisionList] = useState<IncisionListType[]>([]);
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
     const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
+    const [count, setCount] = useState(0); // 경과 시간 초 (0부터 시작)
 
     // 수술의 상태 체크
-    const handleOpeStatus = async (doctorID: string) => {
+    const handleOpeStatus = async (
+        doctorID: string,
+        psEntry: string,
+        opCode: string
+    ) => {
         try {
             const { doctor } = useDoctorStore.getState();
             if (doctor.id == null) return;
             const response = await fetch(
-                `/api/kiosk-surgery/surgery/status?userID=${doctorID}`,
+                `/api/kiosk-surgery/surgery/status?userID=${doctorID}&deviceID=${deviceId}&psEntry=${psEntry}&opCode=${opCode}`,
                 { method: "GET" }
             );
             if (!response.ok) throw new Error("Network response was not ok");
@@ -65,16 +70,29 @@ export default function Info() {
             }
 
             const result = await response.json();
+            if (result?.success) {
+                const endTime = result?.list?.[0]?.["수술완료시간"];
+                if (endTime) {
+                    const surgeryDate = new Date(endTime);
+                    const now = new Date();
+                    const diffSeconds = Math.floor(
+                        (now.getTime() - surgeryDate.getTime()) / 1000
+                    );
+                    // 과거 시간은 0으로 초기화, 미래 시간(음수)일 경우에도 0으로 처리
+                    setCount(diffSeconds > 0 ? diffSeconds : 0);
+                } else {
+                    // 수술 완료 시간이 없으면 초기화
+                    setCount(0);
+                }
+            }
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
 
-    // 숫자 카운트
-    const [count, setCount] = useState(180);
-
-    const minutes = Math.floor(count / 60);
+    // 시간 포맷팅
+    const minutes = Math.floor((count % 3600) / 60);
     const seconds = count % 60;
 
     const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
@@ -139,17 +157,10 @@ export default function Info() {
         }
     };
 
+    // 카운트업 타이머 (1초마다 경과시간 증가)
     useEffect(() => {
-        if (count <= 0) return;
-
         const timer = setInterval(() => {
-            setCount((prevCount) => {
-                if (prevCount <= 0) {
-                    clearInterval(timer);
-                    return 0;
-                }
-                return prevCount - 1;
-            });
+            setCount((prevCount) => prevCount + 1);
         }, 1000);
 
         return () => clearInterval(timer);
@@ -247,26 +258,34 @@ export default function Info() {
 
     // 해당 수술의 상태 체크
     useEffect(() => {
-        if (!deviceId && doctor.id === "") return;
+        if (
+            !deviceId ||
+            doctor.id === "" ||
+            client?.psEntry === "" ||
+            client?.opeCode === ""
+        )
+            return;
 
         const interval = setInterval(() => {
-            handleOpeStatus(doctor.id).then((res) => {
-                if (res.success) {
-                    if (res.status == 0) router.replace("/");
-                    if (res.status == 1) router.push("/record");
-                    if (res.status == 2) router.push("/operate");
-                } else {
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor?.id,
-                        message: res.message,
-                    });
+            handleOpeStatus(doctor?.id, client?.psEntry, client?.opeCode).then(
+                (res) => {
+                    if (res.success) {
+                        if (res.status == 0) router.replace("/");
+                        if (res.status == 1) router.push("/record");
+                        if (res.status == 2) router.push("/operate");
+                    } else {
+                        updateErrorMessage({
+                            deviceID: deviceId,
+                            userID: doctor?.id,
+                            message: res.message,
+                        });
+                    }
                 }
-            });
+            );
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [deviceId, doctor]);
+    }, [deviceId, doctor, client]);
 
     return (
         <>

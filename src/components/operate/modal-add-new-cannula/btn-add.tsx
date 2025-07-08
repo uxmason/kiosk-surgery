@@ -69,7 +69,7 @@ const BtnAdd = ({
 
     // 새로운 캐뉼라 등록
     const handleAddNewCannula = async () => {
-        const url = `/api/kiosk-surgery/cannula/add/`;
+        const url = `/api/kiosk-surgery/cannula/add`;
         try {
             const response = await fetch(url, {
                 method: "POST",

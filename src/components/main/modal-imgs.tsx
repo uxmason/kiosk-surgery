@@ -22,31 +22,31 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
     const [currentImgs, setCurrentImgs] = useState<ImgsType[]>([]);
+    const [hasInitialized, setHasInitialized] = useState(false);
 
-    const regDates = imgs?.map((v) => v?.regdate);
+    const regDates = imgs?.map((v) => v?.regdate) ?? [];
+
+    const isFewSlides = regDates.length <= 3;
 
     useEffect(() => {
         if (imgs && imgs.length === 0) {
             setCurrentImgs([]);
-            return;
+        } else {
+            setCurrentImgs(imgs?.filter((_, i) => i === currentDateIndex));
         }
-        setCurrentDateIndex(imgs?.length - 1);
-    }, [imgs]);
-
-    useEffect(() => {
-        setCurrentImgs(imgs?.filter((_, i) => i === currentDateIndex));
     }, [imgs, currentDateIndex]);
 
     useEffect(() => {
-        if (!swiperInstance || currentDateIndex === undefined) return;
-
-        const targetIndex =
-            currentDateIndex < 3 ? currentDateIndex - 1 : currentDateIndex;
-
-        setTimeout(() => {
-            swiperInstance.slideTo(targetIndex, 0);
-        }, 0);
-    }, [currentDateIndex, swiperInstance]);
+        if (!swiperInstance || regDates.length < 2 || hasInitialized) return;
+        if (isModalImgsOpen) {
+            swiperInstance.slideTo(regDates.length - 2, 0);
+            setCurrentDateIndex(regDates.length - 1);
+            setHasInitialized(true);
+        } else {
+            setCurrentDateIndex(0);
+            setHasInitialized(false);
+        }
+    }, [swiperInstance, regDates, hasInitialized, isModalImgsOpen]);
 
     return (
         <CustomModal
@@ -76,23 +76,21 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
                         }
                     >
                         {currentImgs?.[0]?.image?.map(
-                            (v: ImgType, i: number) => {
-                                return (
-                                    <SwiperSlide
-                                        key={i}
-                                        className="flex flex-col h-[95px] items-center justify-center"
-                                    >
-                                        <img
-                                            src={`${imgOriginalUrl}/${String(
-                                                v?.filename
-                                            )?.slice(4)}`}
-                                            width={885}
-                                            height={565}
-                                            className="w-[885px] h-[565px] aspect-[885/565] object-cover rounded-[15px]"
-                                        />
-                                    </SwiperSlide>
-                                );
-                            }
+                            (v: ImgType, i: number) => (
+                                <SwiperSlide
+                                    key={i}
+                                    className="flex flex-col h-[95px] items-center justify-center"
+                                >
+                                    <img
+                                        src={`${imgOriginalUrl}/${String(
+                                            v?.filename
+                                        )?.slice(4)}`}
+                                        width={885}
+                                        height={565}
+                                        className="w-[885px] h-[565px] aspect-[885/565] object-cover rounded-[15px]"
+                                    />
+                                </SwiperSlide>
+                            )
                         )}
                     </Swiper>
                     <div className="flex py-5 px-[25px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] overflow-y-scroll">
@@ -107,34 +105,31 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
                             centeredSlides={false}
                         >
                             {currentImgs?.[0]?.image?.map(
-                                (f: any, i: number) => {
-                                    return (
-                                        <SwiperSlide
-                                            style={{ height: 95 }}
-                                            key={i}
-                                            className="h-[95px] w-[95px] flex items-center justify-center"
-                                        >
-                                            <img
-                                                src={`${imgThumbUrl}/${String(
-                                                    f?.filename
-                                                )?.slice(4)}`}
-                                                width={95}
-                                                height={95}
-                                                className={`${
-                                                    currentImgIndex === i &&
-                                                    "border-[3px] border-solid border-[#15CF8F]"
-                                                } object-cover w-[95px] h-[95px] rounded-[10px]`}
-                                                onClick={(e) =>
-                                                    e.stopPropagation()
-                                                }
-                                                onError={(e) =>
-                                                    (e.currentTarget.src =
-                                                        "/assets/지방이.jpg")
-                                                }
-                                            />
-                                        </SwiperSlide>
-                                    );
-                                }
+                                (f: any, i: number) => (
+                                    <SwiperSlide
+                                        style={{ height: 95 }}
+                                        key={i}
+                                        className="h-[95px] w-[95px] flex items-center justify-center"
+                                    >
+                                        <img
+                                            src={`${imgThumbUrl}/${String(
+                                                f?.filename
+                                            )?.slice(4)}`}
+                                            width={95}
+                                            height={95}
+                                            className={`${
+                                                currentImgIndex === i
+                                                    ? "border-[3px] border-solid border-[#15CF8F]"
+                                                    : ""
+                                            } object-cover w-[95px] h-[95px] rounded-[10px]`}
+                                            onClick={(e) => e.stopPropagation()}
+                                            onError={(e) =>
+                                                (e.currentTarget.src =
+                                                    "/assets/지방이.jpg")
+                                            }
+                                        />
+                                    </SwiperSlide>
+                                )
                             )}
                         </Swiper>
                     </div>
@@ -145,42 +140,58 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
                             centeredSlides={true}
                             slidesPerView="auto"
                             className="overflow-y-scroll h-full w-full flex items-center"
-                            onSlideChange={() =>
-                                setCurrentDateIndex(currentDateIndex)
-                            }
+                            allowTouchMove={!isFewSlides}
+                            onSlideChange={(swiper) => {
+                                if (isFewSlides) return;
+
+                                const centerIndex = swiper.activeIndex;
+                                const targetIndex =
+                                    centerIndex + 1 < regDates.length
+                                        ? centerIndex + 1
+                                        : centerIndex;
+                                setCurrentDateIndex(targetIndex);
+                            }}
                         >
-                            {regDates?.map((d, i) => {
-                                return (
-                                    <SwiperSlide
-                                        key={i}
-                                        className="flex justify-center pt-5"
-                                        style={{
-                                            width: "190px",
-                                            height: "95px",
+                            {regDates?.map((d, i) => (
+                                <SwiperSlide
+                                    key={i}
+                                    className="flex justify-center pt-5"
+                                    style={{
+                                        width: "190px",
+                                        height: "95px",
+                                    }}
+                                >
+                                    <button
+                                        className={`flex flex-col shrink-0 items-start w-[190px] h-[95px] bg-[rgba(255,255,255,0.05)] rounded-[10px] py-[15px] px-[25px] gap-y-[14px] border-[3px] border-solid
+            ${
+                i === currentDateIndex
+                    ? "border-[#15CF8F]"
+                    : "border-[rgba(255,255,255,0.15)]"
+            }
+          `}
+                                        onClick={() => {
+                                            if (
+                                                swiperInstance &&
+                                                !isFewSlides
+                                            ) {
+                                                const safeIndex =
+                                                    i - 1 < 0 ? 0 : i - 1;
+                                                swiperInstance.slideTo(
+                                                    safeIndex
+                                                );
+                                            }
+                                            setCurrentDateIndex(i);
                                         }}
                                     >
-                                        <button
-                                            className={`flex flex-col shrink-0 items-start w-[190px] h-[95px] bg-[rgba(255,255,255,0.05)] rounded-[10px] py-[15px] px-[25px] gap-y-[14px] border-[3px] border-solid
-                                                ${
-                                                    i === currentDateIndex
-                                                        ? "border-[#15CF8F]"
-                                                        : "border-[rgba(255,255,255,0.15)]"
-                                                }
-                                                `}
-                                            onClick={() =>
-                                                setCurrentDateIndex(i)
-                                            }
-                                        >
-                                            <p className="text-[rgba(255,255,255,0.50)] text-[18px] font-bold leading-6">
-                                                촬영일
-                                            </p>
-                                            <p className="text-white text-[24px] font-bold leading-6">
-                                                {d}
-                                            </p>
-                                        </button>
-                                    </SwiperSlide>
-                                );
-                            })}
+                                        <p className="text-[rgba(255,255,255,0.50)] text-[18px] font-bold leading-6">
+                                            촬영일
+                                        </p>
+                                        <p className="text-white text-[24px] font-bold leading-6">
+                                            {d}
+                                        </p>
+                                    </button>
+                                </SwiperSlide>
+                            ))}
                         </Swiper>
                     </div>
                 </div>
@@ -188,4 +199,5 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
         </CustomModal>
     );
 };
+
 export default ModalImgs;

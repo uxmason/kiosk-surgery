@@ -4,20 +4,34 @@ import queryDB from "../../../../../../lib/db";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
-        const { userID } = Object.fromEntries(url.searchParams.entries());
-        const sql = `SELECT top 1 * FROM tsfmc_mailsystem.dbo.KIOSK_SURGERY S, tsfmc_mailsystem.dbo.KIOSK_DEVICES D
-        WHERE S.DEVICE_ID = D._id AND USER_ID = '${userID}' ORDER BY S.createdAt DESC;`;
-        const results = await queryDB(sql);
-        if (results.length > 0) {
+        const { userID, psEntry, deviceID, opCode } = Object.fromEntries(
+            url.searchParams.entries()
+        );
+        const checkSql = `SELECT * FROM tsfmc_mailsystem.dbo.KIOSK_SURGERY S, tsfmc_mailsystem.dbo.KIOSK_DEVICES D
+                        WHERE S.DEVICE_ID = D._id AND USER_ID = '${userID}' 
+                            AND S.PSENTRY = '${psEntry}' AND S.OPCODE = '${opCode}';`;
+        const checkResult = await queryDB(checkSql);
+        if (checkResult?.length === 0) {
             return NextResponse.json({
                 success: true,
-                status: results[0].STATUS,
             });
         } else {
-            return NextResponse.json({
-                success: false,
-                message: "해당 수술이 존재하지 않습니다.",
-            });
+            const sql = `SELECT * FROM tsfmc_mailsystem.dbo.KIOSK_SURGERY S, tsfmc_mailsystem.dbo.KIOSK_DEVICES D
+                        WHERE S.DEVICE_ID = D._id AND D.DEVICE_HASH = '${deviceID}' 
+                            AND USER_ID = '${userID}' AND S.PSENTRY = '${psEntry}' 
+                            AND S.OPCODE = '${opCode}';`;
+            const results = await queryDB(sql);
+            if (results.length > 0) {
+                return NextResponse.json({
+                    success: true,
+                    status: results[0].STATUS,
+                });
+            } else {
+                return NextResponse.json({
+                    success: false,
+                    message: "다른 기기에서 수술을 등록했습니다.",
+                });
+            }
         }
     } catch {
         return NextResponse.json(

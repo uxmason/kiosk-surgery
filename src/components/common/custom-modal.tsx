@@ -6,9 +6,17 @@ interface Props {
     children: ReactNode;
     top?: number;
     isComplete?: boolean;
+    btnClass?: boolean;
 }
 
-const CustomModal = ({ isOpen, onClose, children, top, isComplete }: Props) => {
+const CustomModal = ({
+    isOpen,
+    onClose,
+    children,
+    top,
+    isComplete,
+    btnClass,
+}: Props) => {
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = "hidden";
@@ -40,7 +48,11 @@ const CustomModal = ({ isOpen, onClose, children, top, isComplete }: Props) => {
                 >
                     <button
                         onClick={onClose}
-                        className="w-120 h-30 bg-[#15CF8F] rounded-[15px] text-white text-[32px] font-bold leading-8"
+                        className={`${
+                            btnClass
+                                ? "bg-[#F05579] w-60"
+                                : "bg-[#15CF8F] w-120 "
+                        } h-30 rounded-[15px] text-white text-[32px] font-bold leading-8`}
                     >
                         닫기
                     </button>

@@ -18,7 +18,7 @@ const Weights = ({ isWeights, color }: Props) => {
                 </p>
                 <div className="flex justify-between w-full pt-4 gap-x-5">
                     <div
-                        className="backdrop-blur-[20px] rounded-[5px] h-[25px]"
+                        className="rounded-[5px] h-[25px] backdrop-blur-[20px]"
                         style={{
                             width: `calc(${
                                 100 -
@@ -26,7 +26,7 @@ const Weights = ({ isWeights, color }: Props) => {
                                     limitWeight) *
                                     100
                             }% - 70px)`,
-                            backgroundColor: `rgba(${color})`,
+                            backgroundColor: `rgba(${color}, 1)`,
                         }}
                     />
                     <p className="text-white text-[32px] font-[250] leading-8">

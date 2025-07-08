@@ -6,3 +6,4 @@ export { default as Photo } from "./photo";
 export { default as Ai } from "./ai";
 export { default as InbodyGraph } from "./inbody-graph";
 export { default as ModalImgs } from "./modal-imgs";
+export { default as ModalError } from "./modal-error";

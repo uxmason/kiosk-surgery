@@ -50,13 +50,13 @@ export default function Info() {
 
                 if (opeDate && startTime) {
                     const surgeryDate = new Date(
-                        `${opeDate.slice(0, 4)}-${opeDate.slice(
+                        `${opeDate?.slice(0, 4)}-${opeDate?.slice(
                             4,
                             6
-                        )}-${opeDate.slice(6, 8)}T${startTime.slice(
+                        )}-${opeDate?.slice(6, 8)}T${startTime?.slice(
                             0,
                             2
-                        )}:${startTime.slice(2, 4)}:00`
+                        )}:${startTime?.slice(2, 4)}:00`
                     );
                     const now = new Date();
                     const diff = surgeryDate.getTime() - now.getTime();
@@ -77,12 +77,16 @@ export default function Info() {
     };
 
     // 수술의 상태 체크
-    const handleOpeStatus = async (doctorID: string) => {
+    const handleOpeStatus = async (
+        doctorID: string,
+        psEntry: string,
+        opCode: string
+    ) => {
         try {
             const { doctor } = useDoctorStore.getState();
             if (doctor.id == null) return;
             const response = await fetch(
-                `/api/kiosk-surgery/surgery/status?userID=${doctorID}`,
+                `/api/kiosk-surgery/surgery/status?userID=${doctorID}&deviceID=${deviceId}&psEntry=${psEntry}&opCode=${opCode}`,
                 { method: "GET" }
             );
             if (!response.ok) throw new Error("Network response was not ok");
@@ -138,20 +142,28 @@ export default function Info() {
 
     // 수술 상태 체크
     useEffect(() => {
-        if (!deviceId || doctor.id === "") return;
+        if (
+            !deviceId ||
+            doctor.id === "" ||
+            client?.psEntry === "" ||
+            client?.opeCode
+        )
+            return;
 
         const interval = setInterval(() => {
-            handleOpeStatus(doctor.id).then((res) => {
-                if (res.success) {
-                    if (res.status == 0) router.replace("/");
-                    if (res.status == 1) router.push("/record");
-                    if (res.status == 2) router.push("/operate");
+            handleOpeStatus(doctor?.id, client?.psEntry, client?.opeCode).then(
+                (res) => {
+                    if (res.success) {
+                        if (res.status == 0) router.replace("/");
+                        if (res.status == 1) router.push("/record");
+                        if (res.status == 2) router.push("/operate");
+                    }
                 }
-            });
+            );
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [deviceId, doctor]);
+    }, [deviceId, doctor, client]);
 
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
