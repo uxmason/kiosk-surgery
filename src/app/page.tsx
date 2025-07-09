@@ -697,12 +697,12 @@ export default function Home() {
                 {isPaired && (
                     <UpcomingTime
                         text={
-                            !isReversCount
+                            isReversCount
                                 ? `수술 예정 시각 이후 경과 시간`
                                 : `시작까지 남은 시간`
                         }
                         time={formattedTime}
-                        color={!isReversCount ? `#F9AC68` : `#15CF8F`}
+                        color={isReversCount ? `#F9AC68` : `#15CF8F`}
                     />
                 )}
                 <Process isProcess={1} />
