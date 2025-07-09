@@ -37,6 +37,7 @@ interface Props {
     isOpen: boolean;
     isOpeOpenNext: boolean;
     setTargetPsEntry: (v: string) => void;
+    setTargetOpeCode: (v: string) => void;
     setOpeOpen: (v: boolean) => void;
     dataAllOpe: DataAllOpeItem[];
     deviceId: string;
@@ -47,6 +48,7 @@ const ModalSelecOpe = ({
     isOpeOpenNext,
     setOpeOpen,
     setTargetPsEntry,
+    setTargetOpeCode,
     dataAllOpe,
     deviceId,
 }: Props) => {
@@ -411,6 +413,18 @@ const ModalSelecOpe = ({
                                                                             result
                                                                                 .client
                                                                                 .PSENTRY
+                                                                        );
+                                                                        setTargetOpeCode(
+                                                                            dataAllOpe?.[
+                                                                                hospitalIndex
+                                                                            ]
+                                                                                ?.doctor?.[
+                                                                                doctorIndex
+                                                                            ]
+                                                                                ?.surgeries[
+                                                                                index
+                                                                            ]
+                                                                                ?.수술코드
                                                                         );
                                                                         setOpeOpen(
                                                                             false

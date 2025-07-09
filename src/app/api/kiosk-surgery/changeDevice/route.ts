@@ -34,7 +34,12 @@ export async function POST(req: NextRequest) {
                         success: true,
                     });
                 } else {
-                    const updateSql = `UPDATE KIOSK_SURGERY SET STATUS=${status}, updatedAt=SYSDATETIME() WHERE DEVICE_ID = '${device_ID}' AND PSENTRY = '${psEntry}' AND OPDATE = '${today}' AND OPCODE = '${opCode}'`;
+                    let updateSql = "";
+                    if (status === 0) {
+                        updateSql = `DELETE KIOSK_SURGERY WHERE _id = ${deviceResult?.[0]?._id}`;
+                    } else {
+                        updateSql = `UPDATE KIOSK_SURGERY SET STATUS=${status}, updatedAt=SYSDATETIME() WHERE DEVICE_ID = '${device_ID}' AND PSENTRY = '${psEntry}' AND OPDATE = '${today}' AND OPCODE = '${opCode}'`;
+                    }
                     await queryDB(updateSql);
                     return NextResponse.json({
                         success: true,

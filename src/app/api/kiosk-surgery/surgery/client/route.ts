@@ -57,7 +57,7 @@ export async function GET(req: Request) {
                     AND K.OPDATE  = A.PROMDATE 
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}')
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE >= '${today}')
                     AND A.PSENTRY = '${psEntry}';
                 `;
         const results: any[] = await queryDB(sql);

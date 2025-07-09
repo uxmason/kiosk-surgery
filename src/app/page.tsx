@@ -44,6 +44,7 @@ export default function Home() {
     const [isBoostCheckStatus, setBoostCheckStatus] = useState(false);
     const [count, setCount] = useState(24 * 60 * 60);
     const [isReversCount, setReversCount] = useState(false);
+    const [targetOpeCode, setTargetOpeCode] = useState("");
     const [targetPsEntry, setTargetPsEntry] = useState("");
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
@@ -130,7 +131,9 @@ export default function Home() {
         setOnLoading(true);
         try {
             let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
-            if (targetPsEntry !== "") url += `&psEntry=${targetPsEntry}`;
+            if (targetPsEntry !== "" && targetOpeCode !== "")
+                url += `&psEntry=${targetPsEntry}&opeCode=${targetOpeCode}`;
+            if (targetDeviceId !== "") url += `&deviceId=${targetDeviceId}`;
 
             const response = await fetch(url, { method: "GET" });
 
@@ -171,6 +174,7 @@ export default function Home() {
         } catch (error) {
             console.error("Error fetching data:", error);
             setTargetPsEntry("");
+            setTargetOpeCode("");
             setOnLoading(false);
         }
     };
@@ -559,9 +563,9 @@ export default function Home() {
     // }, []);
     // console.log("device", deviceId);
     // 개발 시 사용
-    //     useEffect(() => {
-    //         setDeviceId("Apple M1 Pro2");
-    //     }, []);
+    useEffect(() => {
+        setDeviceId("Apple M1 Pro");
+    }, []);
 
     return (
         <>
@@ -664,6 +668,7 @@ export default function Home() {
                 isOpeOpenNext={isOpeOpenNext}
                 setOpeOpen={setOpeOpen}
                 setTargetPsEntry={setTargetPsEntry}
+                setTargetOpeCode={setTargetOpeCode}
                 dataAllOpe={dataAllOpe}
                 deviceId={deviceId}
             />

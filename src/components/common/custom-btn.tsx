@@ -41,7 +41,7 @@ const CustomBtn = ({
             return setIsModalComplete?.(true);
         }
         if (path) {
-            const url = `/api/kiosk-surgery/changeDevice/`;
+            const url = `/api/kiosk-surgery/changeDevice`;
             try {
                 const response = await fetch(url, {
                     method: "POST",

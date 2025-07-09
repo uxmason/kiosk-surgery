@@ -21,7 +21,6 @@ export default function Info() {
     const { deviceId } = useStore();
     const { client } = useClientStore();
     const { doctor } = useDoctorStore();
-
     const [isFirstOpen, setIsFirstOpen] = useState(true);
     const [isSecondOpen, setIsSecondOpen] = useState(false);
     const [isOpenOpeModal, setIsOpenOpeModal] = useState(false);
@@ -144,19 +143,27 @@ export default function Info() {
     useEffect(() => {
         if (
             !deviceId ||
-            doctor.id === "" ||
+            doctor?.id === "" ||
             client?.psEntry === "" ||
-            client?.opeCode
-        )
+            client?.opeCode === ""
+        ) {
             return;
+        }
 
         const interval = setInterval(() => {
-            handleOpeStatus(doctor?.id, client?.psEntry, client?.opeCode).then(
+            handleOpeStatus(doctor.id, client?.psEntry, client?.opeCode).then(
                 (res) => {
                     if (res.success) {
-                        if (res.status == 0) router.replace("/");
-                        if (res.status == 1) router.push("/record");
-                        if (res.status == 2) router.push("/operate");
+                        if (res.status === 0) router.push("/");
+                        if (res.status === 1) router.push("/record");
+                        if (res.status === 2) router.push("/operate");
+                    } else {
+                        clearInterval(interval);
+                        updateErrorMessage({
+                            deviceID: deviceId,
+                            userID: doctor?.id,
+                            message: res.message,
+                        });
                     }
                 }
             );
@@ -219,7 +226,6 @@ export default function Info() {
             }
         });
     }, [unpaired, client]);
-
     return (
         <>
             <main className="relative w-full h-full min-h-[1920px]">
