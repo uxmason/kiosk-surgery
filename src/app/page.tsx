@@ -180,10 +180,9 @@ export default function Home() {
     };
 
     const time = isReversCount ? -count : count;
-
-    const hours = Math.floor(time / 3600);
-    const minutes = Math.floor((time % 3600) / 60);
-    const seconds = time % 60;
+    const hours = Math.abs(Math.floor(time / 3600));
+    const minutes = Math.abs(Math.floor((time % 3600) / 60));
+    const seconds = Math.abs(time % 60);
 
     const formattedTime = `${String(hours).padStart(2, "0")}:${String(
         minutes
@@ -564,7 +563,7 @@ export default function Home() {
     // console.log("device", deviceId);
     // 개발 시 사용
     useEffect(() => {
-        setDeviceId("Apple M1 Pro");
+        setDeviceId("Apple M1 Pro2");
     }, []);
 
     return (
@@ -652,12 +651,12 @@ export default function Home() {
                 {isPaired && (
                     <UpcomingTime
                         text={
-                            isReversCount
+                            !isReversCount
                                 ? `수술 예정 시각 이후 경과 시간`
-                                : `수술 시작까지 남은 시간`
+                                : `시작까지 남은 시간`
                         }
                         time={formattedTime}
-                        color={isReversCount ? `#F9AC68` : `#15CF8F`}
+                        color={!isReversCount ? `#F9AC68` : `#15CF8F`}
                     />
                 )}
                 <Process isProcess={1} />

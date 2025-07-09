@@ -5,7 +5,7 @@ import { getCurrentTimeHHMM, getFormattedDate } from "@/function";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
-        const { doctorId, psEntry } = Object.fromEntries(
+        const { doctorId, psEntry, opeCode } = Object.fromEntries(
             url.searchParams.entries()
         );
         const today = getFormattedDate();
@@ -57,8 +57,8 @@ export async function GET(req: Request) {
                     AND K.OPDATE  = A.PROMDATE 
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE >= '${today}')
-                    AND A.PSENTRY = '${psEntry}';
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME >= '${nowTime}') OR A.PROMDATE > '${today}')
+                    AND A.PSENTRY = '${psEntry}' AND A.PACKAGE = '${opeCode}';
                 `;
         const results: any[] = await queryDB(sql);
         return NextResponse.json({ success: true, list: results });

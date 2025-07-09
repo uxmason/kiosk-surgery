@@ -28,47 +28,23 @@ export default function Info() {
     const [unpaired, setUnpaired] = useState(false);
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
     const [elapsedTimeMs, setElapsedTimeMs] = useState(0);
-    const [isReverseCount, setReverseCount] = useState(false);
-
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     // 수술 고객 정보 불러오기
-    const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
+    const onHandleSelectOpe = async (
+        doctorId: string,
+        psEntry: string,
+        opeCode: string
+    ) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
+                `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}&opeCode=${opeCode}`,
                 { method: "GET" }
             );
 
             if (!response.ok) throw new Error("Network response was not ok");
 
             const result = await response.json();
-            if (result?.success) {
-                const opeDate = result?.list?.[0]?.["수술일"];
-                const startTime = result?.list?.[0]?.["시작시간"];
-
-                if (opeDate && startTime) {
-                    const surgeryDate = new Date(
-                        `${opeDate?.slice(0, 4)}-${opeDate?.slice(
-                            4,
-                            6
-                        )}-${opeDate?.slice(6, 8)}T${startTime?.slice(
-                            0,
-                            2
-                        )}:${startTime?.slice(2, 4)}:00`
-                    );
-                    const now = new Date();
-                    const diff = surgeryDate.getTime() - now.getTime();
-
-                    if (diff > 0) {
-                        setReverseCount(false);
-                        setElapsedTimeMs(diff);
-                    } else {
-                        setReverseCount(true);
-                        setElapsedTimeMs(-diff);
-                    }
-                }
-            }
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -105,7 +81,7 @@ export default function Info() {
         }, 10);
 
         return () => clearInterval(intervalRef.current!);
-    }, [isReverseCount]);
+    }, []);
 
     // 시간 포맷 처리
     const absMs = Math.max(elapsedTimeMs, 0);
@@ -193,20 +169,22 @@ export default function Info() {
 
     // 수술 고객 정보 담기
     useEffect(() => {
-        if (unpaired || !client || !doctor) return;
+        if (unpaired || client?.psEntry === "" || doctor?.id === "") return;
 
-        onHandleSelectOpe(doctor?.id, client?.psEntry).then((res) => {
-            if (res?.success) {
-                setIsOpeInfo(res.list);
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
+        onHandleSelectOpe(doctor?.id, client?.psEntry, client?.opeCode).then(
+            (res) => {
+                if (res?.success) {
+                    setIsOpeInfo(res.list);
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
             }
-        });
+        );
     }, [unpaired, client, doctor]);
 
     // 고객 사진 정보 불러오기
@@ -255,11 +233,7 @@ export default function Info() {
                 </div>
                 <UpcomingTime
                     isOther
-                    text={
-                        isReverseCount
-                            ? "수술 경과 시간"
-                            : "수술 예정까지 남은 시간"
-                    }
+                    text="수술 경과 시간"
                     time={formattedTime}
                     color="#ED6B5B"
                 />
