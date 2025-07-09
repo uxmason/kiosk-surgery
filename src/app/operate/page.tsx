@@ -56,10 +56,14 @@ export default function Info() {
     };
 
     // 수술 고객 정보
-    const onHandleSelectOpe = async (doctorId: string, psEntry: string) => {
+    const onHandleSelectOpe = async (
+        doctorId: string,
+        psEntry: string,
+        opeCode: string
+    ) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}`,
+                `/api/kiosk-surgery/surgery/client?doctorId=${doctorId}&psEntry=${psEntry}&opeCode=${opeCode}`,
                 {
                     method: "GET",
                 }
@@ -191,19 +195,21 @@ export default function Info() {
 
     // 수술 고객 정보 담기
     useEffect(() => {
-        if (unpaired || !client || !doctor) return;
-        onHandleSelectOpe(doctor?.id, client?.psEntry).then((res) => {
-            if (res.success) {
-                setIsOpeInfo(res.list);
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
+        if (unpaired || client?.psEntry === "" || doctor?.id === "") return;
+        onHandleSelectOpe(doctor?.id, client?.psEntry, client?.opeCode).then(
+            (res) => {
+                if (res.success) {
+                    setIsOpeInfo(res.list);
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
             }
-        });
+        );
     }, [unpaired, client, doctor]);
 
     // 인시젼 리스트 담기
