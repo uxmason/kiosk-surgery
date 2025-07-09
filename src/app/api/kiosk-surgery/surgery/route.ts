@@ -6,7 +6,7 @@ import { OpeClientType } from "@/type";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
-        const { doctorId, psEntry, deviceId } = Object.fromEntries(
+        const { doctorId, psEntry, deviceId, opeCode } = Object.fromEntries(
             url.searchParams.entries()
         );
         const today = getFormattedDate();
@@ -16,7 +16,9 @@ export async function GET(req: Request) {
                 ? `AND (D.DEVICE_HASH IS NULL OR D.DEVICE_HASH = '${deviceId}')`
                 : "";
         const addWhere =
-            typeof psEntry === "string" ? `AND A.PSENTRY='${psEntry}'` : ``;
+            typeof psEntry === "string"
+                ? `AND A.PSENTRY = '${psEntry}' AND A.PACKAGE = '${opeCode}'`
+                : "";
         const sql = `SELECT top 1
                     A.STARTBRAN AS 지점,
                     A.PROMDATE  AS 수술일,
@@ -67,9 +69,9 @@ export async function GET(req: Request) {
                     ON K.DEVICE_ID = D.[_id]
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}')
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME <= '${nowTime}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE >='${today}')
                     ${addWhere} ${addDeviceIdWhere}
-                ORDER BY A.PROMDATE, A.PROMTIME`;
+                ORDER BY A.PROMDATE, A.PROMTIME;`;
         const results: OpeClientType[] = await queryDB(sql);
         if (results?.length !== 0) {
             return NextResponse.json({
