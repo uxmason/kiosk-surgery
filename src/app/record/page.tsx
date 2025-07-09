@@ -215,6 +215,7 @@ export default function Info() {
                     imgs={imgs}
                 />
                 <SecondImgs
+                    isFirstOpen={isFirstOpen}
                     isSecondOpen={isSecondOpen}
                     setIsSecondOpen={setIsSecondOpen}
                     imgs={imgs}

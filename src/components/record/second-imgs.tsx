@@ -7,11 +7,17 @@ import { PhotsArrType } from "@/type";
 import { imgOriginalUrl, imgThumbUrl } from "@/variables";
 
 interface Props {
+    isFirstOpen: boolean;
     isSecondOpen: boolean;
     setIsSecondOpen: (v: boolean) => void;
     imgs: PhotsArrType[];
 }
-const SecondImgs = ({ isSecondOpen, setIsSecondOpen, imgs }: Props) => {
+const SecondImgs = ({
+    isFirstOpen,
+    isSecondOpen,
+    setIsSecondOpen,
+    imgs,
+}: Props) => {
     const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>(
         null
     );
@@ -91,7 +97,7 @@ const SecondImgs = ({ isSecondOpen, setIsSecondOpen, imgs }: Props) => {
                                 })}
                             </Swiper>
                             <div className="flex w-full">
-                                {isSecondOpen && (
+                                {isSecondOpen && isFirstOpen && (
                                     <button
                                         className="flex justify-center items-center bg-[rgba(58,62,89,0.50)] w-full max-w-[135px] h-[135px] rounded-[15px] mr-[23px]"
                                         onClick={() => setIsSecondOpen(false)}
