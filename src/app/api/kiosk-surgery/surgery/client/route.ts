@@ -60,7 +60,7 @@ export async function GET(req: Request) {
                     ON K.DEVICE_ID = D.[_id]
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND ((A.PROMDATE = '${today}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}')
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME >= '${nowTime}') OR A.PROMDATE > '${today}')
                     AND A.PSENTRY = '${psEntry}' AND A.PACKAGE = '${opeCode}';
                 `;
         const results: any[] = await queryDB(sql);

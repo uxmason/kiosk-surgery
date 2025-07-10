@@ -70,9 +70,10 @@ export async function GET(req: Request) {
                     ON K.DEVICE_ID = D.[_id]
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-                    AND ((A.PROMDATE = '${today}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}')
+                    AND ((A.PROMDATE = '${today}' AND A.PROMTIME >= '${nowTime}') OR A.PROMDATE > '${today}')
                     ${addWhere} ${addDeviceIdWhere}
                 ORDER BY A.PROMDATE, A.PROMTIME;`;
+        console.error(sql);
         const results: OpeClientType[] = await queryDB(sql);
         if (results?.length !== 0) {
             return NextResponse.json({
