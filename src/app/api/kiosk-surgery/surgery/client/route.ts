@@ -55,6 +55,9 @@ export async function GET(req: Request) {
                 LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_SURGERY K
                     ON K.PSENTRY  = A.PSENTRY 
                     AND K.OPDATE  = A.PROMDATE 
+                    AND K.STATUS IS NULL AND K.STATUS < 3
+                LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_DEVICES D
+                    ON K.DEVICE_ID = D.[_id]
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
                     AND ((A.PROMDATE = '${today}' AND A.OPETIME >= '${nowTime}') OR A.PROMDATE > '${today}')

@@ -65,6 +65,7 @@ export async function GET(req: Request) {
                     ON K.PSENTRY  = A.PSENTRY 
                     AND K.OPDATE  = A.PROMDATE
                     AND A.PACKAGE = K.OPCODE 
+                    AND K.STATUS IS NULL AND K.STATUS < 3
                 LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_DEVICES D
                     ON K.DEVICE_ID = D.[_id]
                 WHERE A.PROMDOCTOR = '${doctorId}'

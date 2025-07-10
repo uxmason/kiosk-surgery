@@ -609,7 +609,7 @@ export default function Home() {
     // console.log("device", deviceId);
     // 개발 시 사용
     // useEffect(() => {
-    //     setDeviceId("Apple M1 Pro2");
+    //     setDeviceId("Apple M1 Pro");
     // }, []);
 
     return (
