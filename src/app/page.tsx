@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { CustomBtn, Footer, Process, UpcomingTime } from "@/components/common";
-import { Ai, Client, Inbody, Info, ModalImgs, Photo } from "@/components/main";
+import {
+    Ai,
+    Client,
+    Inbody,
+    Info,
+    ModalError,
+    ModalImgs,
+    Photo,
+} from "@/components/main";
 import { ModalAI } from "@/components/main/modal-ai";
 import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
@@ -32,6 +40,7 @@ export default function Home() {
     const [isInbodyOpen, setInbodyOpen] = useState(false);
     const [isModalImgsOpen, setModalImgsOpen] = useState(false);
     const [isModalAIOpen, setModalAIOpen] = useState(false);
+    const [isErrorOpen, setIsErrorOpen] = useState(false);
     const [imgs, setImgs] = useState<ImgsType[]>([]);
     const [dataOpeInfo, setOpeInfo] = useState<OpeClientType[]>([]);
     const [dataFepa] = useState([]);
@@ -46,6 +55,7 @@ export default function Home() {
     const [isReversCount, setReversCount] = useState(false);
     const [targetOpeCode, setTargetOpeCode] = useState("");
     const [targetPsEntry, setTargetPsEntry] = useState("");
+    const [targetDeviceId, setTargetDeviceId] = useState("");
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
     const [isCalories, setIsCalories] = useState<CaloriesType[]>([]);
@@ -245,12 +255,18 @@ export default function Home() {
     };
 
     // 수술의 상태 체크
-    const handleOpeStatus = async (doctorID: string) => {
+    const handleOpeStatus = async (
+        doctorID: string,
+        psEntry: string,
+        opCode: string
+    ) => {
         try {
             const { doctor } = useDoctorStore.getState();
-            if (doctor.id == null) return;
+            if (doctor.id == "") {
+                return;
+            }
             const response = await fetch(
-                `/api/kiosk-surgery/surgery/status?userID=${doctorID}`,
+                `/api/kiosk-surgery/surgery/status?userID=${doctorID}&deviceID=${deviceId}&psEntry=${psEntry}&opCode=${opCode}`,
                 { method: "GET" }
             );
             if (!response.ok) throw new Error("Network response was not ok");
@@ -279,24 +295,37 @@ export default function Home() {
 
     // 해당 수술의 상태 체크
     useEffect(() => {
-        if (!deviceId || doctor.id === "") return;
+        if (
+            !deviceId ||
+            doctor?.id === "" ||
+            client?.psEntry === "" ||
+            client?.opeCode === ""
+        ) {
+            return;
+        }
+
         const interval = setInterval(() => {
-            handleOpeStatus(doctor.id).then((res) => {
-                if (res.success) {
-                    if (res.status == 1) router.push("/record");
-                    if (res.status == 2) router.push("/operate");
-                } else {
-                    // updateErrorMessage({
-                    //     deviceID: deviceId,
-                    //     userID: doctor?.id,
-                    //     message: res.message,
-                    // });
+            handleOpeStatus(doctor.id, client?.psEntry, client?.opeCode).then(
+                (res) => {
+                    if (res.success) {
+                        if (res.status == 1) router.push("/record");
+                        if (res.status == 2) router.push("/operate");
+                    } else {
+                        clearInterval(interval);
+                        setIsErrorOpen(true);
+                        setTargetDeviceId(deviceId);
+                        updateErrorMessage({
+                            deviceID: deviceId,
+                            userID: doctor?.id,
+                            message: res.message,
+                        });
+                    }
                 }
-            });
+            );
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [deviceId, doctor]);
+    }, [deviceId, doctor, client]);
 
     // 의사 정보
     useEffect(() => {
@@ -329,7 +358,9 @@ export default function Home() {
 
     // 해당 기기의 고유번호의 유효성 체크
     useEffect(() => {
-        if (!deviceId) return;
+        if (!deviceId) {
+            return;
+        }
 
         const interval = setInterval(() => {
             handleSelectDoctor().then((res) => {
@@ -351,7 +382,9 @@ export default function Home() {
 
     // 수술 정보
     useEffect(() => {
-        if (!doctor.id) return;
+        if (typeof doctor.id === "undefined" || doctor.id === "") {
+            return;
+        }
         setOnLoading(true);
         onHandleSelectOpe().then((res) => {
             if (res.success) {
@@ -366,7 +399,7 @@ export default function Home() {
             }
             setOnLoading(false);
         });
-    }, [doctor]);
+    }, [doctor, targetDeviceId]);
 
     // 타이머
     useEffect(() => {
@@ -404,7 +437,9 @@ export default function Home() {
 
     // 고객 정보
     useEffect(() => {
-        if (!dataOpeInfo) return;
+        if (!dataOpeInfo) {
+            return;
+        }
         setClient({
             psEntry: dataOpeInfo?.[0]?.고객번호,
             branch: dataOpeInfo?.[0]?.지점,
@@ -417,114 +452,125 @@ export default function Home() {
 
     // 고객의 이미지
     useEffect(() => {
-        if (!client?.psEntry) return;
-        handleSelectImgLst(client?.psEntry).then((res) => {
-            setImgs([]);
-            if (res.success) {
-                setImgs(res.list);
-                if (res.list.length > 0) {
-                    setLastRegDate(res.list[res.list.length - 1].regdate);
+        if (typeof client?.psEntry === "undefined" || client?.psEntry === "") {
+            return;
+        } else {
+            handleSelectImgLst(client?.psEntry).then((res) => {
+                setImgs([]);
+                if (res && res.success) {
+                    setImgs(res.list);
+                    if (res.list.length > 0) {
+                        setLastRegDate(res.list[res.list.length - 1].regdate);
+                    }
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
                 }
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
+            });
+        }
     }, [client]);
 
     // 고객의 인바디
     useEffect(() => {
-        if (!client.psEntry) return;
-        handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
-            if (res.success) {
-                const inbody = res?.inbody;
-                const cutInbody = inbody?.slice(-4);
-                const inbodyLength = inbody?.length;
-                setIsWeights({
-                    BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
-                    WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
-                    MUST_WEIGHTL: inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
-                });
-                setWeightArr(
-                    cutInbody?.map((v: never) => {
-                        return {
-                            date: v?.["PRODATE"],
-                            weight: v?.["BD_WEIGHT"],
-                        };
-                    })
-                );
-                setIsCalories(
-                    cutInbody?.map((c: never) => {
-                        return {
-                            date: c?.["PRODATE"],
-                            blBaseCalory: c?.["BL_BASECALORY"],
-                            wcBasic: c?.["WC_BASIC"],
-                        };
-                    })
-                );
-                setIsBmiFat(
-                    cutInbody?.map((b: never) => {
-                        return {
-                            date: b?.["PRODATE"],
-                            obstFatH: b?.["OBST_FATH"],
-                            obstFatL: b?.["OBST_FATL"],
-                            obFat: b?.["OB_FAT"],
-                        };
-                    })
-                );
-                setIsBmi(
-                    cutInbody?.map((m: never) => {
-                        return {
-                            date: m?.["PRODATE"],
-                            obstBmiH: m?.["OBST_BMIH"],
-                            obstBmiL: m?.["OBST_BMIL"],
-                            obBmi: m?.["OB_BMI"],
-                        };
-                    })
-                );
-                setIsMineral(
-                    cutInbody?.map((r: never) => {
-                        return {
-                            date: r?.["PRODATE"],
-                            bdstMineralH: r?.["BDST_MINERALH"],
-                            bdstMineralL: r?.["BDST_MINERALL"],
-                            bdMineral: r?.["BD_MINERAL"],
-                        };
-                    })
-                );
-                setIsProtein(
-                    cutInbody?.map((p: never) => {
-                        return {
-                            date: p?.["PRODATE"],
-                            bdstProteinH: p?.["BDST_PROTEINH"],
-                            bdstProteinL: p?.["BDST_PROTEINL"],
-                            bdProtein: p?.["BD_PROTEIN"],
-                        };
-                    })
-                );
-                setIsWater(
-                    cutInbody?.map((w: never) => {
-                        return {
-                            date: w?.["PRODATE"],
-                            bdstWaterH: w?.["BDST_WATERH"],
-                            bdstWaterL: w?.["BDST_WATERL"],
-                            bdWater: w?.["BD_WATER"],
-                        };
-                    })
-                );
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
+        if (
+            typeof client?.psEntry === "undefined" ||
+            client?.psEntry === "" ||
+            client?.part === ""
+        ) {
+            return;
+        } else {
+            handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
+                if (res?.success) {
+                    const inbody = res?.inbody;
+                    const cutInbody = inbody?.slice(-4);
+                    const inbodyLength = inbody?.length;
+                    setIsWeights({
+                        BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
+                        WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
+                        MUST_WEIGHTL:
+                            inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
+                    });
+                    setWeightArr(
+                        cutInbody?.map((v: never) => {
+                            return {
+                                date: v?.["PRODATE"],
+                                weight: v?.["BD_WEIGHT"],
+                            };
+                        })
+                    );
+                    setIsCalories(
+                        cutInbody?.map((c: never) => {
+                            return {
+                                date: c?.["PRODATE"],
+                                blBaseCalory: c?.["BL_BASECALORY"],
+                                wcBasic: c?.["WC_BASIC"],
+                            };
+                        })
+                    );
+                    setIsBmiFat(
+                        cutInbody?.map((b: never) => {
+                            return {
+                                date: b?.["PRODATE"],
+                                obstFatH: b?.["OBST_FATH"],
+                                obstFatL: b?.["OBST_FATL"],
+                                obFat: b?.["OB_FAT"],
+                            };
+                        })
+                    );
+                    setIsBmi(
+                        cutInbody?.map((m: never) => {
+                            return {
+                                date: m?.["PRODATE"],
+                                obstBmiH: m?.["OBST_BMIH"],
+                                obstBmiL: m?.["OBST_BMIL"],
+                                obBmi: m?.["OB_BMI"],
+                            };
+                        })
+                    );
+                    setIsMineral(
+                        cutInbody?.map((r: never) => {
+                            return {
+                                date: r?.["PRODATE"],
+                                bdstMineralH: r?.["BDST_MINERALH"],
+                                bdstMineralL: r?.["BDST_MINERALL"],
+                                bdMineral: r?.["BD_MINERAL"],
+                            };
+                        })
+                    );
+                    setIsProtein(
+                        cutInbody?.map((p: never) => {
+                            return {
+                                date: p?.["PRODATE"],
+                                bdstProteinH: p?.["BDST_PROTEINH"],
+                                bdstProteinL: p?.["BDST_PROTEINL"],
+                                bdProtein: p?.["BD_PROTEIN"],
+                            };
+                        })
+                    );
+                    setIsWater(
+                        cutInbody?.map((w: never) => {
+                            return {
+                                date: w?.["PRODATE"],
+                                bdstWaterH: w?.["BDST_WATERH"],
+                                bdstWaterL: w?.["BDST_WATERL"],
+                                bdWater: w?.["BD_WATER"],
+                            };
+                        })
+                    );
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }
     }, [client]);
 
     //     기기 고유 번호
@@ -691,6 +737,10 @@ export default function Home() {
             <ModalAI
                 isModalAIOpen={isModalAIOpen && isPaired}
                 setModalAIOpen={setModalAIOpen}
+            />
+            <ModalError
+                isErrorOpen={isErrorOpen}
+                setIsErrorOpen={setIsErrorOpen}
             />
             {isOnLoading ? (
                 <div className="B-00">
