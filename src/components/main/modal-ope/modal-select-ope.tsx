@@ -340,8 +340,7 @@ const ModalSelecOpe = ({
                                                     </p>
                                                 </div>
                                                 {Number(currentTimeHHMM) >=
-                                                    Number(item?.종료시간) &&
-                                                item?.STATUS !== 3 ? (
+                                                Number(item?.종료시간) ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#fff2] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >

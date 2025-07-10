@@ -207,3 +207,7 @@ export type WaterType = {
     bdstWaterL: number | null | undefined;
     bdWater: number | null | undefined;
 };
+export type AnesthesiaType = {
+    riskLevel: number;
+    warningLevel: "DANGER" | "WARNING" | "NORMAL";
+};

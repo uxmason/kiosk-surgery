@@ -48,26 +48,33 @@ const GraphAi = ({ children, aiType }: Props) => {
     };
 
     useEffect(() => {
-        if (!client?.psEntry) return;
-        const age = Number(handleBirthToAge(client?.licence));
-        const sex =
-            client?.licence?.slice(6, 7) === "2" ||
-            client?.licence?.slice(6, 7) === "4"
-                ? "F"
-                : "M";
-        onHandleSelectFepa(client?.psEntry, age, sex)?.then((res) => {
-            if (res?.success) {
-                setIsLimitFatParts(res?.limitFatPart);
-                setIsFatList(res?.fatList);
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
+        if (
+            typeof client?.psEntry === "undefined" ||
+            client?.psEntry === "" ||
+            client?.opeCode === ""
+        ) {
+            return;
+        } else {
+            const age = Number(handleBirthToAge(client?.licence));
+            const sex =
+                client?.licence?.slice(6, 7) === "2" ||
+                client?.licence?.slice(6, 7) === "4"
+                    ? "F"
+                    : "M";
+            onHandleSelectFepa(client?.psEntry, age, sex)?.then((res) => {
+                if (res?.success) {
+                    setIsLimitFatParts(res?.limitFatPart);
+                    setIsFatList(res?.fatList);
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }
     }, [client, aiType]);
 
     return (

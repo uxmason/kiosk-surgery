@@ -27,8 +27,9 @@ import {
     MineralType,
     ProteinType,
     WaterType,
+    AnesthesiaType,
 } from "@/type";
-import { updateErrorMessage } from "@/function";
+import { handleBirthToAge, updateErrorMessage } from "@/function";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -43,7 +44,6 @@ export default function Home() {
     const [isErrorOpen, setIsErrorOpen] = useState(false);
     const [imgs, setImgs] = useState<ImgsType[]>([]);
     const [dataOpeInfo, setOpeInfo] = useState<OpeClientType[]>([]);
-    const [dataFepa] = useState([]);
     const [dataAllOpe, setAllOpe] = useState([]);
     const { deviceId, setDeviceId } = useStore();
     const { client, setClient } = useClientStore();
@@ -56,6 +56,7 @@ export default function Home() {
     const [targetOpeCode, setTargetOpeCode] = useState("");
     const [targetPsEntry, setTargetPsEntry] = useState("");
     const [targetDeviceId, setTargetDeviceId] = useState("");
+    const [isLimitFatPart, setIsLimitFatPart] = useState(0);
     const [isWeights, setIsWeights] = useState<WeightsType>();
     const [weightArr, setWeightArr] = useState<WeightChartType[]>([]);
     const [isCalories, setIsCalories] = useState<CaloriesType[]>([]);
@@ -64,6 +65,7 @@ export default function Home() {
     const [isMineral, setIsMineral] = useState<MineralType[]>([]);
     const [isProtein, setIsProtein] = useState<ProteinType[]>([]);
     const [isWater, setIsWater] = useState<WaterType[]>([]);
+    const [isAnesthesia, setIsAnesthesia] = useState<AnesthesiaType[]>([]);
 
     /* ── 기기 ID를 단 한 번만 설정 ─────────────────────── */
     useEffect(() => {
@@ -219,6 +221,31 @@ export default function Home() {
         }
     };
 
+    // 고객 마취 안전 정보 불러오기
+    const handleSelectAnesthesiaList = async (
+        psEntry: string,
+        opeCode: string,
+        opeDate: string
+    ) => {
+        try {
+            const response = await fetch(
+                `/api/kiosk-surgery/anesthesia/safety?psEntry=${psEntry}&opeCode=${opeCode}&opeDate=${opeDate}`,
+                {
+                    method: "GET",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
     // 고객 사진 정보 불러오기
     const handleSelectImgLst = async (psEntry: string) => {
         try {
@@ -270,6 +297,29 @@ export default function Home() {
                 { method: "GET" }
             );
             if (!response.ok) throw new Error("Network response was not ok");
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // 지방 추출 예측
+    const onHandleSelectFepa = async (
+        psEntry: string,
+        age: number,
+        sex: string
+    ) => {
+        try {
+            const url = `/api/kiosk-surgery/fepa?doctorId=${doctor?.id}&psEntry=${psEntry}&age=${age}&sex=${sex}`;
+            const response = await fetch(url, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
             const result = await response.json();
             return result;
         } catch (error) {
@@ -447,6 +497,7 @@ export default function Home() {
             licence: dataOpeInfo?.[0]?.주민번호,
             part: dataOpeInfo?.[0]?.수술부위,
             opeCode: dataOpeInfo?.[0]?.수술코드,
+            opeDate: dataOpeInfo?.[0]?.수술일,
         });
     }, [dataOpeInfo]);
 
@@ -573,6 +624,77 @@ export default function Home() {
         }
     }, [client]);
 
+    // 고객의 마취 안전
+    useEffect(() => {
+        if (
+            typeof client?.psEntry === "undefined" ||
+            client?.psEntry === "" ||
+            client?.opeCode === "" ||
+            client?.opeDate === ""
+        ) {
+            return;
+        } else {
+            handleSelectAnesthesiaList(
+                client?.psEntry,
+                client?.opeCode,
+                client?.opeDate
+            )?.then((res) => {
+                if (res && res.success) {
+                    const data = res?.anesthesia;
+                    setIsAnesthesia(
+                        data?.map((a: never) => {
+                            return {
+                                riskLevel: a?.["PROBA_1"],
+                                warningLevel: a?.["WARNING_LEVEL"],
+                            };
+                        })
+                    );
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }
+    }, [client]);
+
+    // 지방 예측 추출
+    useEffect(() => {
+        if (
+            typeof client?.psEntry === "undefined" ||
+            client?.psEntry === "" ||
+            client?.opeCode === ""
+        ) {
+            return;
+        } else {
+            const age = Number(handleBirthToAge(client?.licence));
+            const sex =
+                client?.licence?.slice(6, 7) === "2" ||
+                client?.licence?.slice(6, 7) === "4"
+                    ? "F"
+                    : "M";
+            onHandleSelectFepa(client?.psEntry, age, sex)?.then((res) => {
+                if (res?.success) {
+                    const limitFatParts = res?.fatList;
+                    const limitFatPart = limitFatParts?.find(
+                        (v: never) => v?.["메인부위명"] === client?.part
+                    )?.["평균예측지방량"];
+                    setIsLimitFatPart(limitFatPart);
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }
+    }, [client, deviceId, doctor]);
+
     //     기기 고유 번호
     //     useEffect(() => {
     //         setDeviceId(fingerprint);
@@ -608,9 +730,9 @@ export default function Home() {
     // }, []);
     // console.log("device", deviceId);
     // 개발 시 사용
-    // useEffect(() => {
-    //     setDeviceId("Apple M1 Pro");
-    // }, []);
+    useEffect(() => {
+        setDeviceId("Apple M1 Pro");
+    }, []);
 
     return (
         <>
@@ -666,7 +788,8 @@ export default function Home() {
                         <Ai
                             isPaired={isPaired}
                             setModalAIOpen={setModalAIOpen}
-                            dataFepa={dataFepa}
+                            isAnesthesia={isAnesthesia}
+                            isLimitFatPart={isLimitFatPart}
                         />
                         <Inbody
                             isPaired={isPaired}
@@ -737,6 +860,7 @@ export default function Home() {
             <ModalAI
                 isModalAIOpen={isModalAIOpen && isPaired}
                 setModalAIOpen={setModalAIOpen}
+                isAnesthesia={isAnesthesia}
             />
             <ModalError
                 isErrorOpen={isErrorOpen}

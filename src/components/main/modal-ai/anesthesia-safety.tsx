@@ -1,6 +1,50 @@
-const AnesthesiaSafety = () => {
+"use client";
+import { AnesthesiaType } from "@/type";
+
+interface Props {
+    isAnesthesia: AnesthesiaType[];
+}
+
+const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
+    const riskLevel = 37;
+    const warningLevel = isAnesthesia?.[0]?.warningLevel || "NORMAL";
+    // const riskLevel = isAnesthesia?.[0]?.riskLevel ?? 0;
+
+    // 각 구간 정의
+    const zones = {
+        NORMAL: { min: 0, max: 37 },
+        WARNING: { min: 38, max: 93 },
+        DANGER: { min: 94, max: 100 },
+    };
+    // 현재 구간 및 위치 계산
+    let pointPosition = 0;
+
+    if (warningLevel === "DANGER") {
+        const percent =
+            (riskLevel - zones.DANGER.min) /
+            (zones.DANGER.max - zones.DANGER.min);
+        pointPosition = percent * 130;
+    } else if (warningLevel === "WARNING") {
+        const percent =
+            (riskLevel - zones.WARNING.min) /
+            (zones.WARNING.max - zones.WARNING.min);
+        pointPosition = percent * 130;
+    } else {
+        const percent =
+            (riskLevel - zones.NORMAL.min) /
+            (zones.NORMAL.max - zones.NORMAL.min);
+        pointPosition = percent * 130;
+    }
+
+    const levels = [
+        { label: "위험", value: "DANGER", color: "#ED6B5B" },
+        { label: "경고", value: "WARNING", color: "#F9AC68" },
+        { label: "안전", value: "NORMAL", color: "#15CF8F" },
+    ];
+
     return (
         <div className="flex justify-between w-full h-[135px] my-5 bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] pt-[26px] pb-[25px] px-[35px] rounded-[15px]">
+            {/* 제목 */}
             <div className="w-50">
                 <p className="text-white text-[24px] font-bold leading-[42px]">
                     마취 안전
@@ -9,37 +53,76 @@ const AnesthesiaSafety = () => {
                     응급 / 긴급 확률
                 </p>
             </div>
+
+            {/* 위험도 바 */}
             <div className="flex items-center justify-around w-[calc(100%-340px)]">
-                <div className="flex flex-col gap-y-[6px]">
-                    <p className="text-[rgba(255,255,255,0.30)] text-[16px] text-center font-medium leading-normal">
-                        위험
-                    </p>
-                    <div className="relative w-[130px] h-5 bg-[rgba(255,255,255,0.20)] rounded-[10px] backdrop-blur-[20px]"></div>
-                </div>
-                <div className="flex flex-col gap-y-[6px]">
-                    <p className="text-[rgba(255,255,255,0.30)] text-[16px] text-center font-medium leading-normal">
-                        경고
-                    </p>
-                    <div className="relative w-[130px] h-5 bg-[rgba(255,255,255,0.20)] rounded-[10px] backdrop-blur-[20px]"></div>
-                </div>
-                <div className="flex flex-col gap-y-[6px]">
-                    <p className="text-[#15CF8F] text-[16px] text-center font-medium leading-normal">
-                        안전
-                    </p>
-                    <div className="relative w-[130px] h-5 bg-[#15CF8F] rounded-[10px] backdrop-blur-[20px]">
-                        <div className="absolute top-1/2 -translate-y-1/2 w-7 h-7 bg-[#15CF8F] border-[4px] border-white rounded-full"></div>
-                    </div>
-                </div>
+                {levels.map(({ label, value, color }) => {
+                    const isActive = warningLevel === value;
+                    return (
+                        <div key={value} className="flex flex-col gap-y-[6px]">
+                            <p
+                                style={{
+                                    color: isActive
+                                        ? color
+                                        : "rgba(255,255,255,0.30)",
+                                }}
+                                className="text-[16px] text-center font-medium leading-normal"
+                            >
+                                {label}
+                            </p>
+                            <div
+                                className="relative w-[130px] h-5 rounded-[10px] backdrop-blur-[20px]"
+                                style={{
+                                    backgroundColor: isActive
+                                        ? color
+                                        : "rgba(255,255,255,0.30)",
+                                }}
+                            >
+                                {isActive && (
+                                    <div
+                                        className="absolute top-1/2 w-7 h-7 border-[4px] border-white rounded-full"
+                                        style={{
+                                            backgroundColor: color,
+                                            right: `${pointPosition}%`,
+                                            transform: "translate(-50%, -50%)",
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
+
+            {/* 수치 표시 */}
             <div className="flex justify-end items-baseline pt-[14px] w-[140px]">
-                <p className="text-[#15CF8F] italic text-[40px] font-light leading-[44px]">
-                    75.7
+                <p
+                    className={`italic text-[40px] font-light leading-[44px] ${
+                        warningLevel === "DANGER"
+                            ? "text-[#ED6B5B]"
+                            : warningLevel === "WARNING"
+                            ? "text-[#F9AC68]"
+                            : "text-[#15CF8F]"
+                    }`}
+                >
+                    {riskLevel}
                 </p>
-                <p className="text-[#15CF8F] font-[20px] italic leading-[44px]">
-                    %
+                <p
+                    className={`font-[20px] italic leading-[44px] ${
+                        riskLevel > 0
+                            ? warningLevel === "DANGER"
+                                ? "text-[#ED6B5B]"
+                                : warningLevel === "WARNING"
+                                ? "text-[#F9AC68]"
+                                : "text-[#15CF8F]"
+                            : "text-[rgba(255,255,255,0.30)] pt-4"
+                    }`}
+                >
+                    {riskLevel > 0 ? "%" : "데이터 없음"}
                 </p>
             </div>
         </div>
     );
 };
+
 export default AnesthesiaSafety;
