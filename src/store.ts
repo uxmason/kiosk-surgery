@@ -17,6 +17,7 @@ interface Client {
     licence: string;
     part: string;
     opeCode: string;
+    opeDate: string;
 }
 
 interface ClientStore {
@@ -33,6 +34,7 @@ export const useClientStore = create<ClientStore>((set, get) => ({
         licence: "",
         part: "",
         opeCode: "",
+        opeDate: "",
     },
     setClient: (newClient) => set({ client: newClient }),
     getClient: () => get().client,
