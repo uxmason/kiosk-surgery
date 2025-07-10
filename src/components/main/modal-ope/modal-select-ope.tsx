@@ -127,28 +127,28 @@ const ModalSelecOpe = ({
                                                         ? "py-[10px]"
                                                         : ""
                                                 } ${
-                                                    item.수술부위 == "가슴"
+                                                    item.수술부위 === "가슴"
                                                         ? "bg-[#55DAF222]"
-                                                        : item.수술부위 == "팔"
+                                                        : item.수술부위 === "팔"
                                                         ? "bg-[#15CF8F22]"
-                                                        : item.수술부위 ==
+                                                        : item.수술부위 ===
                                                           "복부"
                                                         ? "bg-[#ED6B5B22]"
-                                                        : item.수술부위 ==
+                                                        : item.수술부위 ===
                                                           "허벅지"
                                                         ? "bg-[#38ABBE22]"
-                                                        : item.수술부위 ==
+                                                        : item.수술부위 ===
                                                           "얼굴"
                                                         ? "bg-[#F9AC6822]"
-                                                        : item.수술부위 ==
+                                                        : item.수술부위 ===
                                                           "러브핸들"
                                                         ? "bg-[#F0557922]"
-                                                        : item.수술부위 == "힙"
+                                                        : item.수술부위 === "힙"
                                                         ? "bg-[#F9AC6822]"
-                                                        : item.수술부위 ==
+                                                        : item.수술부위 ===
                                                           "종아리"
                                                         ? "bg-[#5B87ED22]"
-                                                        : item.수술부위 == "등"
+                                                        : item.수술부위 === "등"
                                                         ? "bg-[#ED8E5B22]"
                                                         : null
                                                 } text-white rounded-[15px] left-[75px] w-[470px]`}
@@ -186,91 +186,91 @@ const ModalSelecOpe = ({
                                             >
                                                 <div
                                                     className={`styleSheet absolute w-[50px] h-[50px] rounded-[15px] border-[5px] ${
-                                                        item.수술부위 == "가슴"
+                                                        item.수술부위 === "가슴"
                                                             ? "border-[#55DAF2]"
-                                                            : item.수술부위 ==
+                                                            : item.수술부위 ===
                                                               "팔"
                                                             ? "border-[#15CF8F]"
-                                                            : item.수술부위 ==
+                                                            : item.수술부위 ===
                                                               "복부"
                                                             ? "border-[#ED6B5B]"
-                                                            : item.수술부위 ==
+                                                            : item.수술부위 ===
                                                               "허벅지"
                                                             ? "border-[#38ABBE]"
-                                                            : item.수술부위 ==
+                                                            : item.수술부위 ===
                                                               "얼굴"
                                                             ? "border-[#F9AC68]"
-                                                            : item.수술부위 ==
+                                                            : item.수술부위 ===
                                                               "러브핸들"
                                                             ? "border-[#F05579]"
-                                                            : item.수술부위 ==
+                                                            : item.수술부위 ===
                                                               "힙"
                                                             ? "border-[#F9AC68]"
-                                                            : item.수술부위 ==
+                                                            : item.수술부위 ===
                                                               "종아리"
                                                             ? "border-[#5B87ED]"
-                                                            : item.수술부위 ==
+                                                            : item.수술부위 ===
                                                               "등"
                                                             ? "border-[#ED8E5B]"
                                                             : null
                                                     } bg-no-repeat bg-white`}
                                                     style={{
                                                         backgroundPositionX: `${
-                                                            item.수술부위 ==
+                                                            item.수술부위 ===
                                                             "가슴"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "복부"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "힙"
                                                                 ? -105
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "허벅지"
                                                                 ? -155
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "종아리"
                                                                 ? -205
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "팔"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "등"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "러브핸들"
                                                                 ? -105
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "얼굴"
                                                                 ? -155
                                                                 : 50
                                                         }px`,
                                                         backgroundPositionY: `${
-                                                            item.수술부위 ==
+                                                            item.수술부위 ===
                                                             "가슴"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "복부"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "힙"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "허벅지"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "종아리"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "팔"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "등"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "러브핸들"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "얼굴"
                                                                 ? -55
                                                                 : 50
@@ -282,31 +282,31 @@ const ModalSelecOpe = ({
                                                 >
                                                     <p
                                                         className={`text-[24px] leading-[24px] ${
-                                                            item.수술부위 ==
+                                                            item.수술부위 ===
                                                             "가슴"
                                                                 ? "text-[#55DAF2]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "팔"
                                                                 ? "text-[#15CF8F]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "복부"
                                                                 ? "text-[#ED6B5B]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "허벅지"
                                                                 ? "text-[#38ABBE]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "얼굴"
                                                                 ? "text-[#F9AC68]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "러브핸들"
                                                                 ? "text-[#F05579]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "힙"
                                                                 ? "text-[#F9AC68]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "종아리"
                                                                 ? "text-[#5B87ED]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "등"
                                                                 ? "text-[#ED8E5B]"
                                                                 : null
@@ -335,14 +335,17 @@ const ModalSelecOpe = ({
                                                     </p>
                                                 </div>
                                                 {Number(currentTimeHHMM) >=
-                                                Number(item.종료시간) ? (
+                                                    Number(item.종료시간) &&
+                                                item.STATUS !== 3 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#fff2] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
                                                         수술종료
                                                     </p>
-                                                ) : item.STATUS == null ||
-                                                  item.STATUS == 0 ? (
+                                                ) : (item.STATUS === null ||
+                                                      item.STATUS === 0) &&
+                                                  Number(currentTimeHHMM) <=
+                                                      Number(item.시작시간) ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#15cf8f] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                         style={{
@@ -456,19 +459,21 @@ const ModalSelecOpe = ({
                                                     >
                                                         선택하기
                                                     </p>
-                                                ) : item.STATUS == 1 ? (
+                                                ) : item.STATUS === 1 ||
+                                                  Number(currentTimeHHMM) >=
+                                                      Number(item.시작시간) ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#ED6B5B] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
                                                         수술중
                                                     </p>
-                                                ) : item.STATUS == 2 ? (
+                                                ) : item.STATUS === 2 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#ED6B5B] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
                                                         수술완료
                                                     </p>
-                                                ) : item.STATUS == 3 ? (
+                                                ) : item.STATUS === 3 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#5B87ED] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
