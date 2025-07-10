@@ -73,7 +73,6 @@ export async function GET(req: Request) {
                     AND ((A.PROMDATE = '${today}' AND A.PROMTIME >= '${nowTime}') OR A.PROMDATE > '${today}')
                     ${addWhere} ${addDeviceIdWhere}
                 ORDER BY A.PROMDATE, A.PROMTIME;`;
-        console.error(sql);
         const results: OpeClientType[] = await queryDB(sql);
         if (results?.length !== 0) {
             return NextResponse.json({
