@@ -64,16 +64,15 @@ export async function GET(req: Request) {
                 LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_SURGERY K
                     ON K.PSENTRY  = A.PSENTRY 
                     AND K.OPDATE  = A.PROMDATE
-                    AND A.PACKAGE = K.OPCODE 
-                    AND K.STATUS IS NULL AND K.STATUS < 3
+                    AND A.PACKAGE = K.OPCODE
                 LEFT OUTER JOIN tsfmc_mailsystem.dbo.KIOSK_DEVICES D
                     ON K.DEVICE_ID = D.[_id]
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
+					AND (K.STATUS IS NULL OR K.STATUS  < 3)
                     AND ((A.PROMDATE = '${today}' AND A.PROMTIME >= '${nowTime}') OR A.PROMDATE > '${today}')
                     ${addWhere} ${addDeviceIdWhere}
                 ORDER BY A.PROMDATE, A.PROMTIME;`;
-        console.error(sql);
         const results: OpeClientType[] = await queryDB(sql);
         if (results?.length !== 0) {
             return NextResponse.json({

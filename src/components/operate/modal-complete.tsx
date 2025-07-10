@@ -24,7 +24,7 @@ const ModalComplete = ({
     const { doctor } = useDoctorStore();
     const handleClick = async () => {
         if (!isPaired || dataOpeInfo?.length == 0) return;
-        const url = `/api/kiosk-surgery/changeDevice/`;
+        const url = `/api/kiosk-surgery/changeDevice`;
         try {
             const response = await fetch(url, {
                 method: "POST",

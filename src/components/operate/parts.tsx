@@ -131,7 +131,7 @@ const Parts = ({ incisionList }: Props) => {
 
     // 인시젼 정보 삭제
     const handleDeleteIncision = async (data: DeleteDataType) => {
-        const url = `/api/kiosk-surgery/incision/delete/`;
+        const url = `/api/kiosk-surgery/incision/delete`;
         try {
             const response = await fetch(url, {
                 method: "POST",

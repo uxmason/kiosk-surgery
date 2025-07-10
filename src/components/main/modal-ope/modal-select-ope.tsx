@@ -123,32 +123,35 @@ const ModalSelecOpe = ({
                                             <div
                                                 key={index}
                                                 className={`absolute p-[20px] ${
-                                                    Number(item.예상시간) <= 1
+                                                    Number(item?.예상시간) <= 1
                                                         ? "py-[10px]"
                                                         : ""
                                                 } ${
-                                                    item.수술부위 == "가슴"
+                                                    item?.수술부위 === "가슴"
                                                         ? "bg-[#55DAF222]"
-                                                        : item.수술부위 == "팔"
+                                                        : item?.수술부위 ===
+                                                          "팔"
                                                         ? "bg-[#15CF8F22]"
-                                                        : item.수술부위 ==
+                                                        : item?.수술부위 ===
                                                           "복부"
                                                         ? "bg-[#ED6B5B22]"
-                                                        : item.수술부위 ==
+                                                        : item?.수술부위 ===
                                                           "허벅지"
                                                         ? "bg-[#38ABBE22]"
-                                                        : item.수술부위 ==
+                                                        : item?.수술부위 ===
                                                           "얼굴"
                                                         ? "bg-[#F9AC6822]"
-                                                        : item.수술부위 ==
+                                                        : item?.수술부위 ===
                                                           "러브핸들"
                                                         ? "bg-[#F0557922]"
-                                                        : item.수술부위 == "힙"
+                                                        : item?.수술부위 ===
+                                                          "힙"
                                                         ? "bg-[#F9AC6822]"
-                                                        : item.수술부위 ==
+                                                        : item?.수술부위 ===
                                                           "종아리"
                                                         ? "bg-[#5B87ED22]"
-                                                        : item.수술부위 == "등"
+                                                        : item?.수술부위 ===
+                                                          "등"
                                                         ? "bg-[#ED8E5B22]"
                                                         : null
                                                 } text-white rounded-[15px] left-[75px] w-[470px]`}
@@ -156,7 +159,7 @@ const ModalSelecOpe = ({
                                                     top:
                                                         60 +
                                                         (Number(
-                                                            item.시작시간.substring(
+                                                            item?.시작시간.substring(
                                                                 0,
                                                                 2
                                                             )
@@ -164,7 +167,7 @@ const ModalSelecOpe = ({
                                                             9) *
                                                             100 +
                                                         (Number(
-                                                            item.시작시간.substring(
+                                                            item?.시작시간.substring(
                                                                 2,
                                                                 4
                                                             )
@@ -173,104 +176,106 @@ const ModalSelecOpe = ({
                                                             100 +
                                                         "px",
                                                     height:
-                                                        Number(item.예상시간) *
+                                                        Number(item?.예상시간) *
                                                             100 -
                                                         20 +
                                                         "px",
                                                     minHeight:
-                                                        Number(item.예상시간) <=
-                                                        1
+                                                        Number(
+                                                            item?.예상시간
+                                                        ) <= 1
                                                             ? "70px"
                                                             : "90px",
                                                 }}
                                             >
                                                 <div
                                                     className={`styleSheet absolute w-[50px] h-[50px] rounded-[15px] border-[5px] ${
-                                                        item.수술부위 == "가슴"
+                                                        item?.수술부위 ===
+                                                        "가슴"
                                                             ? "border-[#55DAF2]"
-                                                            : item.수술부위 ==
+                                                            : item?.수술부위 ===
                                                               "팔"
                                                             ? "border-[#15CF8F]"
-                                                            : item.수술부위 ==
+                                                            : item?.수술부위 ===
                                                               "복부"
                                                             ? "border-[#ED6B5B]"
-                                                            : item.수술부위 ==
+                                                            : item?.수술부위 ===
                                                               "허벅지"
                                                             ? "border-[#38ABBE]"
-                                                            : item.수술부위 ==
+                                                            : item?.수술부위 ===
                                                               "얼굴"
                                                             ? "border-[#F9AC68]"
-                                                            : item.수술부위 ==
+                                                            : item?.수술부위 ===
                                                               "러브핸들"
                                                             ? "border-[#F05579]"
-                                                            : item.수술부위 ==
+                                                            : item?.수술부위 ===
                                                               "힙"
                                                             ? "border-[#F9AC68]"
-                                                            : item.수술부위 ==
+                                                            : item?.수술부위 ===
                                                               "종아리"
                                                             ? "border-[#5B87ED]"
-                                                            : item.수술부위 ==
+                                                            : item?.수술부위 ===
                                                               "등"
                                                             ? "border-[#ED8E5B]"
                                                             : null
                                                     } bg-no-repeat bg-white`}
                                                     style={{
                                                         backgroundPositionX: `${
-                                                            item.수술부위 ==
+                                                            item?.수술부위 ===
                                                             "가슴"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "복부"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "힙"
                                                                 ? -105
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "허벅지"
                                                                 ? -155
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "종아리"
                                                                 ? -205
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "팔"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "등"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "러브핸들"
                                                                 ? -105
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "얼굴"
                                                                 ? -155
                                                                 : 50
                                                         }px`,
                                                         backgroundPositionY: `${
-                                                            item.수술부위 ==
+                                                            item?.수술부위 ===
                                                             "가슴"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "복부"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "힙"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "허벅지"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "종아리"
                                                                 ? -5
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "팔"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "등"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "러브핸들"
                                                                 ? -55
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "얼굴"
                                                                 ? -55
                                                                 : 50
@@ -282,42 +287,42 @@ const ModalSelecOpe = ({
                                                 >
                                                     <p
                                                         className={`text-[24px] leading-[24px] ${
-                                                            item.수술부위 ==
+                                                            item?.수술부위 ===
                                                             "가슴"
                                                                 ? "text-[#55DAF2]"
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "팔"
                                                                 ? "text-[#15CF8F]"
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "복부"
                                                                 ? "text-[#ED6B5B]"
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "허벅지"
                                                                 ? "text-[#38ABBE]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "얼굴"
                                                                 ? "text-[#F9AC68]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "러브핸들"
                                                                 ? "text-[#F05579]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "힙"
                                                                 ? "text-[#F9AC68]"
-                                                                : item.수술부위 ==
+                                                                : item.수술부위 ===
                                                                   "종아리"
                                                                 ? "text-[#5B87ED]"
-                                                                : item.수술부위 ==
+                                                                : item?.수술부위 ===
                                                                   "등"
                                                                 ? "text-[#ED8E5B]"
                                                                 : null
                                                         }`}
                                                     >
-                                                        {item.수술부위}
+                                                        {item?.수술부위}
                                                     </p>
                                                     <p
                                                         className={`text-[16px] leading-[24px] font-bold`}
                                                     >
-                                                        {item.수술코드}
+                                                        {item?.수술코드}
                                                     </p>
                                                 </div>
                                                 <div
@@ -326,23 +331,26 @@ const ModalSelecOpe = ({
                                                     <p
                                                         className={`text-[24px] leading-[24px] font-bold`}
                                                     >
-                                                        {item.고객명}
+                                                        {item?.고객명}
                                                     </p>
                                                     <p
                                                         className={`text-[14px] leading-[24px]`}
                                                     >
-                                                        {item.고객번호}
+                                                        {item?.고객번호}
                                                     </p>
                                                 </div>
                                                 {Number(currentTimeHHMM) >=
-                                                Number(item.종료시간) ? (
+                                                    Number(item?.종료시간) &&
+                                                item?.STATUS !== 3 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#fff2] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
                                                         수술종료
                                                     </p>
-                                                ) : item.STATUS == null ||
-                                                  item.STATUS == 0 ? (
+                                                ) : (item?.STATUS === null ||
+                                                      item?.STATUS === 0) &&
+                                                  Number(currentTimeHHMM) <=
+                                                      Number(item?.시작시간) ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#15cf8f] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                         style={{
@@ -402,12 +410,12 @@ const ModalSelecOpe = ({
                                                                         }
                                                                     );
                                                                 if (
-                                                                    response.ok
+                                                                    response?.ok
                                                                 ) {
                                                                     const result =
-                                                                        await response.json();
+                                                                        await response?.json();
                                                                     if (
-                                                                        result.success
+                                                                        result?.success
                                                                     ) {
                                                                         setTargetPsEntry(
                                                                             result
@@ -431,13 +439,13 @@ const ModalSelecOpe = ({
                                                                         );
                                                                     } else {
                                                                         toast.error(
-                                                                            result.message
+                                                                            result?.message
                                                                         );
                                                                     }
                                                                 } else {
                                                                     console.error(
                                                                         "API 호출 실패",
-                                                                        response.status
+                                                                        response?.status
                                                                     );
                                                                 }
                                                                 setOnLoading(
@@ -456,19 +464,21 @@ const ModalSelecOpe = ({
                                                     >
                                                         선택하기
                                                     </p>
-                                                ) : item.STATUS == 1 ? (
+                                                ) : item?.STATUS === 1 ||
+                                                  Number(currentTimeHHMM) >=
+                                                      Number(item?.시작시간) ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#ED6B5B] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
                                                         수술중
                                                     </p>
-                                                ) : item.STATUS == 2 ? (
+                                                ) : item?.STATUS === 2 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#ED6B5B] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
                                                         수술완료
                                                     </p>
-                                                ) : item.STATUS == 3 ? (
+                                                ) : item?.STATUS === 3 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#5B87ED] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
@@ -487,7 +497,7 @@ const ModalSelecOpe = ({
                             <div
                                 className={`flex flex-col w-full gap-y-[10px] transition-all duration-300 bg-[rgba(58,62,89,0.25)] rounded-[15px] px-[15px] py-[15px]`}
                             >
-                                {dataAllOpe.map((item, index) => (
+                                {dataAllOpe?.map((item, index) => (
                                     <div
                                         key={index}
                                         className={`flex items-center w-[270px] h-[70px] transition-all duration-300 rounded-[10px] py-5 cursor-pointer ${
@@ -508,48 +518,48 @@ const ModalSelecOpe = ({
                             <div
                                 className={`flex flex-col w-full h-full gap-y-[10px] px-[15px] py-[15px] transition-all duration-300 bg-[rgba(58,62,89,0.25)] rounded-[15px]`}
                             >
-                                {(dataAllOpe[hospitalIndex]?.doctor ?? []).map(
-                                    (item, index) => {
-                                        return (
+                                {(
+                                    dataAllOpe?.[hospitalIndex]?.doctor ?? []
+                                )?.map((item, index) => {
+                                    return (
+                                        <div
+                                            key={index}
+                                            className={`flex relative box-border w-[270px] h-[100px] text-white  rounded-[10px] transition-all duration-300 cursor-pointer ${
+                                                doctorIndex == index
+                                                    ? "border-solid border-[4px] border-[#15CF8F] bg-[#3A3E59] pt-[6px] px-[6px]"
+                                                    : "bg-[rgba(58,62,89,.25)] pt-[10px] px-[10px]"
+                                            }`}
+                                            onClick={() => {
+                                                setDoctorIndex(index);
+                                            }}
+                                        >
                                             <div
-                                                key={index}
-                                                className={`flex relative box-border w-[270px] h-[100px] text-white  rounded-[10px] transition-all duration-300 cursor-pointer ${
-                                                    doctorIndex == index
-                                                        ? "border-solid border-[4px] border-[#15CF8F] bg-[#3A3E59] pt-[6px] px-[6px]"
-                                                        : "bg-[rgba(58,62,89,.25)] pt-[10px] px-[10px]"
-                                                }`}
-                                                onClick={() => {
-                                                    setDoctorIndex(index);
-                                                }}
-                                            >
-                                                <div
-                                                    className={`absolute isPortrait I${item?.doctorId} h-[90px] w-[61.651px]`}
-                                                />
-                                                <div className="flex flex-col pl-[85px] pt-[15px] gap-y-[13px]">
-                                                    <p className="text-[22px] font-bold leading-[22px]">
+                                                className={`absolute isPortrait I${item?.doctorId} h-[90px] w-[61.651px]`}
+                                            />
+                                            <div className="flex flex-col pl-[85px] pt-[15px] gap-y-[13px]">
+                                                <p className="text-[22px] font-bold leading-[22px]">
+                                                    {
+                                                        item?.surgeries?.[0]
+                                                            .담당의명
+                                                    }{" "}
+                                                    <span className="font-[250]">
+                                                        원장
+                                                    </span>
+                                                </p>
+                                                <p className="text-[14px] font-light leading-[14px]">
+                                                    오늘 수술:{" "}
+                                                    <span className="text-[16px] font-bold mx-1">
                                                         {
-                                                            item.surgeries[0]
-                                                                .담당의명
-                                                        }{" "}
-                                                        <span className="font-[250]">
-                                                            원장
-                                                        </span>
-                                                    </p>
-                                                    <p className="text-[14px] font-light leading-[14px]">
-                                                        오늘 수술:{" "}
-                                                        <span className="text-[16px] font-bold mx-1">
-                                                            {
-                                                                item.surgeries
-                                                                    .length
-                                                            }
-                                                        </span>
-                                                        건
-                                                    </p>
-                                                </div>
+                                                            item?.surgeries
+                                                                ?.length
+                                                        }
+                                                    </span>
+                                                    건
+                                                </p>
                                             </div>
-                                        );
-                                    }
-                                )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
