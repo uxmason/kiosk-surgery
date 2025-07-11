@@ -17,30 +17,22 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
         WARNING: { min: 38, max: 93, startPx: 49.4, endPx: 121.9 },
         DANGER: { min: 94, max: 100, startPx: 123.5, endPx: 130 },
     };
+
     // 현재 구간 및 위치 계산
-    let pointPosition = 0;
+    let percent = 0;
 
     if (warningLevel === "DANGER") {
-        const percent =
-            (riskLevel - zones.DANGER.min) /
+        percent =
+            (zones.DANGER.max - riskLevel) /
             (zones.DANGER.max - zones.DANGER.min);
-        pointPosition =
-            zones.DANGER.endPx -
-            percent * (zones.DANGER.endPx - zones.DANGER.startPx);
     } else if (warningLevel === "WARNING") {
-        const percent =
-            (riskLevel - zones.WARNING.min) /
+        percent =
+            (zones.WARNING.max - riskLevel) /
             (zones.WARNING.max - zones.WARNING.min);
-        pointPosition =
-            zones.WARNING.endPx -
-            percent * (zones.WARNING.endPx - zones.WARNING.startPx);
     } else {
-        const percent =
-            (riskLevel - zones.NORMAL.min) /
+        percent =
+            (zones.NORMAL.max - riskLevel) /
             (zones.NORMAL.max - zones.NORMAL.min);
-        pointPosition =
-            zones.NORMAL.endPx -
-            percent * (zones.NORMAL.endPx - zones.NORMAL.startPx);
     }
 
     const levels = [
@@ -90,7 +82,7 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
                                         className="absolute top-1/2 w-7 h-7 border-[4px] border-white rounded-full"
                                         style={{
                                             backgroundColor: color,
-                                            left: `${pointPosition}px`,
+                                            left: `${percent * 100}%`,
                                             transform: "translate(-50%, -50%)",
                                         }}
                                     />
