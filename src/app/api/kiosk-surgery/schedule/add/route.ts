@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
                 message: "사용할 수 없는 디바이스 정보입니다.",
             });
         } else {
-            const deviceSql = `SELECT * FROM KIOSK_SURGERY WHERE DEVICE_ID != '${device_ID}' AND PSENTRY='${psEntry}' AND OPDATE='${today}' AND OPCODE='${opCode}'`;
+            const deviceSql = `SELECT * FROM KIOSK_SURGERY WHERE DEVICE_ID != '${device_ID}' AND PSENTRY='${psEntry}' AND OPDATE='${today}' AND OPCODE='${opCode}' AND STATUS > 0;`;
             const deviceResult = await queryDB(deviceSql);
             if (deviceResult?.length > 0) {
                 return NextResponse.json({

@@ -16,7 +16,7 @@ export async function GET(req: Request) {
                 success: true,
             });
         } else {
-            const sql = `SELECT * FROM tsfmc_mailsystem.dbo.KIOSK_SURGERY S, tsfmc_mailsystem.dbo.KIOSK_DEVICES D
+            const sql = `SELECT S._id, S.STATUS, S.createdAt, S.updatedAt FROM tsfmc_mailsystem.dbo.KIOSK_SURGERY S, tsfmc_mailsystem.dbo.KIOSK_DEVICES D
                         WHERE S.DEVICE_ID = D._id AND D.DEVICE_HASH = '${deviceID}' 
                             AND USER_ID = '${userID}' AND S.PSENTRY = '${psEntry}' 
                             AND S.OPCODE = '${opCode}';`;
@@ -25,6 +25,8 @@ export async function GET(req: Request) {
                 return NextResponse.json({
                     success: true,
                     status: results[0].STATUS,
+                    createdAt: results[0].createdAt,
+                    updatedAt: results[0].updatedAt,
                 });
             } else {
                 return NextResponse.json({

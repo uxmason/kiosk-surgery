@@ -20,10 +20,19 @@ export async function POST(req: NextRequest) {
             const deviceSql = `SELECT * FROM KIOSK_SURGERY WHERE DEVICE_ID != '${device_ID}' AND PSENTRY='${psEntry}' AND OPDATE='${today}' AND OPCODE='${opCode}'`;
             const deviceResult = await queryDB(deviceSql);
             if (deviceResult?.length > 0) {
-                return NextResponse.json({
-                    success: false,
-                    message: "다른 다비이스에서 이미 시작한 수술입니다.",
-                });
+                const status = deviceResult?.[0]?.STATUS;
+                if (status === 0) {
+                    const updateSql = `UPDATE KIOSK_SURGERY SET DEVICE_ID = '${device_ID}', STATUS=${status}, updatedAt=SYSDATETIME() WHERE PSENTRY = '${psEntry}' AND OPDATE = '${today}' AND OPCODE = '${opCode}'`;
+                    await queryDB(updateSql);
+                    return NextResponse.json({
+                        success: true,
+                    });
+                } else {
+                    return NextResponse.json({
+                        success: false,
+                        message: "다른 다비이스에서 이미 시작한 수술입니다.",
+                    });
+                }
             } else {
                 const deviceSql = `SELECT * FROM KIOSK_SURGERY WHERE DEVICE_ID = '${device_ID}' AND PSENTRY='${psEntry}' AND OPDATE='${today}' AND OPCODE='${opCode}'`;
                 const deviceResult = await queryDB(deviceSql);
@@ -34,12 +43,7 @@ export async function POST(req: NextRequest) {
                         success: true,
                     });
                 } else {
-                    let updateSql = "";
-                    if (status === 0) {
-                        updateSql = `DELETE tsfmc_mailsystem.dbo.KIOSK_SURGERY WHERE _id = ${deviceResult?.[0]?._id}`;
-                    } else {
-                        updateSql = `UPDATE KIOSK_SURGERY SET STATUS=${status}, updatedAt=SYSDATETIME() WHERE DEVICE_ID = '${device_ID}' AND PSENTRY = '${psEntry}' AND OPDATE = '${today}' AND OPCODE = '${opCode}'`;
-                    }
+                    const updateSql = `UPDATE KIOSK_SURGERY SET STATUS=${status}, updatedAt=SYSDATETIME() WHERE DEVICE_ID = '${device_ID}' AND PSENTRY = '${psEntry}' AND OPDATE = '${today}' AND OPCODE = '${opCode}'`;
                     await queryDB(updateSql);
                     return NextResponse.json({
                         success: true,
