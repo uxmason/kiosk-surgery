@@ -48,10 +48,9 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
                     마취 안전
                 </p>
                 <p className="text-[rgba(255,255,255,0.50)] text-[24px] font-bold leading-[42px]">
-                    응급 / 긴급 확률
+                    AI 예상 위험도
                 </p>
             </div>
-
             <div className="flex items-center justify-around w-[calc(100%-340px)]">
                 {levels.map(({ label, value, color }) => {
                     const isActive = warningLevel === value;
@@ -90,7 +89,6 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
                     );
                 })}
             </div>
-
             <div className="flex justify-end items-baseline pt-[14px] w-[140px]">
                 {riskLevel !== 0 && (
                     <p
