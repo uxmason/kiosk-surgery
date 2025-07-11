@@ -29,6 +29,7 @@ export default function Info() {
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
     const [elapsedTimeMs, setElapsedTimeMs] = useState(0);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const [isCreatedAt, setIsCreatedAt] = useState<Date>();
 
     // 수술 고객 정보 불러오기
     const onHandleSelectOpe = async (
@@ -74,14 +75,28 @@ export default function Info() {
 
     // 타이머 설정
     useEffect(() => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
+        if (!isCreatedAt) return;
 
-        intervalRef.current = setInterval(() => {
-            setElapsedTimeMs((prev) => prev + 10);
-        }, 10);
+        const createdAtTime =
+            new Date(isCreatedAt).getTime() - 9 * 60 * 60 * 1000;
+        console.log("createdAtTime (ms):", createdAtTime);
+        console.log(
+            "createdAt (date):",
+            new Date(createdAtTime).toLocaleString()
+        );
+
+        const updateElapsed = () => {
+            const now = Date.now();
+            const diff = now - createdAtTime;
+            setElapsedTimeMs(diff < 0 ? 0 : diff);
+        };
+
+        updateElapsed();
+
+        intervalRef.current = setInterval(updateElapsed, 10);
 
         return () => clearInterval(intervalRef.current!);
-    }, []);
+    }, [isCreatedAt]);
 
     // 시간 포맷 처리
     const absMs = Math.max(elapsedTimeMs, 0);
@@ -130,6 +145,10 @@ export default function Info() {
             handleOpeStatus(doctor.id, client?.psEntry, client?.opeCode).then(
                 (res) => {
                     if (res.success) {
+                        const opeTime = res?.updatedAt
+                            ? res?.updatedAt
+                            : res?.createdAt;
+                        setIsCreatedAt(opeTime);
                         if (res.status === 0) router.push("/");
                         if (res.status === 1) router.push("/record");
                         if (res.status === 2) router.push("/operate");
