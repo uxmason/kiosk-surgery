@@ -43,17 +43,14 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
 
     return (
         <div className="flex justify-between w-full h-[135px] my-5 bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] pt-[26px] pb-[25px] px-[35px] rounded-[15px]">
-            {/* 제목 */}
             <div className="w-50">
                 <p className="text-white text-[24px] font-bold leading-[42px]">
                     마취 안전
                 </p>
                 <p className="text-[rgba(255,255,255,0.50)] text-[24px] font-bold leading-[42px]">
-                    응급 / 긴급 확률
+                    AI 예상 위험도
                 </p>
             </div>
-
-            {/* 위험도 바 */}
             <div className="flex items-center justify-around w-[calc(100%-340px)]">
                 {levels.map(({ label, value, color }) => {
                     const isActive = warningLevel === value;
@@ -92,23 +89,23 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
                     );
                 })}
             </div>
-
-            {/* 수치 표시 */}
             <div className="flex justify-end items-baseline pt-[14px] w-[140px]">
-                <p
-                    className={`italic text-[40px] font-light leading-[44px] ${
-                        warningLevel === "DANGER"
-                            ? "text-[#ED6B5B]"
-                            : warningLevel === "WARNING"
-                            ? "text-[#F9AC68]"
-                            : "text-[#15CF8F]"
-                    }`}
-                >
-                    {riskLevel?.toLocaleString()}
-                </p>
+                {riskLevel !== 0 && (
+                    <p
+                        className={`italic text-[40px] font-light leading-[44px] ${
+                            warningLevel === "DANGER"
+                                ? "text-[#ED6B5B]"
+                                : warningLevel === "WARNING"
+                                ? "text-[#F9AC68]"
+                                : "text-[#15CF8F]"
+                        }`}
+                    >
+                        {riskLevel?.toLocaleString()}
+                    </p>
+                )}
                 <p
                     className={`font-[20px] italic leading-[44px] ${
-                        riskLevel > 0
+                        riskLevel !== 0
                             ? warningLevel === "DANGER"
                                 ? "text-[#ED6B5B]"
                                 : warningLevel === "WARNING"
@@ -117,7 +114,7 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
                             : "text-[rgba(255,255,255,0.30)] pt-4"
                     }`}
                 >
-                    {riskLevel > 0 ? "%" : "데이터 없음"}
+                    {riskLevel !== 0 ? "%" : "데이터 없음"}
                 </p>
             </div>
         </div>
