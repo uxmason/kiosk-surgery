@@ -6,15 +6,16 @@ interface Props {
 }
 
 const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
-    const riskLevel = 37;
-    const warningLevel = isAnesthesia?.[0]?.warningLevel || "NORMAL";
-    // const riskLevel = isAnesthesia?.[0]?.riskLevel ?? 0;
+    const riskLevel = isAnesthesia?.[0]?.riskLevel
+        ? Math.trunc(isAnesthesia?.[0]?.riskLevel * 1000) / 10
+        : 0;
+    const warningLevel = isAnesthesia?.[0]?.warningLevel;
 
     // 각 구간 정의
     const zones = {
-        NORMAL: { min: 0, max: 37 },
-        WARNING: { min: 38, max: 93 },
-        DANGER: { min: 94, max: 100 },
+        NORMAL: { min: 0, max: 37, startPx: 0, endPx: 48.1 },
+        WARNING: { min: 38, max: 93, startPx: 49.4, endPx: 121.9 },
+        DANGER: { min: 94, max: 100, startPx: 123.5, endPx: 130 },
     };
     // 현재 구간 및 위치 계산
     let pointPosition = 0;
@@ -23,17 +24,23 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
         const percent =
             (riskLevel - zones.DANGER.min) /
             (zones.DANGER.max - zones.DANGER.min);
-        pointPosition = percent * 130;
+        pointPosition =
+            zones.DANGER.endPx -
+            percent * (zones.DANGER.endPx - zones.DANGER.startPx);
     } else if (warningLevel === "WARNING") {
         const percent =
             (riskLevel - zones.WARNING.min) /
             (zones.WARNING.max - zones.WARNING.min);
-        pointPosition = percent * 130;
+        pointPosition =
+            zones.WARNING.endPx -
+            percent * (zones.WARNING.endPx - zones.WARNING.startPx);
     } else {
         const percent =
             (riskLevel - zones.NORMAL.min) /
             (zones.NORMAL.max - zones.NORMAL.min);
-        pointPosition = percent * 130;
+        pointPosition =
+            zones.NORMAL.endPx -
+            percent * (zones.NORMAL.endPx - zones.NORMAL.startPx);
     }
 
     const levels = [
@@ -83,7 +90,7 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
                                         className="absolute top-1/2 w-7 h-7 border-[4px] border-white rounded-full"
                                         style={{
                                             backgroundColor: color,
-                                            right: `${pointPosition}%`,
+                                            left: `${pointPosition}px`,
                                             transform: "translate(-50%, -50%)",
                                         }}
                                     />
@@ -105,7 +112,7 @@ const AnesthesiaSafety = ({ isAnesthesia }: Props) => {
                             : "text-[#15CF8F]"
                     }`}
                 >
-                    {riskLevel}
+                    {riskLevel?.toLocaleString()}
                 </p>
                 <p
                     className={`font-[20px] italic leading-[44px] ${
