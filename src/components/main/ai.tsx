@@ -86,7 +86,7 @@ const Ai = ({
                         </div>
                         <div className="flex w-full items-baseline gap-x-1">
                             <p className="text-white text-[28px] italic font-[100] leading-4">
-                                {Math.round(
+                                {Math.trunc(
                                     isAnesthesia?.[0]?.riskLevel * 1000
                                 ) / 10}
                             </p>
