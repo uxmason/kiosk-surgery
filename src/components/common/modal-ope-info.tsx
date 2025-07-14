@@ -70,34 +70,38 @@ const ModalOpeInfo = ({
 
     // 고객 인바디 정보 담기
     useEffect(() => {
-        if (!client) return;
-        handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
-            if (res.success) {
-                const inbody = res?.inbody;
-                const inbodyLength = inbody?.length;
-                setIsWeights({
-                    BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
-                    WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
-                    MUST_WEIGHTL: inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
-                });
-                setWeightArr(
-                    inbody?.map((v: never) => {
-                        return {
-                            date: v?.["PRODATE"],
-                            weight: v?.["BD_WEIGHT"],
-                        };
-                    })
-                );
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
-    }, [client]);
+        if (!isOpeInfo || client?.psEntry === "" || client?.part === "") {
+            return;
+        } else {
+            handleSelectInbodyLst(client.psEntry, client.part).then((res) => {
+                if (res.success) {
+                    const inbody = res?.inbody;
+                    const inbodyLength = inbody?.length;
+                    setIsWeights({
+                        BD_WEIGHT: inbody?.[inbodyLength - 1]?.["BD_WEIGHT"],
+                        WC_WEIGHT: inbody?.[inbodyLength - 1]?.["WC_WEIGHT"],
+                        MUST_WEIGHTL:
+                            inbody?.[inbodyLength - 1]?.["MUST_WEIGHTL"],
+                    });
+                    setWeightArr(
+                        inbody?.map((v: never) => {
+                            return {
+                                date: v?.["PRODATE"],
+                                weight: v?.["BD_WEIGHT"],
+                            };
+                        })
+                    );
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }
+    }, [isOpeInfo, client]);
 
     // 나이
     useEffect(() => {
@@ -118,7 +122,7 @@ const ModalOpeInfo = ({
                 <ClientInfoForModal />
                 <ReservationInfo isOpeInfo={isOpeInfo} />
                 {isAge !== 0 && (
-                    <GraphAi aiType="DOCTOR">
+                    <GraphAi aiType="DOCTOR" isOpen={isOpenOpeModal}>
                         <>
                             <p className="text-white text-[24px] font-bold leading-6">
                                 예측 지방 추출량

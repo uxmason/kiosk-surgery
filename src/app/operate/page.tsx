@@ -104,10 +104,10 @@ export default function Info() {
     ).padStart(2, "0")}`;
 
     // 캐뉼라 리스트 불러오기
-    const handleSelectCannulaList = async () => {
+    const handleSelectCannulaList = async (psEntry: string) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/cannula/list?psEntry=${client?.psEntry}`,
+                `/api/kiosk-surgery/cannula/list?psEntry=${psEntry}`,
                 {
                     method: "GET",
                 }
@@ -126,25 +126,29 @@ export default function Info() {
 
     // API 재요청하는 함수 (특정 버튼 클릭 시 호출)
     const reloadCannulaList = () => {
-        handleSelectCannulaList().then((res) => {
-            if (res.success) {
-                setCannulaInSurgeryList(res.list);
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
+        if (client?.psEntry === "") {
+            return;
+        } else {
+            handleSelectCannulaList(client?.psEntry).then((res) => {
+                if (res.success) {
+                    setCannulaInSurgeryList(res.list);
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }
     };
 
     // 인시젼 리스트 불러오기
-    const handleSelectIncisionList = async () => {
+    const handleSelectIncisionList = async (psEntry: string) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/incision/list?psEntry=${client?.psEntry}`,
+                `/api/kiosk-surgery/incision/list?psEntry=${psEntry}`,
                 {
                     method: "GET",
                 }
@@ -172,32 +176,39 @@ export default function Info() {
 
     // 해당 기기의 고유번호의 유효성 체크
     useEffect(() => {
-        if (!deviceId) return;
+        if (!deviceId) {
+            return;
+        } else {
+            const interval = setInterval(() => {
+                handleSelectDoctor(deviceId).then((res) => {
+                    if (res.success) {
+                        setUnpaired(false);
+                    } else {
+                        setUnpaired(true);
+                        toast.error(res.message);
+                        updateErrorMessage({
+                            deviceID: deviceId,
+                            userID: doctor.id,
+                            message: res.message,
+                        });
+                    }
+                });
+            }, 3000);
 
-        const interval = setInterval(() => {
-            handleSelectDoctor(deviceId).then((res) => {
-                if (res.success) {
-                    setUnpaired(false);
-                } else {
-                    setUnpaired(true);
-                    toast.error(res.message);
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor.id,
-                        message: res.message,
-                    });
-                }
-            });
-        }, 3000);
-
-        return () => clearInterval(interval);
+            return () => clearInterval(interval);
+        }
     }, [deviceId]);
 
     // 수술 고객 정보 담기
     useEffect(() => {
-        if (unpaired || client?.psEntry === "" || doctor?.id === "") return;
-        onHandleSelectOpe(doctor?.id, client?.psEntry, client?.opeCode).then(
-            (res) => {
+        if (unpaired || client?.psEntry === "" || doctor?.id === "") {
+            return;
+        } else {
+            onHandleSelectOpe(
+                doctor?.id,
+                client?.psEntry,
+                client?.opeCode
+            ).then((res) => {
                 if (res.success) {
                     setIsOpeInfo(res.list);
                 } else {
@@ -208,59 +219,65 @@ export default function Info() {
                         message: res.message,
                     });
                 }
-            }
-        );
+            });
+        }
     }, [unpaired, client, doctor]);
 
     // 인시젼 리스트 담기
     useEffect(() => {
-        if (unpaired) return;
-        handleSelectIncisionList().then((res) => {
-            if (res.success) {
-                setIncisionList(
-                    res.list?.map((v: IncisionListType) => ({
-                        _id: v?._id,
-                        SURGERY_ID: v?.SURGERY_ID,
-                        POINT_NAME: v?.POINT_NAME,
-                        AJAX_ID: v?.AJAX_ID,
-                        SELECTED: v?.SELECTED,
-                    }))
-                );
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
-    }, [unpaired]);
+        if (unpaired || client?.psEntry === "") {
+            return;
+        } else {
+            handleSelectIncisionList(client?.psEntry).then((res) => {
+                if (res.success) {
+                    setIncisionList(
+                        res.list?.map((v: IncisionListType) => ({
+                            _id: v?._id,
+                            SURGERY_ID: v?.SURGERY_ID,
+                            POINT_NAME: v?.POINT_NAME,
+                            AJAX_ID: v?.AJAX_ID,
+                            SELECTED: v?.SELECTED,
+                        }))
+                    );
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
+                }
+            });
+        }
+    }, [unpaired, client]);
 
     // 캐뉼라 리스트 담기
     useEffect(() => {
-        if (unpaired) return;
-        handleSelectCannulaList().then((res) => {
-            if (res.success) {
-                const list: CannulaListType[] = res.list;
-                setCannulaInSurgeryList(list);
-                if (list?.map((v) => v.SELECTED === 1)) {
-                    setSelectedCannulaIds(
-                        list
-                            ?.filter((v) => v.SELECTED === 1)
-                            ?.map((s) => s.CANNULA_ID)
-                    );
+        if (unpaired || client?.psEntry === "") {
+            return;
+        } else {
+            handleSelectCannulaList(client?.psEntry).then((res) => {
+                if (res.success) {
+                    const list: CannulaListType[] = res.list;
+                    setCannulaInSurgeryList(list);
+                    if (list?.map((v) => v.SELECTED === 1)) {
+                        setSelectedCannulaIds(
+                            list
+                                ?.filter((v) => v.SELECTED === 1)
+                                ?.map((s) => s.CANNULA_ID)
+                        );
+                    }
+                } else {
+                    toast.error(res.message);
+                    updateErrorMessage({
+                        deviceID: deviceId,
+                        userID: doctor.id,
+                        message: res.message,
+                    });
                 }
-            } else {
-                toast.error(res.message);
-                updateErrorMessage({
-                    deviceID: deviceId,
-                    userID: doctor.id,
-                    message: res.message,
-                });
-            }
-        });
-    }, [unpaired]);
+            });
+        }
+    }, [unpaired, client]);
 
     // 해당 수술의 상태 체크
     useEffect(() => {

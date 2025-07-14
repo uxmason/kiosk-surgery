@@ -27,7 +27,7 @@ export async function GET(req: Request) {
                         success: true,
                         status: results[0].STATUS,
                         createdAt: results[0].createdAt,
-                        updatedAt: results[0].updatedAt,
+                        updatedAt: null,
                     });
                 } else {
                     if (results?.[0]?.STATUS === 0) {

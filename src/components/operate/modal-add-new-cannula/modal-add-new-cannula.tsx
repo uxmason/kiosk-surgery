@@ -86,7 +86,7 @@ const MoodalAddNewCannula = ({
 
     // 캐뉼라 존재 여부 확인
     const handleExistCannula = async () => {
-        const url = `/api/kiosk-surgery/cannula/exist/`;
+        const url = `/api/kiosk-surgery/cannula/exist`;
         try {
             const response = await fetch(url, {
                 method: "POST",

@@ -24,7 +24,7 @@ const ModalAI = ({ isModalAIOpen, setModalAIOpen, isAnesthesia }: Props) => {
                 </p>
                 <ClientInfoForModal />
                 <AnesthesiaSafety isAnesthesia={isAnesthesia} />
-                <GraphAi aiType="DOCTOR">
+                <GraphAi isOpen={isModalAIOpen} aiType="DOCTOR">
                     <>
                         <p className="text-white text-[24px] font-bold leading-6">
                             예측 지방 추출량 -
@@ -36,7 +36,7 @@ const ModalAI = ({ isModalAIOpen, setModalAIOpen, isAnesthesia }: Props) => {
                     </>
                 </GraphAi>
                 <div className="h-5" />
-                <GraphAi aiType="AVERAGE">
+                <GraphAi isOpen={isModalAIOpen} aiType="AVERAGE">
                     <>
                         <p className="text-white text-[24px] font-bold leading-6">
                             예측 지방 추출량 - 365mc 전체 평균
