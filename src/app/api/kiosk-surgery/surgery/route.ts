@@ -12,7 +12,9 @@ export async function GET(req: Request) {
         const today = getFormattedDate();
         const nowTime = getCurrentTimeHHMM();
         const addDeviceIdWhere =
-            typeof deviceId === "string"
+            typeof psEntry === "string"
+                ? ""
+                : typeof deviceId === "string"
                 ? `AND (D.DEVICE_HASH IS NULL OR D.DEVICE_HASH = '${deviceId}')`
                 : "";
         const addWhere =
