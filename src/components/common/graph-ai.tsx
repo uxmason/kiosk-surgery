@@ -6,11 +6,12 @@ import { ReactNode, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface Props {
+    isOpen: boolean;
     children: ReactNode;
     aiType: "DOCTOR" | "AVERAGE";
 }
 const order = ["팔", "복부", "허벅지"];
-const GraphAi = ({ children, aiType }: Props) => {
+const GraphAi = ({ isOpen, children, aiType }: Props) => {
     const { deviceId } = useStore();
     // 수술 고객 정보
     const { client } = useClientStore();
@@ -49,6 +50,7 @@ const GraphAi = ({ children, aiType }: Props) => {
 
     useEffect(() => {
         if (
+            !isOpen ||
             typeof client?.psEntry === "undefined" ||
             client?.psEntry === "" ||
             client?.opeCode === ""
@@ -75,7 +77,7 @@ const GraphAi = ({ children, aiType }: Props) => {
                 }
             });
         }
-    }, [client, aiType]);
+    }, [isOpen, client, aiType]);
 
     return (
         <div className="flex flex-col w-full h-[400px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] py-[30px] px-[35px] mb-5">

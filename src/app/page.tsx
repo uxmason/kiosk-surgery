@@ -141,6 +141,7 @@ export default function Home() {
     // 가까운 미래의 수술 고객 정보
     const onHandleSelectOpe = async () => {
         setOnLoading(true);
+        setReversCount(false);
         try {
             let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
             if (targetPsEntry !== "" && targetOpeCode !== "")
@@ -174,7 +175,9 @@ export default function Home() {
                     const diffSeconds = Math.floor(
                         (surgeryDate.getTime() - now.getTime()) / 1000
                     );
-
+                    if (diffSeconds < 0) {
+                        setReversCount(true);
+                    }
                     setCount(diffSeconds);
                 }
 
@@ -456,7 +459,6 @@ export default function Home() {
         const timer = setInterval(() => {
             setCount((prevCount) => {
                 const newCount = prevCount - 1;
-                if (newCount <= 0) setReversCount(true);
                 return newCount;
             });
         }, 1000);
