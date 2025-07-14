@@ -346,10 +346,7 @@ const ModalSelecOpe = ({
                                                     >
                                                         수술종료
                                                     </p>
-                                                ) : (item?.STATUS === null ||
-                                                      item?.STATUS === 0) &&
-                                                  Number(currentTimeHHMM) <=
-                                                      Number(item?.시작시간) ? (
+                                                ) : item?.STATUS === 0 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#15cf8f] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                         style={{
