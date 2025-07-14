@@ -79,11 +79,6 @@ export default function Info() {
 
         const createdAtTime =
             new Date(isCreatedAt).getTime() - 9 * 60 * 60 * 1000;
-        console.log("createdAtTime (ms):", createdAtTime);
-        console.log(
-            "createdAt (date):",
-            new Date(createdAtTime).toLocaleString()
-        );
 
         const updateElapsed = () => {
             const now = Date.now();
