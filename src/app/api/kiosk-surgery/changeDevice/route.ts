@@ -17,36 +17,28 @@ export async function POST(req: NextRequest) {
                     "해당 수술의 상태를 조절하는 권한을 받은 디바이스가 아닙니다.",
             });
         } else {
-            const deviceSql = `SELECT * FROM KIOSK_SURGERY WHERE DEVICE_ID != '${device_ID}' AND PSENTRY='${psEntry}' AND OPDATE='${today}' AND OPCODE='${opCode}'`;
+            const deviceSql = `SELECT * FROM KIOSK_SURGERY WHERE PSENTRY='${psEntry}' AND OPDATE='${today}' AND OPCODE='${opCode}'`;
             const deviceResult = await queryDB(deviceSql);
-            if (deviceResult?.length > 0) {
-                const status = deviceResult?.[0]?.STATUS;
-                if (status === 0) {
-                    const updateSql = `UPDATE KIOSK_SURGERY SET DEVICE_ID = '${device_ID}', STATUS=${status}, updatedAt=SYSDATETIME() WHERE PSENTRY = '${psEntry}' AND OPDATE = '${today}' AND OPCODE = '${opCode}'`;
-                    await queryDB(updateSql);
-                    return NextResponse.json({
-                        success: true,
-                    });
-                } else {
-                    return NextResponse.json({
-                        success: false,
-                        message: "다른 다비이스에서 이미 시작한 수술입니다.",
-                    });
-                }
+            if (deviceResult?.length == 0) {
+                const insertSql = `INSERT INTO tsfmc_mailsystem.dbo.KIOSK_SURGERY (DEVICE_ID, PSENTRY, PART, OPDATE, OPCODE, STATUS, createdAt) VALUES('${device_ID}', '${psEntry}', '${part}', '${today}', '${opCode}', ${status}, SYSDATETIME())`;
+                await queryDB(insertSql);
+                return NextResponse.json({
+                    success: true,
+                });
             } else {
-                const deviceSql = `SELECT * FROM KIOSK_SURGERY WHERE DEVICE_ID = '${device_ID}' AND PSENTRY='${psEntry}' AND OPDATE='${today}' AND OPCODE='${opCode}'`;
-                const deviceResult = await queryDB(deviceSql);
-                if (deviceResult?.length == 0) {
-                    const insertSql = `INSERT INTO tsfmc_mailsystem.dbo.KIOSK_SURGERY (DEVICE_ID, PSENTRY, PART, OPDATE, OPCODE, STATUS, createdAt) VALUES('${device_ID}', '${psEntry}', '${part}', '${today}', '${opCode}', ${status}, SYSDATETIME())`;
-                    await queryDB(insertSql);
-                    return NextResponse.json({
-                        success: true,
-                    });
-                } else {
+                if (deviceResult?.[0]?._id === device_ID) {
                     const updateSql = `UPDATE KIOSK_SURGERY SET STATUS=${status}, updatedAt=SYSDATETIME() WHERE DEVICE_ID = '${device_ID}' AND PSENTRY = '${psEntry}' AND OPDATE = '${today}' AND OPCODE = '${opCode}'`;
                     await queryDB(updateSql);
                     return NextResponse.json({
                         success: true,
+                    });
+                } else {
+                    const updateSql = `UPDATE KIOSK_SURGERY SET DEVICE_ID = ${device_ID}, STATUS = ${status}, updatedAt=SYSDATETIME() WHERE PSENTRY = '${psEntry}' AND OPDATE = '${today}' AND OPCODE = '${opCode}'`;
+                    await queryDB(updateSql);
+                    return NextResponse.json({
+                        success: true,
+                        message:
+                            "다른 기기에 등록되었던 수술을 해제 후 이 기기로 업데이트합니다.",
                     });
                 }
             }
