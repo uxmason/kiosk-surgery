@@ -407,7 +407,7 @@ export default function Home() {
             });
             setOnLoading(false);
         }
-    }, [deviceId, isBoostCheckStatus]);
+    }, [deviceId, isBoostCheckStatus, isPaired]);
 
     // 해당 기기의 고유번호의 유효성 체크
     useEffect(() => {
@@ -418,6 +418,7 @@ export default function Home() {
         const interval = setInterval(() => {
             handleSelectDoctor().then((res) => {
                 if (res.success) {
+                    setPaired(true);
                 } else {
                     setOnLoading(false);
                     setPaired(false);
