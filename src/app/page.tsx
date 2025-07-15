@@ -803,12 +803,12 @@ export default function Home() {
                     </div>
                     <CustomBtn
                         text={
-                            !isPaired || dataOpeInfo.length == 0
+                            !isPaired || dataOpeInfo?.length === 0
                                 ? `수술 대상이 아직 선택되지 않았습니다.`
                                 : `시작하기`
                         }
                         bg={
-                            !isPaired || dataOpeInfo.length == 0
+                            !isPaired || dataOpeInfo?.length === 0
                                 ? "rgba(58,62,89,0.50)"
                                 : "#15CF8F"
                         }
@@ -819,7 +819,7 @@ export default function Home() {
                         status={1}
                     />
                 </div>
-                {(typeof client?.psEntry !== "undefined" || isPaired) && (
+                {(dataOpeInfo?.length !== 0 || isPaired) && (
                     <UpcomingTime
                         text={
                             isReversCount
