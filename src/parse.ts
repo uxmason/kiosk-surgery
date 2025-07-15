@@ -31,7 +31,7 @@ export const parseOpePart = generateParseKeyForObject<PartType>({
     ABDOMEN: { text: "복부", color: "#ED6B5B" },
     BACK: { text: "등", color: "#F9AC68" },
     LOVEHANDLE: { text: "러브핸들", color: "#F05579" },
-    HIP: { text: "엉덩이", color: "#F9AC68" },
+    HIP: { text: "힙", color: "#F9AC68" },
     FACE: { text: "얼굴", color: "#F9AC68" },
     CALVES: { text: "종아리", color: "#5B87ED" },
 });

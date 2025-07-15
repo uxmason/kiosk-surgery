@@ -1,5 +1,5 @@
 import { handleBirthToAge } from "@/function";
-import { parseSexType } from "@/parse";
+import { parseOpePart, parseSexType } from "@/parse";
 import { useClientStore } from "@/store";
 
 interface Props {
@@ -8,6 +8,23 @@ interface Props {
 const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
     const { client } = useClientStore();
     const sex = Number(client?.licence?.slice(6, 7)) % 2 === 0 ? "F" : "M";
+    const isPart = client?.part;
+    const engPart =
+        isPart === "허벅지"
+            ? "THIGH"
+            : isPart === "팔"
+            ? "ARM"
+            : isPart === "복부"
+            ? "ABDOMEN"
+            : isPart === "등"
+            ? "BACK"
+            : isPart === "러브핸들"
+            ? "LOVEHANDLE"
+            : isPart === "엉덩이" || isPart === "힙"
+            ? "HIP"
+            : isPart === "얼굴"
+            ? "FACE"
+            : "CALVES";
     return (
         <div className="flex w-full gap-x-5 px-5 pt-5">
             <div className="flex w-[885px] h-[135px] pt-[30px] pb-[41px] px-10 rounded-[15px] bg-[rgba(58,62,89,0.15)]">
@@ -52,7 +69,12 @@ const ClientInfo = ({ setIsOpenOpeModal }: Props) => {
                     <p className="text-white/50 text-[18px] font-bold leading-6">
                         부위
                     </p>
-                    <p className="text-[#38ABBE] text-[32px] font-light leading-6">
+                    <p
+                        style={{
+                            color: parseOpePart(engPart).color,
+                        }}
+                        className="text-[32px] font-light leading-6"
+                    >
                         {client?.part}
                     </p>
                 </div>
