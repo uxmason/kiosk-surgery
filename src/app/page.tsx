@@ -819,7 +819,7 @@ export default function Home() {
                         status={1}
                     />
                 </div>
-                {(client?.psEntry !== "" || isPaired) && (
+                {(typeof client?.psEntry !== "undefined" || isPaired) && (
                     <UpcomingTime
                         text={
                             isReversCount
