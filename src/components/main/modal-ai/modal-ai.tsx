@@ -35,7 +35,6 @@ const ModalAI = ({ isModalAIOpen, setModalAIOpen, isAnesthesia }: Props) => {
                         </p>
                     </>
                 </GraphAi>
-                <div className="h-5" />
                 <GraphAi isOpen={isModalAIOpen} aiType="AVERAGE">
                     <>
                         <p className="text-white text-[24px] font-bold leading-6">
