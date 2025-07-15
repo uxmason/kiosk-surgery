@@ -5,7 +5,6 @@ const ClientInfoForModal = () => {
     const { client } = useClientStore();
     const isSex = Number(client?.licence?.slice(6, 7)) % 2 === 0 ? "F" : "M";
     const isAge = handleBirthToAge(client?.licence);
-
     const isPart = client?.part;
     const engPart =
         isPart === "허벅지"
@@ -18,7 +17,7 @@ const ClientInfoForModal = () => {
             ? "BACK"
             : isPart === "러브핸들"
             ? "LOVEHANDLE"
-            : isPart === "엉덩이"
+            : isPart === "엉덩이" || isPart === "힙"
             ? "HIP"
             : isPart === "얼굴"
             ? "FACE"
