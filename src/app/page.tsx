@@ -394,7 +394,6 @@ export default function Home() {
                         branchName: doctorInfo?.["HOS_NAME"],
                     });
                     setPaired(true);
-                    setOnLoading(false);
                 } else {
                     toast.error(res.message);
                     setPaired(false);
@@ -406,6 +405,7 @@ export default function Home() {
                 }
                 setBoostCheckStatus(false);
             });
+            setOnLoading(false);
         }
     }, [deviceId, isBoostCheckStatus]);
 
@@ -419,7 +419,7 @@ export default function Home() {
             handleSelectDoctor().then((res) => {
                 if (res.success) {
                 } else {
-                    setOnLoading(true);
+                    setOnLoading(false);
                     toast.error(res.message);
                     // updateErrorMessage({
                     //     deviceID: deviceId,
