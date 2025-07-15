@@ -420,6 +420,7 @@ export default function Home() {
                 if (res.success) {
                 } else {
                     setOnLoading(false);
+                    setPaired(false);
                     toast.error(res.message);
                     // updateErrorMessage({
                     //     deviceID: deviceId,
@@ -819,7 +820,7 @@ export default function Home() {
                         status={1}
                     />
                 </div>
-                {(dataOpeInfo?.length !== 0 || isPaired) && (
+                {isPaired && (
                     <UpcomingTime
                         text={
                             isReversCount
