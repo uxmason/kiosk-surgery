@@ -20,9 +20,16 @@ const GraphAi = ({ isOpen, children, aiType }: Props) => {
     );
     const [isFatList, setIsFatList] = useState<FatListType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const sortedArray = isFatList?.sort((a, b) => {
-        return order.indexOf(a?.메인부위명) - order.indexOf(b?.메인부위명);
-    });
+    const sortedArray = isFatList
+        ?.sort((a, b) => {
+            return order.indexOf(a?.메인부위명) - order.indexOf(b?.메인부위명);
+        })
+        ?.filter(
+            (f) =>
+                f?.최대예측지방량 !== null ||
+                f?.최소예측지방량 !== null ||
+                f?.평균예측지방량 !== null
+        );
     const onHandleSelectFepa = async (
         psEntry: string,
         age: number,
@@ -49,38 +56,45 @@ const GraphAi = ({ isOpen, children, aiType }: Props) => {
         }
     };
 
+    const [hasFetched, setHasFetched] = useState(false);
+
     useEffect(() => {
         if (
             !isOpen ||
-            typeof client?.psEntry === "undefined" ||
-            client?.psEntry === "" ||
-            client?.opeCode === ""
+            hasFetched ||
+            !client?.psEntry ||
+            !client?.opeCode ||
+            !client?.licence
         ) {
             return;
-        } else {
-            setIsLoading(true);
-            const age = Number(handleBirthToAge(client?.licence));
-            const sex =
-                client?.licence?.slice(6, 7) === "2" ||
-                client?.licence?.slice(6, 7) === "4"
-                    ? "F"
-                    : "M";
-            onHandleSelectFepa(client?.psEntry, age, sex)?.then((res) => {
-                if (res?.success) {
-                    setIsLoading(false);
-                    setIsLimitFatParts(res?.limitFatPart);
-                    setIsFatList(res?.fatList);
-                } else {
-                    toast.error(res.message);
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor.id,
-                        message: res.message,
-                    });
-                }
-            });
         }
-    }, [isOpen, client, aiType]);
+
+        const fetchFepa = async () => {
+            setIsLoading(true);
+            const age = Number(handleBirthToAge(client.licence));
+            const sex = ["2", "4"].includes(client.licence.slice(6, 7))
+                ? "F"
+                : "M";
+
+            const res = await onHandleSelectFepa(client.psEntry, age, sex);
+            setIsLoading(false);
+
+            if (res?.success) {
+                setIsLimitFatParts(res.limitFatPart);
+                setIsFatList(res.fatList);
+                setHasFetched(true);
+            } else {
+                toast.error(res.message);
+                updateErrorMessage({
+                    deviceID: deviceId,
+                    userID: doctor.id,
+                    message: res.message,
+                });
+            }
+        };
+
+        fetchFepa();
+    }, [isOpen, client?.psEntry, client?.opeCode, client?.licence]);
 
     return (
         <div className="flex flex-col w-full h-[400px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] py-[30px] px-[35px] mb-5">
