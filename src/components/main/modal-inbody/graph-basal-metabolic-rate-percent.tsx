@@ -112,9 +112,9 @@ const GraphBasalMetabolicRatePercent = ({
                 <p className="text-white text-[24px] font-bold leading-6">
                     권장 섭취량
                 </p>
-                <div className="flex items-center w-full justify-between pt-[10px]">
+                <div className="flex w-full justify-between">
                     <div
-                        className="max-w-30 h-[15px] bg-[rgba(255,255,255,0.35)] backdrop-blur-[20px] rounded-[5px]"
+                        className="max-w-30 h-[15px] mt-[16px] bg-[rgba(255,255,255,0.35)] backdrop-blur-[20px] rounded-[5px]"
                         style={{
                             width: `${
                                 100 -
@@ -124,7 +124,7 @@ const GraphBasalMetabolicRatePercent = ({
                             }%`,
                         }}
                     />
-                    <div className="flex items-baseline">
+                    <div className="flex items-baseline pt-[10px]">
                         <p className="text-white text-[20px] font-bold leading-[25px]">
                             {blBaseCalory?.toLocaleString()}
                         </p>
@@ -138,9 +138,9 @@ const GraphBasalMetabolicRatePercent = ({
                 <p className="text-white text-[24px] font-bold leading-6">
                     기초 대사량
                 </p>
-                <div className="flex items-center justify-between pt-[10px]">
+                <div className="flex items-center justify-between">
                     <div
-                        className="max-w-30 h-[15px] bg-[#ED6B5B] backdrop-blur-[20px] rounded-[5px]"
+                        className="max-w-30 h-[15px] mt-4 bg-[#ED6B5B] backdrop-blur-[20px] rounded-[5px]"
                         style={{
                             width: `${
                                 100 -
@@ -150,7 +150,7 @@ const GraphBasalMetabolicRatePercent = ({
                             }%`,
                         }}
                     />
-                    <div className="flex items-baseline">
+                    <div className="flex items-baseline pt-[10px]">
                         <p className="text-white text-[20px] font-bold leading-[25px]">
                             {wcBasic?.toLocaleString()}
                         </p>
