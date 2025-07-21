@@ -513,7 +513,7 @@ const ModalSelecOpe = ({
                                 ))}
                             </div>
                             <div
-                                className={`flex flex-col w-full h-full gap-y-[10px] px-[15px] py-[15px] transition-all duration-300 bg-[rgba(58,62,89,0.25)] rounded-[15px]`}
+                                className={`flex flex-col w-full h-full min-h-[760px] overflow-y-scroll gap-y-[10px] px-[15px] py-[15px] transition-all duration-300 bg-[rgba(58,62,89,0.25)] rounded-[15px]`}
                             >
                                 {(
                                     dataAllOpe?.[hospitalIndex]?.doctor ?? []
@@ -521,7 +521,7 @@ const ModalSelecOpe = ({
                                     return (
                                         <div
                                             key={index}
-                                            className={`flex relative box-border w-[270px] h-[100px] text-white  rounded-[10px] transition-all duration-300 cursor-pointer ${
+                                            className={`flex relative shrink-0 box-border w-[270px] h-[100px] text-white  rounded-[10px] transition-all duration-300 cursor-pointer ${
                                                 doctorIndex == index
                                                     ? "border-solid border-[4px] border-[#15CF8F] bg-[#3A3E59] pt-[6px] px-[6px]"
                                                     : "bg-[rgba(58,62,89,.25)] pt-[10px] px-[10px]"
