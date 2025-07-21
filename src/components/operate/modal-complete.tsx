@@ -45,6 +45,7 @@ const ModalComplete = ({
                 const result = await response.json();
                 if (result.success) {
                     setIsModalComplete(false);
+                    localStorage.removeItem("client-storage");
                     router.replace("/");
                 } else {
                     updateErrorMessage({

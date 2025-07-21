@@ -57,7 +57,6 @@ const ModalSelecOpe = ({
     const [hospitalIndex, setHospitalIndex] = useState(0);
     const [doctorIndex, setDoctorIndex] = useState(0);
     const [isErrorMessage, setIsErrorMessage] = useState(false);
-
     const currentTimeHHMM =
         new Date().getHours() +
         "" +

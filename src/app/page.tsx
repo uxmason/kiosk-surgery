@@ -142,11 +142,29 @@ export default function Home() {
     const onHandleSelectOpe = async () => {
         setOnLoading(true);
         setReversCount(false);
+
+        let clientInfo = null;
+        try {
+            const raw = localStorage.getItem("client-storage");
+            if (raw) {
+                clientInfo = JSON.parse(raw);
+            }
+        } catch (e) {
+            console.error("로컬 스토리지 파싱 오류", e);
+        }
+
         try {
             let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
-            if (targetPsEntry !== "" && targetOpeCode !== "")
-                url += `&psEntry=${targetPsEntry}&opeCode=${targetOpeCode}`;
-            if (targetDeviceId !== "") url += `&deviceId=${targetDeviceId}`;
+
+            const psEntry = clientInfo?.state?.client?.psEntry || targetPsEntry;
+            const opeCode = clientInfo?.state?.client?.opeCode || targetOpeCode;
+
+            if (psEntry && opeCode) {
+                url += `&psEntry=${psEntry}&opeCode=${opeCode}`;
+            }
+            if (targetDeviceId !== "") {
+                url += `&deviceId=${targetDeviceId}`;
+            }
 
             const response = await fetch(url, { method: "GET" });
 
@@ -472,6 +490,7 @@ export default function Home() {
         if (isOpeOpen) {
             handleSelectAllOpe().then((res) => {
                 if (res.success) {
+                    localStorage.removeItem("client-storage");
                     setAllOpe(res.list);
                     setOpeOpenNext(true);
                 } else {
@@ -491,17 +510,32 @@ export default function Home() {
 
     // 고객 정보
     useEffect(() => {
-        if (!dataOpeInfo) {
-            return;
+        let clientInfo = null;
+        try {
+            const raw = localStorage.getItem("client-storage");
+            if (raw) {
+                clientInfo = JSON.parse(raw);
+            }
+        } catch (e) {
+            console.error("로컬 스토리지 파싱 오류", e);
         }
+
+        if (!dataOpeInfo) return;
         setClient({
-            psEntry: dataOpeInfo?.[0]?.고객번호,
-            branch: dataOpeInfo?.[0]?.지점,
-            name: dataOpeInfo?.[0]?.고객명,
-            licence: dataOpeInfo?.[0]?.주민번호,
-            part: dataOpeInfo?.[0]?.수술부위,
-            opeCode: dataOpeInfo?.[0]?.수술코드,
-            opeDate: dataOpeInfo?.[0]?.수술일,
+            psEntry:
+                clientInfo?.state?.client?.psEntry ||
+                dataOpeInfo?.[0]?.고객번호,
+            branch: clientInfo?.state?.client?.branch || dataOpeInfo?.[0]?.지점,
+            name: clientInfo?.state?.client?.name || dataOpeInfo?.[0]?.고객명,
+            licence:
+                clientInfo?.state?.client?.licence ||
+                dataOpeInfo?.[0]?.주민번호,
+            part: clientInfo?.state?.client?.part || dataOpeInfo?.[0]?.수술부위,
+            opeCode:
+                clientInfo?.state?.client?.opeCode ||
+                dataOpeInfo?.[0]?.수술코드,
+            opeDate:
+                clientInfo?.state?.client?.opeDate || dataOpeInfo?.[0]?.수술일,
         });
     }, [dataOpeInfo]);
 
@@ -737,7 +771,6 @@ export default function Home() {
     // useEffect(() => {
     //     setDeviceId("Apple M1 Pro");
     // }, []);
-
     return (
         <>
             <main
