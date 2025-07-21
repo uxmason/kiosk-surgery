@@ -45,11 +45,11 @@ const ReservationInfo = ({ isOpeInfo }: Props) => {
     }, [isOpeInfo]);
 
     return (
-        <div className="flex flex-col w-full h-[310px] bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] my-5 py-[30px] px-[35px]">
+        <div className="flex flex-col w-full h-[310px] justify-between bg-[rgba(58,62,89,0.25)] backdrop-blur-[20px] rounded-[15px] my-5 pt-[30px] pb-10 px-[35px]">
             <p className="text-white text-[24px] font-bold leading-6">
                 수술 예약 정보
             </p>
-            <p className="text-[#15CF8F] text-[20px] font-bold leading-5 pt-[31px] pb-[35px]">
+            <p className="text-[#15CF8F] text-[20px] font-bold leading-5">
                 {isOpeName}
             </p>
             <div className="grid grid-cols-5 row-end-2 w-full gap-y-[30px]">
