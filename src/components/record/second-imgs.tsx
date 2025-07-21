@@ -28,35 +28,25 @@ const SecondImgs = ({
     const selectedImgs = imgs?.[currentDateIndex]?.image;
 
     useEffect(() => {
-        if (!swiperInstance || currentDateIndex === undefined) return;
+        if (imgs?.length) {
+            setCurrentDateIndex(imgs.length - 1);
+        }
+    }, [imgs]);
 
-        const totalSlides = swiperInstance.slides.length;
-        const slidesPerView = swiperInstance.params.slidesPerView as number;
+    useEffect(() => {
+        if (!swiperInstance || currentDateIndex === undefined || !isSecondOpen)
+            return;
 
         let targetIndex = currentDateIndex;
 
-        // 조건 1: 3개 이하일 때는 1번 인덱스를 가운데로
-        if (totalSlides <= 3) {
-            targetIndex = 1;
-        }
-        // 조건 2: 맨 처음 인덱스
-        else if (swiperInstance.isBeginning) {
-            targetIndex = 0;
-        }
-        // 조건 3: 맨 마지막 인덱스
-        else if (swiperInstance.isEnd) {
-            targetIndex = totalSlides - slidesPerView;
+        if (dates?.length <= 3) {
+            targetIndex = currentDateIndex - 1;
+            if (targetIndex < 0) targetIndex = 0;
         }
 
-        // 범위 밖 보호
-        if (targetIndex < 0) targetIndex = 0;
+        swiperInstance.slideTo(targetIndex, 300);
+    }, [swiperInstance, currentDateIndex, isSecondOpen]);
 
-        swiperInstance.slideTo(targetIndex, 300); // 300ms 애니메이션
-    }, [currentDateIndex, swiperInstance]);
-
-    useEffect(() => {
-        setCurrentDateIndex(imgs?.length - 1);
-    }, [imgs]);
     return (
         <>
             <div className="flex w-full h-fit gap-x-5 pt-5 px-5">
@@ -113,45 +103,43 @@ const SecondImgs = ({
                                 <Swiper
                                     onSwiper={setSwiperInstance}
                                     spaceBetween={20}
-                                    centeredSlides={true}
+                                    centeredSlides={dates?.length <= 3}
                                     slidesPerView="auto"
                                     className="flex w-full h-[135px] py-5 bg-[rgba(58,62,89,0.15)] rounded-[15px]"
                                     onSlideChange={() =>
                                         setCurrentDateIndex(currentDateIndex)
                                     }
                                 >
-                                    {dates?.map((d, i) => {
-                                        return (
-                                            <SwiperSlide
-                                                key={i}
-                                                className="flex justify-center pt-5"
-                                                style={{
-                                                    width: "190px",
-                                                    height: "95px",
-                                                }}
-                                            >
-                                                <button
-                                                    className={`flex flex-col shrink-0 items-start w-[190px] h-[95px] bg-[rgba(255,255,255,0.05)] rounded-[10px] py-[15px] px-[25px] gap-y-[14px] border-[3px] border-solid
-                                                ${
-                                                    i === currentDateIndex
-                                                        ? "border-[#15CF8F]"
-                                                        : "border-[rgba(255,255,255,0.15)]"
+                                    {dates?.map((d, i) => (
+                                        <SwiperSlide
+                                            key={i}
+                                            className="flex justify-center pt-5"
+                                            style={{
+                                                width: "190px",
+                                                height: "95px",
+                                            }}
+                                        >
+                                            <button
+                                                className={`flex flex-col shrink-0 items-start w-[190px] h-[95px] bg-[rgba(255,255,255,0.05)] rounded-[10px] py-[15px] px-[25px] gap-y-[14px] border-[3px] border-solid
+                    ${
+                        i === currentDateIndex
+                            ? "border-[#15CF8F]"
+                            : "border-[rgba(255,255,255,0.15)]"
+                    }
+                `}
+                                                onClick={() =>
+                                                    setCurrentDateIndex(i)
                                                 }
-                                                `}
-                                                    onClick={() =>
-                                                        setCurrentDateIndex(i)
-                                                    }
-                                                >
-                                                    <p className="text-[rgba(255,255,255,0.50)] text-[18px] font-bold leading-6">
-                                                        촬영일
-                                                    </p>
-                                                    <p className="text-white text-[24px] font-bold leading-6">
-                                                        {d}
-                                                    </p>
-                                                </button>
-                                            </SwiperSlide>
-                                        );
-                                    })}
+                                            >
+                                                <p className="text-[rgba(255,255,255,0.50)] text-[18px] font-bold leading-6">
+                                                    촬영일
+                                                </p>
+                                                <p className="text-white text-[24px] font-bold leading-6">
+                                                    {d}
+                                                </p>
+                                            </button>
+                                        </SwiperSlide>
+                                    ))}
                                 </Swiper>
                             </div>
                         </div>

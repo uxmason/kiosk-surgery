@@ -58,7 +58,6 @@ const FirstImgs = ({
     useEffect(() => {
         setCurrentDateIndex(imgs?.length - 1);
     }, [imgs]);
-
     return (
         <>
             <div className="flex w-full h-fit gap-x-5 pt-5 px-5">
@@ -115,7 +114,9 @@ const FirstImgs = ({
                                 <Swiper
                                     onSwiper={setSwiperInstance}
                                     spaceBetween={20}
-                                    centeredSlides={true}
+                                    centeredSlides={
+                                        dates?.length <= 3 ? true : false
+                                    }
                                     slidesPerView="auto"
                                     className="flex w-full h-[135px] py-5 bg-[rgba(58,62,89,0.15)] rounded-[15px]"
                                     onSlideChange={() =>
