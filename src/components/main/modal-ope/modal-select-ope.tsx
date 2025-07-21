@@ -413,6 +413,9 @@ const ModalSelecOpe = ({
                                                                     if (
                                                                         result?.success
                                                                     ) {
+                                                                        localStorage.removeItem(
+                                                                            "client-storage"
+                                                                        );
                                                                         setTargetPsEntry(
                                                                             result
                                                                                 .client
