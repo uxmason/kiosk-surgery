@@ -490,7 +490,6 @@ export default function Home() {
         if (isOpeOpen) {
             handleSelectAllOpe().then((res) => {
                 if (res.success) {
-                    localStorage.removeItem("client-storage");
                     setAllOpe(res.list);
                     setOpeOpenNext(true);
                 } else {
