@@ -22,11 +22,8 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
     const [currentImgs, setCurrentImgs] = useState<ImgsType[]>([]);
-    const [hasInitialized, setHasInitialized] = useState(false);
 
     const regDates = imgs?.map((v) => v?.regdate) ?? [];
-
-    const isFewSlides = regDates.length <= 3;
 
     useEffect(() => {
         if (imgs && imgs.length === 0) {
@@ -36,17 +33,21 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
         }
     }, [imgs, currentDateIndex]);
 
+    const [hasInitialized, setHasInitialized] = useState(false);
+
     useEffect(() => {
-        if (!swiperInstance || regDates.length < 2 || hasInitialized) return;
-        if (isModalImgsOpen) {
-            swiperInstance.slideTo(regDates.length - 2, 0);
-            setCurrentDateIndex(regDates.length - 1);
-            setHasInitialized(true);
-        } else {
-            setCurrentDateIndex(0);
+        if (!swiperInstance || !isModalImgsOpen || hasInitialized) return;
+
+        swiperInstance.slideTo(regDates.length - 2, 300);
+        setCurrentDateIndex(regDates.length - 1);
+        setHasInitialized(true);
+    }, [swiperInstance, regDates, isModalImgsOpen, hasInitialized]);
+
+    useEffect(() => {
+        if (!isModalImgsOpen) {
             setHasInitialized(false);
         }
-    }, [swiperInstance, regDates, hasInitialized, isModalImgsOpen]);
+    }, [isModalImgsOpen]);
 
     return (
         <CustomModal
@@ -137,20 +138,11 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
                         <Swiper
                             onSwiper={setSwiperInstance}
                             spaceBetween={20}
-                            centeredSlides={true}
+                            centeredSlides={
+                                regDates?.length <= 3 ? true : false
+                            }
                             slidesPerView="auto"
                             className="overflow-y-scroll h-full w-full flex items-center"
-                            allowTouchMove={!isFewSlides}
-                            onSlideChange={(swiper) => {
-                                if (isFewSlides) return;
-
-                                const centerIndex = swiper.activeIndex;
-                                const targetIndex =
-                                    centerIndex + 1 < regDates.length
-                                        ? centerIndex + 1
-                                        : centerIndex;
-                                setCurrentDateIndex(targetIndex);
-                            }}
                         >
                             {regDates?.map((d, i) => (
                                 <SwiperSlide
@@ -170,14 +162,12 @@ const ModalImgs = ({ isModalImgsOpen, setModalImgsOpen, imgs }: Props) => {
             }
           `}
                                         onClick={() => {
-                                            if (
-                                                swiperInstance &&
-                                                !isFewSlides
-                                            ) {
+                                            if (swiperInstance) {
                                                 const safeIndex =
                                                     i - 1 < 0 ? 0 : i - 1;
                                                 swiperInstance.slideTo(
-                                                    safeIndex
+                                                    safeIndex,
+                                                    300
                                                 );
                                             }
                                             setCurrentDateIndex(i);
