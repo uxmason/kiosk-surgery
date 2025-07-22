@@ -42,6 +42,7 @@ export default function Home() {
     const [isModalImgsOpen, setModalImgsOpen] = useState(false);
     const [isModalAIOpen, setModalAIOpen] = useState(false);
     const [isErrorOpen, setIsErrorOpen] = useState(false);
+    const [isYesterdayClient, setIsYesterdayClient] = useState(false);
     const [imgs, setImgs] = useState<ImgsType[]>([]);
     const [dataOpeInfo, setOpeInfo] = useState<OpeClientType[]>([]);
     const [dataAllOpe, setAllOpe] = useState([]);
@@ -150,7 +151,11 @@ export default function Home() {
                 clientInfo = JSON.parse(raw);
             }
         } catch (e) {
-            console.error("로컬 스토리지 파싱 오류", e);
+            toast.error("고객 정보를 로컬 스토리지에서 가져오지 못했습니다.");
+            console.error(
+                "고객 정보를 로컬 스토리지에서 가져오지 못했습니다.",
+                e
+            );
         }
 
         try {
@@ -379,6 +384,16 @@ export default function Home() {
             handleOpeStatus(doctor.id, client?.psEntry, client?.opeCode).then(
                 (res) => {
                     if (res.success) {
+                        if (res.createdAt) {
+                            const createdAt = new Date(res.createdAt)
+                                .toISOString()
+                                .slice(0, 10);
+                            const now = new Date().toISOString().slice(0, 10);
+                            if (createdAt !== now) {
+                                localStorage.removeItem("client-storage");
+                                setIsYesterdayClient(true);
+                            }
+                        }
                         if (res.status == 1) router.push("/record");
                         if (res.status == 2) router.push("/operate");
                     } else {
@@ -441,11 +456,6 @@ export default function Home() {
                     setOnLoading(false);
                     setPaired(false);
                     toast.error(res.message);
-                    // updateErrorMessage({
-                    //     deviceID: deviceId,
-                    //     userID: doctor.id,
-                    //     message: res.message,
-                    // });
                 }
             });
         }, 3000);
@@ -462,6 +472,7 @@ export default function Home() {
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setOpeInfo(res.list);
+                setIsYesterdayClient(false);
             } else {
                 toast.error(res.message);
                 updateErrorMessage({
@@ -472,7 +483,7 @@ export default function Home() {
             }
             setOnLoading(false);
         });
-    }, [doctor, targetDeviceId]);
+    }, [doctor, targetDeviceId, isYesterdayClient]);
 
     // 타이머
     useEffect(() => {
@@ -509,6 +520,7 @@ export default function Home() {
 
     // 고객 정보
     useEffect(() => {
+        if (!dataOpeInfo) return;
         let clientInfo = null;
         try {
             const raw = localStorage.getItem("client-storage");
@@ -516,10 +528,12 @@ export default function Home() {
                 clientInfo = JSON.parse(raw);
             }
         } catch (e) {
+            toast.error(
+                "고객 정보를 로컬 스토리지 파싱하는데 오류가 발생했습니다."
+            );
             console.error("로컬 스토리지 파싱 오류", e);
         }
 
-        if (!dataOpeInfo) return;
         setClient({
             psEntry:
                 clientInfo?.state?.client?.psEntry ||
