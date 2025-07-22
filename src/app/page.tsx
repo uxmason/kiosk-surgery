@@ -41,7 +41,7 @@ export default function Home() {
     const [isInbodyOpen, setInbodyOpen] = useState(false);
     const [isModalImgsOpen, setModalImgsOpen] = useState(false);
     const [isModalAIOpen, setModalAIOpen] = useState(false);
-    const [isErrorOpen, setIsErrorOpen] = useState(false);
+    const [isErrorOpen, setIsErrorOpen] = useState("");
     const [isRemoveClient, setIsRemoveClient] = useState(false);
     const [imgs, setImgs] = useState<ImgsType[]>([]);
     const [dataOpeInfo, setOpeInfo] = useState<OpeClientType[]>([]);
@@ -155,15 +155,31 @@ export default function Home() {
                     .slice(0, 10)
                     .split("-")
                     .join("");
-                if (opeDate !== now) {
+                if (
+                    doctor.id !== clientInfo?.state?.client?.doctorId ||
+                    opeDate < now
+                ) {
                     localStorage.removeItem("client-storage");
                     setIsRemoveClient(true);
-                } else {
-                    const promTime = clientInfo?.state?.client?.promTime;
-                    const opeTime = clientInfo?.state?.client?.opeTime;
-                    const now = new Date().toLocaleTimeString().slice(2);
-                    console.log({ promTime, opeTime, now });
                 }
+                // else {
+                //     // 오늘 또는 내일
+                //     const opeTime = clientInfo?.state?.client?.opeTime;
+                //     const now = new Date();
+                //     const koreaISO = new Date(
+                //         now.getTime() + 9 * 60 * 60 * 1000
+                //     )
+                //         .toISOString()
+                //         .slice(0, 19)
+                //         .replace("T", " ")
+                //         .split(" ")?.[1]
+                //         ?.split(":");
+                //     const nowTime = koreaISO?.[0] + koreaISO?.[1];
+                //     if (opeTime <= nowTime) {
+                //         localStorage.removeItem("client-storage");
+                //         setIsRemoveClient(true);
+                //     }
+                // }
             }
         } catch (e) {
             toast.error("고객 정보를 로컬 스토리지에서 가져오지 못했습니다.");
@@ -176,10 +192,8 @@ export default function Home() {
         try {
             let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
 
-            // const psEntry = clientInfo?.state?.client?.psEntry || targetPsEntry;
-            // const opeCode = clientInfo?.state?.client?.opeCode || targetOpeCode;
-            const psEntry = targetPsEntry;
-            const opeCode = targetOpeCode;
+            const psEntry = clientInfo?.state?.client?.psEntry || targetPsEntry;
+            const opeCode = clientInfo?.state?.client?.opeCode || targetOpeCode;
 
             if (psEntry && opeCode) {
                 url += `&psEntry=${psEntry}&opeCode=${opeCode}`;
@@ -401,11 +415,15 @@ export default function Home() {
             handleOpeStatus(doctor.id, client?.psEntry, client?.opeCode).then(
                 (res) => {
                     if (res.success) {
-                        if (res.status == 1) router.push("/record");
-                        if (res.status == 2) router.push("/operate");
+                        if (res.status === 1) router.push("/record");
+                        if (res.status === 2) router.push("/operate");
+                        if (res.status === 3) {
+                            localStorage.removeItem("client-storage");
+                            setIsRemoveClient(true);
+                        }
                     } else {
                         clearInterval(interval);
-                        setIsErrorOpen(true);
+                        setIsErrorOpen(`"다른 기기에서 수술을 등록했습니다."`);
                         setTargetDeviceId(deviceId);
                         localStorage.removeItem("client-storage");
                         setIsRemoveClient(true);
@@ -564,6 +582,9 @@ export default function Home() {
             opeTime:
                 clientInfo?.state?.client?.opeTime ||
                 dataOpeInfo?.[0]?.종료시간,
+            doctorId:
+                clientInfo?.state?.client?.doctorId ||
+                dataOpeInfo?.[0]?.담당의ID,
         });
     }, [dataOpeInfo]);
 
@@ -880,6 +901,8 @@ export default function Home() {
                         isPaired={isPaired}
                         dataOpeInfo={dataOpeInfo}
                         status={1}
+                        setIsErrorOpen={setIsErrorOpen}
+                        setIsRemoveClient={setIsRemoveClient}
                     />
                 </div>
                 {isPaired && (

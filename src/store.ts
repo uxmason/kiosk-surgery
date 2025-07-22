@@ -31,6 +31,7 @@ interface Client {
     opeDate: string;
     promTime: string;
     opeTime: string;
+    doctorId: string;
 }
 
 interface ClientStore {
@@ -52,6 +53,7 @@ export const useClientStore = create<ClientStore>()(
                 opeDate: "",
                 promTime: "",
                 opeTime: "",
+                doctorId: "",
             },
             setClient: (newClient) => set({ client: newClient }),
             getClient: () => get().client,
