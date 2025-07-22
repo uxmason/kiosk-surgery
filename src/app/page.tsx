@@ -394,8 +394,8 @@ export default function Home() {
                                 setIsYesterdayClient(true);
                                 toast.error("NOT SAME");
                             }
-                            toast.error("NULL");
                         }
+                        toast.error("NULL");
                         if (res.status == 1) router.push("/record");
                         if (res.status == 2) router.push("/operate");
                     } else {
