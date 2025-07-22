@@ -42,7 +42,7 @@ export default function Home() {
     const [isModalImgsOpen, setModalImgsOpen] = useState(false);
     const [isModalAIOpen, setModalAIOpen] = useState(false);
     const [isErrorOpen, setIsErrorOpen] = useState(false);
-    const [isYesterdayClient, setIsYesterdayClient] = useState(false);
+    const [isRemoveClient, setIsRemoveClient] = useState(false);
     const [imgs, setImgs] = useState<ImgsType[]>([]);
     const [dataOpeInfo, setOpeInfo] = useState<OpeClientType[]>([]);
     const [dataAllOpe, setAllOpe] = useState([]);
@@ -157,7 +157,7 @@ export default function Home() {
                     .join("");
                 if (opeDate !== now) {
                     localStorage.removeItem("client-storage");
-                    setIsYesterdayClient(true);
+                    setIsRemoveClient(true);
                 }
             }
         } catch (e) {
@@ -400,6 +400,8 @@ export default function Home() {
                         clearInterval(interval);
                         setIsErrorOpen(true);
                         setTargetDeviceId(deviceId);
+                        localStorage.removeItem("client-storage");
+                        setIsRemoveClient(true);
                         updateErrorMessage({
                             deviceID: deviceId,
                             userID: doctor?.id,
@@ -411,7 +413,7 @@ export default function Home() {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [deviceId, doctor, client]);
+    }, [deviceId, doctor, client, isRemoveClient]);
 
     // 의사 정보
     useEffect(() => {
@@ -472,7 +474,7 @@ export default function Home() {
         onHandleSelectOpe().then((res) => {
             if (res.success) {
                 setOpeInfo(res.list);
-                setIsYesterdayClient(false);
+                setIsRemoveClient(false);
             } else {
                 toast.error(res.message);
                 updateErrorMessage({
@@ -483,7 +485,7 @@ export default function Home() {
             }
             setOnLoading(false);
         });
-    }, [doctor, targetDeviceId, isYesterdayClient]);
+    }, [doctor, targetDeviceId, isRemoveClient]);
 
     // 타이머
     useEffect(() => {
