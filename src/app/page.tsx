@@ -149,6 +149,16 @@ export default function Home() {
             const raw = localStorage.getItem("client-storage");
             if (raw) {
                 clientInfo = JSON.parse(raw);
+                const opeDate = clientInfo?.state?.client?.opeDate;
+                const now = new Date()
+                    .toISOString()
+                    .slice(0, 10)
+                    .split("-")
+                    .join("");
+                if (opeDate !== now) {
+                    localStorage.removeItem("client-storage");
+                    setIsYesterdayClient(true);
+                }
             }
         } catch (e) {
             toast.error("고객 정보를 로컬 스토리지에서 가져오지 못했습니다.");
@@ -384,18 +394,6 @@ export default function Home() {
             handleOpeStatus(doctor.id, client?.psEntry, client?.opeCode).then(
                 (res) => {
                     if (res.success) {
-                        if (res.createdAt) {
-                            const createdAt = new Date(res.createdAt)
-                                .toISOString()
-                                .slice(0, 10);
-                            const now = new Date().toISOString().slice(0, 10);
-                            if (createdAt !== now) {
-                                localStorage.removeItem("client-storage");
-                                setIsYesterdayClient(true);
-                                toast.error("NOT SAME");
-                            }
-                        }
-                        toast.error("NULL");
                         if (res.status == 1) router.push("/record");
                         if (res.status == 2) router.push("/operate");
                     } else {
