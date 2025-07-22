@@ -392,7 +392,9 @@ export default function Home() {
                             if (createdAt !== now) {
                                 localStorage.removeItem("client-storage");
                                 setIsYesterdayClient(true);
+                                toast.error("NOT SAME");
                             }
+                            toast.error("NULL");
                         }
                         if (res.status == 1) router.push("/record");
                         if (res.status == 2) router.push("/operate");
