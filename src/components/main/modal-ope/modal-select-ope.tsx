@@ -86,7 +86,7 @@ const ModalSelecOpe = ({
                         수술 고객 선택
                     </p>
                     <div className="flex w-full pt-[66px] gap-x-5">
-                        <div className="relative w-full max-w-[580px] max-h-[1200px] h-full bg-[rgba(58,62,89,0.25)] rounded-[15px] pl-5 pr-[25px]">
+                        <div className="relative w-full max-w-[580px] min-h-[1200px] h-full bg-[rgba(58,62,89,0.25)] rounded-[15px] pl-5 pr-[25px]">
                             {isOpeOpenNext ? (
                                 <>
                                     <div className="absolute w-full h-full max-h-[1200px] mt-[45px]">
@@ -338,8 +338,9 @@ const ModalSelecOpe = ({
                                                         {item?.고객번호}
                                                     </p>
                                                 </div>
-                                                {Number(currentTimeHHMM) >=
-                                                Number(item?.종료시간) ? (
+                                                {item?.STATUS !== 3 &&
+                                                Number(currentTimeHHMM) >=
+                                                    Number(item?.종료시간) ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#fff2] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
@@ -513,7 +514,7 @@ const ModalSelecOpe = ({
                                 ))}
                             </div>
                             <div
-                                className={`flex flex-col w-full h-full max-h-[760px] overflow-y-scroll gap-y-[10px] px-[15px] py-[15px] transition-all duration-300 bg-[rgba(58,62,89,0.25)] rounded-[15px]`}
+                                className={`flex flex-col w-full h-full min-h-[760px] overflow-y-scroll gap-y-[10px] px-[15px] py-[15px] transition-all duration-300 bg-[rgba(58,62,89,0.25)] rounded-[15px]`}
                             >
                                 {(
                                     dataAllOpe?.[hospitalIndex]?.doctor ?? []

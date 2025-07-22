@@ -15,6 +15,8 @@ interface Props {
     isPaired?: boolean;
     dataOpeInfo: OpeInfoItem[];
     status: number;
+    setIsErrorOpen?: (v: string) => void;
+    setIsRemoveClient?: (v: boolean) => void;
 }
 const CustomBtn = ({
     text,
@@ -26,6 +28,8 @@ const CustomBtn = ({
     isPaired,
     dataOpeInfo,
     status,
+    setIsErrorOpen,
+    setIsRemoveClient,
 }: Props) => {
     const { deviceId } = useStore();
     const { client } = useClientStore();
@@ -39,6 +43,23 @@ const CustomBtn = ({
         if (!isPaired || dataOpeInfo?.length == 0) return;
         if (btnStatus === 3) {
             return setIsModalComplete?.(true);
+        }
+        if (btnStatus === 1) {
+            const opeTime = client?.opeTime;
+            const now = new Date();
+            const koreaISO = new Date(now.getTime() + 9 * 60 * 60 * 1000)
+                .toISOString()
+                .slice(0, 19)
+                .replace("T", " ")
+                .split(" ")?.[1]
+                ?.split(":");
+            const nowTime = koreaISO?.[0] + koreaISO?.[1];
+            if (opeTime <= nowTime) {
+                localStorage.removeItem("client-storage");
+                setIsErrorOpen?.(`"이미 종료된 수술입니다."`);
+                setIsRemoveClient?.(true);
+                return;
+            }
         }
         if (path) {
             const url = `/api/kiosk-surgery/changeDevice`;

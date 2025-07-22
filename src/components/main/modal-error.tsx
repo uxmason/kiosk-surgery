@@ -1,18 +1,20 @@
 import { CustomModal } from "../common";
 interface Props {
-    isErrorOpen: boolean;
-    setIsErrorOpen: (v: boolean) => void;
+    isErrorOpen: string;
+    setIsErrorOpen: (v: string) => void;
 }
 const ModalError = ({ isErrorOpen, setIsErrorOpen }: Props) => {
     return (
         <CustomModal
-            isOpen={isErrorOpen}
+            isOpen={!!isErrorOpen}
             top={680}
-            onClose={() => setIsErrorOpen(false)}
+            onClose={() => setIsErrorOpen("")}
             btnClass
         >
             <div className="w-full flex flex-col items-center pt-[370px]">
-                <p className="text-white text-[54px] font-bold leading-[54px]">{`"다른 기기에서 수술을 등록했습니다."`}</p>
+                <p className="text-white text-[54px] font-bold leading-[54px]">
+                    {isErrorOpen}
+                </p>
                 <p className="text-white text-[32px] font-bold leading-[54px] whitespace-break-spaces pt-[61px]">
                     이 기기에 등록되어 있던 수술 정보는 자동 해제되었습니다.
                     {`\n`}
