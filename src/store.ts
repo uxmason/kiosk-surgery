@@ -29,6 +29,8 @@ interface Client {
     part: string;
     opeCode: string;
     opeDate: string;
+    promTime: string;
+    opeTime: string;
 }
 
 interface ClientStore {
@@ -48,6 +50,8 @@ export const useClientStore = create<ClientStore>()(
                 part: "",
                 opeCode: "",
                 opeDate: "",
+                promTime: "",
+                opeTime: "",
             },
             setClient: (newClient) => set({ client: newClient }),
             getClient: () => get().client,
