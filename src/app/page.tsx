@@ -158,6 +158,11 @@ export default function Home() {
                 if (opeDate !== now) {
                     localStorage.removeItem("client-storage");
                     setIsRemoveClient(true);
+                } else {
+                    const promTime = clientInfo?.state?.client?.promTime;
+                    const opeTime = clientInfo?.state?.client?.opeTime;
+                    const now = new Date().toLocaleTimeString().slice(2);
+                    console.log({ promTime, opeTime, now });
                 }
             }
         } catch (e) {
@@ -171,8 +176,10 @@ export default function Home() {
         try {
             let url = `/api/kiosk-surgery/surgery?doctorId=${doctor.id}`;
 
-            const psEntry = clientInfo?.state?.client?.psEntry || targetPsEntry;
-            const opeCode = clientInfo?.state?.client?.opeCode || targetOpeCode;
+            // const psEntry = clientInfo?.state?.client?.psEntry || targetPsEntry;
+            // const opeCode = clientInfo?.state?.client?.opeCode || targetOpeCode;
+            const psEntry = targetPsEntry;
+            const opeCode = targetOpeCode;
 
             if (psEntry && opeCode) {
                 url += `&psEntry=${psEntry}&opeCode=${opeCode}`;
@@ -551,6 +558,12 @@ export default function Home() {
                 dataOpeInfo?.[0]?.수술코드,
             opeDate:
                 clientInfo?.state?.client?.opeDate || dataOpeInfo?.[0]?.수술일,
+            promTime:
+                clientInfo?.state?.client?.promTime ||
+                dataOpeInfo?.[0]?.시작시간,
+            opeTime:
+                clientInfo?.state?.client?.opeTime ||
+                dataOpeInfo?.[0]?.종료시간,
         });
     }, [dataOpeInfo]);
 
