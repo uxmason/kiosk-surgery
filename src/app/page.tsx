@@ -149,37 +149,6 @@ export default function Home() {
             const raw = localStorage.getItem("client-storage");
             if (raw) {
                 clientInfo = JSON.parse(raw);
-                const opeDate = clientInfo?.state?.client?.opeDate;
-                const now = new Date()
-                    .toISOString()
-                    .slice(0, 10)
-                    .split("-")
-                    .join("");
-                if (
-                    doctor.id !== clientInfo?.state?.client?.doctorId ||
-                    opeDate < now
-                ) {
-                    localStorage.removeItem("client-storage");
-                    setIsRemoveClient(true);
-                }
-                // else {
-                //     // 오늘 또는 내일
-                //     const opeTime = clientInfo?.state?.client?.opeTime;
-                //     const now = new Date();
-                //     const koreaISO = new Date(
-                //         now.getTime() + 9 * 60 * 60 * 1000
-                //     )
-                //         .toISOString()
-                //         .slice(0, 19)
-                //         .replace("T", " ")
-                //         .split(" ")?.[1]
-                //         ?.split(":");
-                //     const nowTime = koreaISO?.[0] + koreaISO?.[1];
-                //     if (opeTime <= nowTime) {
-                //         localStorage.removeItem("client-storage");
-                //         setIsRemoveClient(true);
-                //     }
-                // }
             }
         } catch (e) {
             toast.error("고객 정보를 로컬 스토리지에서 가져오지 못했습니다.");
@@ -384,22 +353,6 @@ export default function Home() {
         }
     };
 
-    // 기기의 고유 번호
-    // useEffect(() => {
-    //     if (Cookies.get("FINGERPRINT_HASH_KIOSK")) {
-    //         const cookieVal = Cookies.get("FINGERPRINT_HASH_KIOSK");
-    //         setFingerprint(cookieVal ?? "");
-    //     } else {
-    //         const getFingerprint = async () => {
-    //             const fp = await FingerprintJS.load();
-    //             const result = await fp.get();
-    //             setFingerprint(result.visitorId);
-    //             document.cookie = `FINGERPRINT_HASH_KIOSK=${result.visitorId}; path=/`;
-    //         };
-    //         getFingerprint();
-    //     }
-    // }, []);
-
     // 해당 수술의 상태 체크
     useEffect(() => {
         if (
@@ -415,6 +368,57 @@ export default function Home() {
             handleOpeStatus(doctor.id, client?.psEntry, client?.opeCode).then(
                 (res) => {
                     if (res.success) {
+                        let clientInfo = null;
+                        try {
+                            const raw = localStorage.getItem("client-storage");
+                            const nowDate = new Date()
+                                .toISOString()
+                                .slice(0, 10)
+                                .split("-")
+                                .join("");
+                            if (raw) {
+                                clientInfo = JSON.parse(raw);
+                                const opeDate =
+                                    clientInfo?.state?.client?.opeDate;
+                                if (opeDate < nowDate) {
+                                    localStorage.removeItem("client-storage");
+                                    setIsRemoveClient(true);
+                                } else {
+                                    const opeTime =
+                                        clientInfo?.state?.client?.opeTime;
+                                    const now = new Date();
+                                    const koreaISO = new Date(
+                                        now.getTime() + 9 * 60 * 60 * 1000
+                                    )
+                                        .toISOString()
+                                        .slice(0, 19)
+                                        .replace("T", " ")
+                                        .split(" ")?.[1]
+                                        ?.split(":");
+                                    const nowTime =
+                                        koreaISO?.[0] + koreaISO?.[1];
+                                    if (opeDate === nowDate) {
+                                        // 오늘
+                                        if (opeTime < nowTime) {
+                                            localStorage.removeItem(
+                                                "client-storage"
+                                            );
+                                            setIsRemoveClient(true);
+                                        }
+                                    } else {
+                                        // 내일
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            toast.error(
+                                "고객 정보를 로컬 스토리지에서 가져오지 못했습니다."
+                            );
+                            console.error(
+                                "고객 정보를 로컬 스토리지에서 가져오지 못했습니다.",
+                                e
+                            );
+                        }
                         if (res.status === 1) router.push("/record");
                         if (res.status === 2) router.push("/operate");
                         if (res.status === 3) {
@@ -478,6 +482,25 @@ export default function Home() {
         const interval = setInterval(() => {
             handleSelectDoctor().then((res) => {
                 if (res.success) {
+                    const doctorInfo = res.doctorInfo?.[0];
+                    let clientInfo = null;
+                    const raw = localStorage.getItem("client-storage");
+                    if (raw) {
+                        clientInfo = JSON.parse(raw);
+                        if (
+                            doctorInfo?.["USER_ID"] !==
+                            clientInfo?.state?.client?.doctorId
+                        ) {
+                            localStorage.removeItem("client-storage");
+                            setIsRemoveClient(true);
+                            setDoctor({
+                                id: doctorInfo?.["USER_ID"],
+                                name: doctorInfo?.["USER_NAME"],
+                                branch: doctorInfo?.["STARTBRAN"],
+                                branchName: doctorInfo?.["HOS_NAME"],
+                            });
+                        }
+                    }
                     setPaired(true);
                 } else {
                     setOnLoading(false);
@@ -488,7 +511,7 @@ export default function Home() {
         }, 3000);
 
         return () => clearInterval(interval);
-    }, [deviceId]);
+    }, [deviceId, isRemoveClient]);
 
     // 수술 정보
     useEffect(() => {
@@ -811,7 +834,7 @@ export default function Home() {
     // useEffect(() => {
     //     const fetchCPU = async () => {
     //         const cpuId = await window.electronAPI?.getCPUID?.();
-    //         setDeviceId(cpuId);
+    //         setDeviceId(c        puId);
     //     };
     //     fetchCPU();
     // }, []);
