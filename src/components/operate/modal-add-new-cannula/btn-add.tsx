@@ -41,7 +41,7 @@ const BtnAdd = ({
 
     // 기존의 캐뉼라 등록
     const handleDirectAddCannula = async () => {
-        const url = `/api/kiosk-surgery/cannula/direct-add/`;
+        const url = `/api/kiosk-surgery/cannula/direct-add`;
         try {
             const response = await fetch(url, {
                 method: "POST",

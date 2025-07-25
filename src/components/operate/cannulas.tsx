@@ -1,13 +1,13 @@
 "use client";
-import { parseCannulShapeType, parseCannulTipType } from "@/parse";
-import { CannulaListType } from "@/type";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import "swiper/css";
-import { Dispatch, SetStateAction } from "react";
 import { getFormattedDate, removeSpace } from "@/function";
+import { parseCannulShapeType, parseCannulTipType } from "@/parse";
 import { useClientStore, useStore } from "@/store";
+import { CannulaListType } from "@/type";
+import { Dispatch, SetStateAction } from "react";
 import toast from "react-hot-toast";
+import "swiper/css";
+import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 interface Props {
     selectedCannulaIds: string[];
     setSelectedCannulaIds: Dispatch<SetStateAction<string[]>>;
@@ -52,7 +52,7 @@ const Cannulas = ({
     };
 
     const handleDirectAddCannula = async (data: DataType) => {
-        const url = `/api/kiosk-surgery/cannula/direct-add/`;
+        const url = `/api/kiosk-surgery/cannula/direct-add`;
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -74,7 +74,7 @@ const Cannulas = ({
     };
 
     const handleInDirectDeleteCannula = async (data: DataType) => {
-        const url = `/api/kiosk-surgery/cannula/in-direct-delete/`;
+        const url = `/api/kiosk-surgery/cannula/in-direct-delete`;
         try {
             const response = await fetch(url, {
                 method: "POST",

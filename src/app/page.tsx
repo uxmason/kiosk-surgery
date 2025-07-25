@@ -13,24 +13,24 @@ import {
 import { ModalAI } from "@/components/main/modal-ai";
 import { ModalInbody } from "@/components/main/modal-inbody";
 import ModalSelectOpe from "@/components/main/modal-ope/modal-select-ope";
-import { useEffect, useState } from "react";
-import { useDoctorStore, useClientStore, useStore } from "@/store";
-import toast from "react-hot-toast";
+import { handleBirthToAge, updateErrorMessage } from "@/function";
+import { useClientStore, useDoctorStore, useStore } from "@/store";
 import {
-    CaloriesType,
-    ImgsType,
+    AnesthesiaType,
     BmiFatType,
     BmiType,
-    OpeClientType,
-    WeightChartType,
-    WeightsType,
+    CaloriesType,
+    ImgsType,
     MineralType,
+    OpeClientType,
     ProteinType,
     WaterType,
-    AnesthesiaType,
+    WeightChartType,
+    WeightsType,
 } from "@/type";
-import { handleBirthToAge, updateErrorMessage } from "@/function";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Home() {
     const router = useRouter();
