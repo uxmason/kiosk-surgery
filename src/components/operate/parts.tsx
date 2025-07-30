@@ -172,13 +172,13 @@ const Parts = ({ incisionList }: Props) => {
     }, [incisionList]);
 
     return (
-        <div className="flex flex-col pt-[50px] w-full px-5">
-            <p className="text-white text-[32px] font-bold leading-8">
+        <div className="flex flex-col pt-[95px] w-full px-5">
+            <p className="text-white text-[32px] font-bold leading-8 pl-[40px]">
                 {`“수술 `}
                 <span className="text-[#15CF8F]">절개부</span>
                 {` 위치를 기록해주세요.”`}
             </p>
-            <div className="flex w-full h-[440px] bg-[rgba(58,62,89,0.15)] gap-x-5 rounded-[15px] mt-7 mb-[5px] px-5 py-5">
+            <div className="flex w-full h-[870px] bg-[rgba(58,62,89,0.15)] gap-x-5 rounded-[15px] mt-7 mb-[5px] px-5 py-5">
                 <div className="relative">
                     {updatedFrontButtonData?.map((button) => {
                         const aaa = isSelectedButtons?.find(
@@ -273,22 +273,31 @@ const Parts = ({ incisionList }: Props) => {
 export default Parts;
 
 const frontButtonData: ButtonDataType[] = [
-    { style: { top: "14%", left: "8%" }, id: 2 },
-    { style: { top: "14%", right: "8%" }, id: 1 },
-    { style: { top: "48%", left: "44%" }, id: 3 },
-    { style: { top: "62%", left: "44%" }, id: 4 },
-    { style: { top: "70%", left: "26%" }, id: 5 },
-    { style: { top: "70%", right: "26%" }, id: 6 },
+    { style: { top: "6%", left: "10%" }, id: 2 },
+    { style: { top: "6%", right: "10%" }, id: 1 },
+    { style: { top: "24%", left: "44%" }, id: 3 },
+    { style: { top: "31%", left: "44%" }, id: 4 },
+    { style: { top: "34%", left: "26%" }, id: 5 },
+    { style: { top: "34%", right: "26%" }, id: 6 },
+    { style: { top: "17%", right: "44%" }, id: 15 },
+    { style: { top: "14%", left: "15%" }, id: 17 },
+    { style: { top: "14%", right: "15%" }, id: 16 },
 ];
 
 const backButtonData: ButtonDataType[] = [
-    { style: { top: "14%", right: "8%" }, id: 7 },
-    { style: { top: "14%", left: "8%" }, id: 8 },
-    { style: { top: "48%", left: "55%" }, id: 9 },
-    { style: { top: "48%", left: "33%" }, id: 10 },
-    { style: { top: "62%", left: "44%" }, id: 11 },
-    { style: { top: "85%", right: "32%" }, id: 12 },
-    { style: { top: "85%", left: "32%" }, id: 13 },
+    { style: { top: "6%", right: "10%" }, id: 7 },
+    { style: { top: "6%", left: "10%" }, id: 8 },
+    { style: { top: "24%", left: "55%" }, id: 9 },
+    { style: { top: "24%", left: "33%" }, id: 10 },
+    { style: { top: "30%", left: "44%" }, id: 11 },
+    { style: { top: "42%", right: "32%" }, id: 12 },
+    { style: { top: "42%", left: "32%" }, id: 13 },
+    { style: { top: "38%", right: "9%" }, id: 19 },
+    { style: { top: "38%", left: "9%" }, id: 18 },
+    { style: { top: "80%", left: "10%" }, id: 20 },
+    { style: { top: "90%", left: "-3%" }, id: 21 },
+    { style: { top: "80%", right: "10%" }, id: 22 },
+    { style: { top: "90%", right: "-3%" }, id: 23 },
 ];
 
 type AddDataType = {

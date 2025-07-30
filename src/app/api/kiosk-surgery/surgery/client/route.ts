@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getCurrentTimeHHMM, getFormattedDate } from "@/function";
 import { NextResponse } from "next/server";
 import queryDB from "../../../../../../lib/db";
-import { getCurrentTimeHHMM, getFormattedDate } from "@/function";
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
@@ -60,7 +60,7 @@ export async function GET(req: Request) {
                     ON K.DEVICE_ID = D.[_id]
                 WHERE A.PROMDOCTOR = '${doctorId}'
                     AND A.PROMSTATE = '001'
-					AND (K.STATUS IS NULL OR K.STATUS  < 3)
+					AND (K.STATUS IS NULL OR K.STATUS  < 4)
                     AND ((A.PROMDATE = '${today}' AND (A.PROMTIME >= '${nowTime}' OR A.OPETIME >= '${nowTime}')) OR A.PROMDATE > '${today}')
                     AND A.PSENTRY = '${psEntry}' AND A.PACKAGE = '${opeCode}';
                 `;

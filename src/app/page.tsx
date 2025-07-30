@@ -380,6 +380,13 @@ export default function Home() {
                                 clientInfo = JSON.parse(raw);
                                 const opeDate =
                                     clientInfo?.state?.client?.opeDate;
+                                if (
+                                    doctor.id !==
+                                    clientInfo?.state?.client?.doctorId
+                                ) {
+                                    localStorage.removeItem("client-storage");
+                                    setIsRemoveClient(true);
+                                }
                                 if (opeDate < nowDate) {
                                     localStorage.removeItem("client-storage");
                                     setIsRemoveClient(true);
@@ -421,7 +428,8 @@ export default function Home() {
                         }
                         if (res.status === 1) router.push("/record");
                         if (res.status === 2) router.push("/operate");
-                        if (res.status === 3) {
+                        if (res.status === 3) router.push("/incision");
+                        if (res.status === 4) {
                             localStorage.removeItem("client-storage");
                             setIsRemoveClient(true);
                         }
@@ -525,6 +533,8 @@ export default function Home() {
                 setIsRemoveClient(false);
             } else {
                 toast.error(res.message);
+                localStorage.removeItem("client-storage");
+                setIsRemoveClient(true);
                 updateErrorMessage({
                     deviceID: deviceId,
                     userID: doctor.id,

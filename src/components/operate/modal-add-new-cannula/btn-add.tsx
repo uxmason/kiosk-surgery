@@ -1,6 +1,6 @@
 "use client";
 import { getFormattedDate } from "@/function";
-import { useClientStore, useStore } from "@/store";
+import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { AddNewCunnulaType } from "@/type";
 import { Dispatch, SetStateAction } from "react";
 import { useFormContext } from "react-hook-form";
@@ -23,6 +23,7 @@ const BtnAdd = ({
 }: Props) => {
     const { deviceId } = useStore();
     const { client } = useClientStore();
+    const { doctor } = useDoctorStore();
     const today = getFormattedDate();
     const { watch } = useFormContext<AddNewCunnulaType>();
     const model = watch()?.model;
@@ -53,6 +54,7 @@ const BtnAdd = ({
                     cannulaID: isExistCannulaId,
                     psEntry: client?.psEntry,
                     opDate: today,
+                    doctorId: doctor?.id,
                 }),
             });
 
@@ -86,6 +88,7 @@ const BtnAdd = ({
                     thicknessID: thick,
                     psEntry: client?.psEntry,
                     opDate: getFormattedDate(),
+                    doctorId: doctor.id,
                 }),
             });
             if (response.ok) {
@@ -102,30 +105,36 @@ const BtnAdd = ({
     return (
         <div className="flex flex-col items-center justify-center w-full">
             <div
-                className={`flex items-center justify-center w-[480px] bg-[rgba(255,255,255,0.25)] backdrop-blur-[20px] rounded-[15px] transition-all duration-200 ease-in
-                ${
-                    isComplete && isExistCannula
-                        ? "opacity-100 h-[120px] mb-[30px]"
-                        : "opacity-0 h-0 mb-[0px]"
-                }
-                `}
+                className={`flex flex-col items-center transition-all duration-200 ease-in ${
+                    isComplete && isExistCannula ? "pt-20" : "pt-0"
+                }`}
             >
-                <p className="text-white text-[32px] font-bold leading-8">
-                    이미 등록된 캐뉼라입니다.
-                </p>
-            </div>
-            <p
-                className={`text-white text-center font-bold leading-12 whitespace-pre-line transition-all duration-200 ease-in
+                <div
+                    className={`flex items-center justify-center w-[480px] bg-[rgba(255,255,255,0.25)] backdrop-blur-[20px] rounded-[15px] transition-all duration-200 ease-in
+                    ${
+                        isComplete && isExistCannula
+                            ? "opacity-100 h-[120px] mb-[30px]"
+                            : "opacity-0 h-0 mb-[0px]"
+                    }
+                    `}
+                >
+                    <p className="text-white text-[32px] font-bold leading-8">
+                        이미 등록된 캐뉼라입니다.
+                    </p>
+                </div>
+                <p
+                    className={`text-white text-center font-bold leading-12 whitespace-pre-line transition-all duration-200 ease-in
                     ${
                         isComplete && isExistCannula
                             ? "opacity-100 pb-[30px] text-[32px]"
                             : "opacity-0 text-[0px] pb-[0px]"
                     }
                     `}
-            >
-                {`“비록, 신규 등록은 안되지만, 이 캐뉼라를 사용한 것
+                >
+                    {`“비록, 신규 등록은 안되지만, 이 캐뉼라를 사용한 것
                 으로 기록하시겠습니까?”`}
-            </p>
+                </p>
+            </div>
             <button
                 className={`text-center w-[480px] bg-[#15CF8F] rounded-[15px] transition-all duration-200 ease-in
                 ${isComplete ? "opacity-100 h-[120px] z-10" : "opacity-0 h-0"}

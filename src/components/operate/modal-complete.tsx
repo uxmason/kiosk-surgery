@@ -1,9 +1,9 @@
 "use client";
+import { updateErrorMessage } from "@/function";
+import { useClientStore, useDoctorStore, useStore } from "@/store";
+import { OpeInfoItem } from "@/type";
 import { useRouter } from "next/navigation";
 import { CustomModal } from "../common";
-import { OpeInfoItem } from "@/type";
-import { useClientStore, useDoctorStore, useStore } from "@/store";
-import { updateErrorMessage } from "@/function";
 
 interface Props {
     isModalComplete: boolean;
@@ -37,7 +37,7 @@ const ModalComplete = ({
                     psEntry: client.psEntry,
                     part: client.part,
                     opCode: client.opeCode,
-                    status: 3,
+                    status: 4,
                     forced: false,
                 }),
             });
@@ -73,7 +73,7 @@ const ModalComplete = ({
                     신중하게 결정해주세요.
                 </p>
                 <button
-                    className="w-[420px] h-[120px] rounded-[15px] bg-[#15CF8F] z-10"
+                    className="w-[420px] h-[120px] rounded-[15px] bg-[#5B87ED] z-10"
                     onClick={(e) => {
                         e.stopPropagation();
                         handleClick();

@@ -38,15 +38,19 @@ const CustomBtn = ({
     const buttonStyle = {
         backgroundColor: bg,
     };
-
     const handleClick = async (btnStatus: number, next: boolean) => {
-        if (!isPaired || dataOpeInfo?.length == 0) return;
-        if (btnStatus === 3) {
+        if (!isPaired || dataOpeInfo?.length === 0) return;
+        if (btnStatus === 4) {
             return setIsModalComplete?.(true);
         }
         if (btnStatus === 1) {
+            const opeDate = client?.opeDate;
             const opeTime = client?.opeTime;
             const now = new Date();
+            const today = new Date(now.getTime() + 9 * 60 * 60 * 1000)
+                .toISOString()
+                .split("T")[0]
+                .replace(/-/g, "");
             const koreaISO = new Date(now.getTime() + 9 * 60 * 60 * 1000)
                 .toISOString()
                 .slice(0, 19)
@@ -54,7 +58,7 @@ const CustomBtn = ({
                 .split(" ")?.[1]
                 ?.split(":");
             const nowTime = koreaISO?.[0] + koreaISO?.[1];
-            if (opeTime <= nowTime) {
+            if (opeDate === today && opeTime <= nowTime) {
                 localStorage.removeItem("client-storage");
                 setIsErrorOpen?.(`"이미 종료된 수술입니다."`);
                 setIsRemoveClient?.(true);
@@ -111,7 +115,7 @@ const CustomBtn = ({
         <div className="flex w-full">
             {isShow && (
                 <button
-                    className="flex items-center justify-between w-full max-w-[340px] rounded-[15px] bg-[rgba(255,255,255,0.25)] px-[35px] mr-5"
+                    className="flex items-center justify-between w-full min-w-[340px] rounded-[15px] bg-[rgba(255,255,255,0.25)] px-[35px] mr-5"
                     onClick={() => handleClick(status - 2, false)}
                 >
                     <div className="flex items-center justify-center bg-[rgba(255,255,255,0.75)] w-12 h-12 rounded-full">
@@ -128,7 +132,9 @@ const CustomBtn = ({
             )}
             <button
                 style={buttonStyle}
-                className={`w-full min-w-[680px] h-[120px] rounded-[15px]`}
+                className={`w-full h-[120px] rounded-[15px] ${
+                    status === 4 ? "min-w-[591px]" : "min-w-[680px]"
+                } `}
                 onClick={() => handleClick(status, true)}
             >
                 <p className="text-white text-[32px] font-bold leading-[32px]">

@@ -8,11 +8,10 @@ import {
     Process,
     UpcomingTime,
 } from "@/components/common";
-import { Cannulas, ModalError } from "@/components/operate";
-import { MoodalAddNewCannula } from "@/components/operate/modal-add-new-cannula";
+import { ModalComplete, Parts } from "@/components/operate";
 import { handleSelectDoctor, updateErrorMessage } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
-import { CannulaListType, OpeClientType } from "@/type";
+import { IncisionListType, OpeClientType } from "@/type";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -24,15 +23,10 @@ export default function Info() {
     const { doctor } = useDoctorStore();
     const [unpaired, setUnpaired] = useState(false);
     const [isOpenOpeModal, setIsOpenOpeModal] = useState(false);
-    const [isOpenAddCannualModal, setIsOpenAddCannualModal] = useState(false);
-    const [cannulaInSurgeryList, setCannulaInSurgeryList] = useState<
-        CannulaListType[]
-    >([]);
+    const [isModalComplete, setIsModalComplete] = useState(false);
+    const [incisionList, setIncisionList] = useState<IncisionListType[]>([]);
     const [isOpeInfo, setIsOpeInfo] = useState<OpeClientType[]>([]);
-    const [selectedCannulaIds, setSelectedCannulaIds] = useState<string[]>([]);
-    const [count, setCount] = useState(0); // 경과 시간 초 (0부터 시작)
-    const [isIdForEdit, setIsIdForEdit] = useState<number | null>(null);
-    const [isDeletCdmtId, setIsDeleteCdmtId] = useState(false);
+    const [count, setCount] = useState(0);
 
     // 수술의 상태 체크
     const handleOpeStatus = async (
@@ -88,14 +82,11 @@ export default function Info() {
         seconds
     ).padStart(2, "0")}`;
 
-    // 캐뉼라 리스트 불러오기
-    const handleSelectCannulaList = async (
-        doctorId: string,
-        psEntry: string
-    ) => {
+    // 인시젼 리스트 불러오기
+    const handleSelectIncisionList = async (psEntry: string) => {
         try {
             const response = await fetch(
-                `/api/kiosk-surgery/cannula/list?doctorId=${doctorId}&psEntry=${psEntry}`,
+                `/api/kiosk-surgery/incision/list?psEntry=${psEntry}`,
                 {
                     method: "GET",
                 }
@@ -109,26 +100,6 @@ export default function Info() {
             return result;
         } catch (error) {
             console.error("Error fetching data:", error);
-        }
-    };
-
-    // API 재요청하는 함수 (특정 버튼 클릭 시 호출)
-    const reloadCannulaList = () => {
-        if (client?.psEntry === "" || doctor?.id === "") {
-            return;
-        } else {
-            handleSelectCannulaList(doctor?.id, client?.psEntry).then((res) => {
-                if (res.success) {
-                    setCannulaInSurgeryList(res.list);
-                } else {
-                    toast.error(res.message);
-                    updateErrorMessage({
-                        deviceID: deviceId,
-                        userID: doctor.id,
-                        message: res.message,
-                    });
-                }
-            });
         }
     };
 
@@ -190,22 +161,22 @@ export default function Info() {
         }
     }, [unpaired, client, doctor]);
 
-    // 캐뉼라 리스트 담기
+    // 인시젼 리스트 담기
     useEffect(() => {
-        if (unpaired || client?.psEntry === "" || doctor?.id === "") {
+        if (unpaired || client?.psEntry === "") {
             return;
         } else {
-            handleSelectCannulaList(doctor?.id, client?.psEntry).then((res) => {
+            handleSelectIncisionList(client?.psEntry).then((res) => {
                 if (res.success) {
-                    const list: CannulaListType[] = res.list;
-                    setCannulaInSurgeryList(list);
-                    if (list?.map((v) => v.SELECTED === 1)) {
-                        setSelectedCannulaIds(
-                            list
-                                ?.filter((v) => v.SELECTED === 1)
-                                ?.map((s) => s.CANNULA_ID)
-                        );
-                    }
+                    setIncisionList(
+                        res.list?.map((v: IncisionListType) => ({
+                            _id: v?._id,
+                            SURGERY_ID: v?.SURGERY_ID,
+                            POINT_NAME: v?.POINT_NAME,
+                            AJAX_ID: v?.AJAX_ID,
+                            SELECTED: v?.SELECTED,
+                        }))
+                    );
                 } else {
                     toast.error(res.message);
                     updateErrorMessage({
@@ -216,7 +187,7 @@ export default function Info() {
                 }
             });
         }
-    }, [unpaired, client, doctor, isIdForEdit]);
+    }, [unpaired, client]);
 
     // 해당 수술의 상태 체크
     useEffect(() => {
@@ -254,25 +225,18 @@ export default function Info() {
         <>
             <main className="relative w-full h-full min-h-[1920px]">
                 <ClientInfo setIsOpenOpeModal={setIsOpenOpeModal} />
-                <Cannulas
-                    selectedCannulaIds={selectedCannulaIds}
-                    setSelectedCannulaIds={setSelectedCannulaIds}
-                    setIsOpenAddCannualModal={setIsOpenAddCannualModal}
-                    cannulaInSurgeryList={cannulaInSurgeryList}
-                    isIdForEdit={isIdForEdit}
-                    setIsIdForEdit={setIsIdForEdit}
-                    setIsDeleteCdmtId={setIsDeleteCdmtId}
-                />
-                <div className="flex w-full justify-center pt-[270px] px-5">
+                <Parts incisionList={incisionList} />
+                <div className="flex w-full justify-center pt-[30px] px-5">
                     <CustomBtn
-                        text="인시전 기록 단계로"
-                        bg="#15CF8F"
+                        text="기록 완료"
+                        bg="#5B87ED"
                         isShow={true}
-                        isShowBtnText="수행 단계로"
+                        isShowBtnText="캐뉼라 기록 단계로"
                         isPaired={!unpaired}
-                        path="/incision"
+                        path="/"
+                        setIsModalComplete={setIsModalComplete}
                         dataOpeInfo={isOpeInfo}
-                        status={3}
+                        status={4}
                     />
                 </div>
                 <UpcomingTime
@@ -289,18 +253,11 @@ export default function Info() {
                 isOpenOpeModal={isOpenOpeModal}
                 setIsOpenOpeModal={setIsOpenOpeModal}
             />
-            <MoodalAddNewCannula
-                reloadCannulaList={reloadCannulaList}
-                selectedCannulaIds={selectedCannulaIds}
-                setSelectedCannulaIds={setSelectedCannulaIds}
-                isOpenAddCannualModal={isOpenAddCannualModal}
-                setIsOpenAddCannualModal={setIsOpenAddCannualModal}
-            />
-            <ModalError
-                isErrorOpen={isDeletCdmtId}
-                setIsErrorOpen={setIsDeleteCdmtId}
-                isIdForEdit={isIdForEdit}
-                setIsIdForEdit={setIsIdForEdit}
+            <ModalComplete
+                isPaired={!unpaired}
+                dataOpeInfo={isOpeInfo}
+                isModalComplete={isModalComplete}
+                setIsModalComplete={setIsModalComplete}
             />
         </>
     );

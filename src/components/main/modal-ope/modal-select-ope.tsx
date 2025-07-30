@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
-import { CustomModal } from "../../common";
-import { ModalError } from ".";
 import { returnDoubleFormatNumber } from "@/function";
-import toast from "react-hot-toast";
 import { useDoctorStore } from "@/store";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { ModalError } from ".";
+import { CustomModal } from "../../common";
 
 interface SurgeryItem {
     지점코드: string;
@@ -339,6 +339,7 @@ const ModalSelecOpe = ({
                                                     </p>
                                                 </div>
                                                 {item?.STATUS !== 3 &&
+                                                item?.STATUS !== 4 &&
                                                 Number(currentTimeHHMM) >=
                                                     Number(item?.종료시간) ? (
                                                     <p
@@ -470,13 +471,14 @@ const ModalSelecOpe = ({
                                                     >
                                                         수술중
                                                     </p>
-                                                ) : item?.STATUS === 2 ? (
+                                                ) : item?.STATUS === 2 ||
+                                                  item?.STATUS === 3 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#ED6B5B] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >
                                                         수술완료
                                                     </p>
-                                                ) : item?.STATUS === 3 ? (
+                                                ) : item?.STATUS === 4 ? (
                                                     <p
                                                         className={`float-right w-[100px] bg-[#5B87ED] h-[50px] rounded-[10px] text-center leading-[50px] font-bold text-[16px]`}
                                                     >

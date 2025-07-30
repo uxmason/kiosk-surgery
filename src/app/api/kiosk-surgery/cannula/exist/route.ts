@@ -2,8 +2,15 @@ import { NextResponse } from "next/server";
 import queryDB from "../../../../../../lib/db";
 
 export async function POST(req: Request) {
-    const { modelNameID, holeCountID, tipID, shapeID, lengthID, thicknessID } =
-        await req.json();
+    const {
+        modelNameID,
+        holeCountID,
+        tipID,
+        shapeID,
+        lengthID,
+        thicknessID,
+        doctorId,
+    } = await req.json();
 
     try {
         const existSql = `
@@ -20,11 +27,21 @@ export async function POST(req: Request) {
 
         if (result0?.length > 0) {
             const cannulaID = result0?.[0]._id;
+            const checkCdtmSql = `SELECT * FROM CNL_DOCTOR_TOOL_MAP WHERE CANNULA_id = ${cannulaID} AND DOCTOR_ID = '${doctorId}'`;
 
-            return NextResponse.json({
-                success: true,
-                cannulaID: cannulaID,
-            });
+            const resultCheckCdtm = await queryDB(checkCdtmSql);
+            if (resultCheckCdtm?.length > 0) {
+                return NextResponse.json({
+                    success: true,
+                    cannulaID: cannulaID,
+                });
+            } else {
+                return NextResponse.json({
+                    success: false,
+                    message:
+                        "캐뉼라는 존재하나 해당 원장님의 캐뉼라로 등록되어있지 않습니다.",
+                });
+            }
         } else {
             return NextResponse.json({
                 success: false,

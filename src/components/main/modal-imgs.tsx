@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { ClientInfoForModal, CustomModal } from "../common";
-import { useEffect, useState } from "react";
-import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
-import { Thumbs } from "swiper/modules";
-import "swiper/css";
-import { imgOriginalUrl, imgThumbUrl } from "@/variables";
 import { ImgsType, ImgType } from "@/type";
+import { imgOriginalUrl, imgThumbUrl } from "@/variables";
+import { useEffect, useState } from "react";
+import "swiper/css";
+import { Thumbs } from "swiper/modules";
+import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
+import { ClientInfoForModal, CustomModal } from "../common";
 
 interface Props {
     isModalImgsOpen: boolean;

@@ -52,6 +52,7 @@ export type CannulaListType = {
     LENGTH: string;
     THICKNESS: string;
     SELECTED: number;
+    cdmt_id: number;
 };
 
 export type AddNewCunnulaType = {
@@ -210,4 +211,10 @@ export type WaterType = {
 export type AnesthesiaType = {
     riskLevel: number;
     warningLevel: "DANGER" | "WARNING" | "NORMAL";
+};
+
+export type DeleteCdtmType = {
+    deviceId: string;
+    cdtmId: number;
+    doctorId: string;
 };
