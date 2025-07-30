@@ -276,10 +276,10 @@ const frontButtonData: ButtonDataType[] = [
     { style: { top: "6%", left: "10%" }, id: 2 },
     { style: { top: "6%", right: "10%" }, id: 1 },
     { style: { top: "24%", left: "44%" }, id: 3 },
-    { style: { top: "30%", left: "44%" }, id: 4 },
+    { style: { top: "31%", left: "44%" }, id: 4 },
     { style: { top: "34%", left: "26%" }, id: 5 },
     { style: { top: "34%", right: "26%" }, id: 6 },
-    { style: { top: "14%", right: "44%" }, id: 15 },
+    { style: { top: "17%", right: "44%" }, id: 15 },
     { style: { top: "14%", left: "15%" }, id: 17 },
     { style: { top: "14%", right: "15%" }, id: 16 },
 ];
@@ -295,9 +295,9 @@ const backButtonData: ButtonDataType[] = [
     { style: { top: "38%", right: "9%" }, id: 19 },
     { style: { top: "38%", left: "9%" }, id: 18 },
     { style: { top: "80%", left: "10%" }, id: 20 },
-    { style: { top: "90%", left: "6%" }, id: 21 },
+    { style: { top: "90%", left: "-3%" }, id: 21 },
     { style: { top: "80%", right: "10%" }, id: 22 },
-    { style: { top: "90%", right: "6%" }, id: 23 },
+    { style: { top: "90%", right: "-3%" }, id: 23 },
 ];
 
 type AddDataType = {
