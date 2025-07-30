@@ -12,9 +12,9 @@ import { FirstImgs, SecondImgs } from "@/components/record";
 import { handleSelectDoctor, updateErrorMessage } from "@/function";
 import { useClientStore, useDoctorStore, useStore } from "@/store";
 import { OpeClientType, PhotsArrType } from "@/type";
-import { useEffect, useState, useRef } from "react";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Info() {
     const router = useRouter();
@@ -147,6 +147,7 @@ export default function Info() {
                         if (res.status === 0) router.push("/");
                         if (res.status === 1) router.push("/record");
                         if (res.status === 2) router.push("/operate");
+                        if (res.status === 3) router.push("/incision");
                     } else {
                         clearInterval(interval);
                         updateErrorMessage({

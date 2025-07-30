@@ -1,17 +1,18 @@
-import { FormProvider, useForm } from "react-hook-form";
-import { BtnAdd, Holes, Lengths, Models, Shapes, Thickness, Tips } from ".";
-import { CustomModal } from "../../common";
+import { useDoctorStore } from "@/store";
 import {
     AddNewCunnulaType,
     HolelCountType,
+    LengthType,
     ModelNameType,
     ShapesType,
-    TipsType,
-    LengthType,
     ThicknessType,
+    TipsType,
 } from "@/type";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { BtnAdd, Holes, Lengths, Models, Shapes, Thickness, Tips } from ".";
+import { CustomModal } from "../../common";
 interface Props {
     isOpenAddCannualModal: boolean;
     selectedCannulaIds: string[];
@@ -26,6 +27,7 @@ const MoodalAddNewCannula = ({
     setSelectedCannulaIds,
     reloadCannulaList,
 }: Props) => {
+    const { doctor } = useDoctorStore();
     const [isExistCannula, setExistCannula] = useState(false);
     const [modelNames, setModelNames] = useState<ModelNameType[]>([]);
     const [holeCounts, setHoleCounts] = useState<HolelCountType[]>([]);
@@ -100,6 +102,7 @@ const MoodalAddNewCannula = ({
                     shapeID: shape,
                     lengthID: length,
                     thicknessID: thick,
+                    doctorId: doctor?.id,
                 }),
             });
             if (response.ok) {
